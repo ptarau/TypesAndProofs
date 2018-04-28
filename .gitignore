@@ -1,0 +1,4 @@
+.DS_Store
+*.qlf
+__pycache__/
+
