@@ -1,4 +1,5 @@
 % random typable normal form, using Boltzmann sampler
+% combined with fast type inference algorithm
 
 ranNF(N,X:T,RepSize):-
   ranNF(random,N,X:T,RepSize).
@@ -50,6 +51,10 @@ tryRanTypableNF(Max,Min,TSize0,MaxSteps,X,T,Size,Steps):-
   tsize(T,TSize),TSize>=TSize0,
   Size is Size0+1. 
   
+
+% parallel version of the same
+% if seen a number instead of the atom 'random'
+% the generation is replicable/deterministic
 
 parRanTNF(Seed,TSize,N,K,X:T,Size):-
   set_random(seed(Seed)),

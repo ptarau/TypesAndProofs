@@ -6,6 +6,10 @@ intu(T0,X):-intu(16,T0,X).
 
 intu(N,T0,X):-intu(N,T0,X,_),!.
 
+% generate normal forms of lambda tems of size N, 
+% then try to see if any subsumes the query type T0
+% if so, we have found an inhabitant X
+% in fact, if generatting larger and 
 intu(N,T0,X,T):-tnfs(N,X,T),subsumes_term(T,T0).
 
 intu0(T0,X):-N=16,intu0(N,T0,X).
@@ -18,33 +22,56 @@ badprove(_) :- 0 =:= random(2).
 % Dyckhoff's original LJT   
 dprove(A):-provable(A),!.
   
-% Dyckhoff's LJT - fig 2, enhanced with add_new avoid duplications
-   
-lprove(T):-ljt(T,[]),!.
 
+% derived directly from Dyckhoff LJT calculus
+lprove(T):-ljt(T,[]),!.
 
 ljt(A,Vs):-memberchk(A,Vs),!.     % axiom
 
-ljt((A->B),Vs1):-
-  !,
-  add_new(A,Vs1,Vs2),
-  ljt(B,Vs2).                           % => imp 
+ljt((A->B),Vs):-!,ljt(B,[A|Vs]).         % => imp 
 
-ljt(G,Vs1):- %atomic(G),                % imp => 4
+ljt(G,Vs1):- % atomic(G),                % imp => 4
   select( ((C->D)->B),Vs1,Vs2),
-  add_new((D->B),Vs2,Vs3),
-  ljt((C->D), Vs3),
+  ljt((C->D), [(D->B)|Vs2]),
   !,
-  add_new(B,Vs2,Vs4),
-  ljt(G,Vs4).
+  ljt(G,[B|Vs2]).
   
 ljt(G,Vs1):- %atomic(G),                % imp => 1, atom A
   select((A->B),Vs1,Vs2),
   atomic(A),
   memberchk(A,Vs2),
   !,
+  ljt(G,[B|Vs2]).
+  
+  
+
+% Dyckhoff's LJT - fig 2, enhanced with add_new avoid duplications
+   
+lprove1(T):-ljt1(T,[]),!.
+
+
+ljt1(A,Vs):-memberchk(A,Vs),!.     % axiom
+
+ljt1((A->B),Vs1):-
+  !,
+  add_new(A,Vs1,Vs2),
+  ljt1(B,Vs2).                           % => imp 
+
+ljt1(G,Vs1):- %atomic(G),                % imp => 4
+  select( ((C->D)->B),Vs1,Vs2),
+  add_new((D->B),Vs2,Vs3),
+  ljt1((C->D), Vs3),
+  !,
+  add_new(B,Vs2,Vs4),
+  ljt1(G,Vs4).
+  
+ljt1(G,Vs1):- %atomic(G),                % imp => 1, atom A
+  select((A->B),Vs1,Vs2),
+  atomic(A),
+  memberchk(A,Vs2),
+  !,
   add_new(B,Vs2,Vs3),
-  ljt(G,Vs3).
+  ljt1(G,Vs3).
 
 add_new(X,Xs,Ys):-memberchk(X,Xs),!,Ys=Xs.
 add_new(X,Xs,[X|Xs]).
@@ -81,7 +108,7 @@ ljn_imp((C->D),B,Vs1)-->newvar(P),
 % simplest, with multisets, no contraction
 % with a single select/3 operation
 
-bprove(T0):-trimImps(T0,T),ljb(T,[]),!.
+bprove(T):-ljb(T,[]),!.
 
 ljb(A,Vs):-memberchk(A,Vs),!.
 ljb((A->B),Vs):-!,ljb(B,[A|Vs]). 

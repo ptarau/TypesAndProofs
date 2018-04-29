@@ -1,10 +1,14 @@
-% supports also negation seen as A->false
+% provers using embedded Horn Clauses or customized
+% for also handling negation and classic proofs
+% via Glivenko's translation from classical to intuitionistic
+% propositional calculus
 
-:- op(425,  fy,  ~ ).
+:- op(425,  fy,  ~ ). % negation
 
 % classicall logic propositional prover
 % using Glivenko's double negation translation
 
+% supports also negation seen as A->false
 clprove(T0):-dneg(T0,T),cprove(T).
 
 cprove(T0):-
@@ -64,7 +68,7 @@ assume_all(A->B,Last,As,[A|Bs]):-
 
 % works on Horn clauses - includes
 % preporcessing from implicational form
-% from which the translation is reversible
+% from which the translation is reversible except for order
 
 xprove(T0):-toSortedHorn(T0,T),ljx(T,[]),!.
 
@@ -72,9 +76,7 @@ xprove_init(T0):-toSortedHorn(T0,_).
 
 ljx(A,Vs):-memberchk(A,Vs),!. 
 ljx((B:-[B]),_):-!.
-ljx((B:-As),Vs1):-!,
-  add_all(As,Vs1,Vs2),
-  ljx(B,Vs2).
+ljx((B:-As),Vs1):-!,add_all(As,Vs1,Vs2),ljx(B,Vs2).
 ljx(G,Vs1):- % atomic(G), G not on Vs
   select((B:-As),Vs1,Vs2),
   select(A,As,Bs), 
@@ -84,10 +86,7 @@ ljx(G,Vs1):- % atomic(G), G not on Vs
   add_new(NewB,Vs2,Vs3),
   ljx(G,Vs3).
   
-ljx_imp(A,_B,Vs):-
-   atomic(A),
-   !,
-   memberchk(A,Vs).
+ljx_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
 ljx_imp((D:-Cs),B,Vs1):-
    add_new((B:-[D]),Vs1,Vs2),
    ljx((D:-Cs),Vs2).
@@ -104,16 +103,12 @@ add_all([X|Xs],Ys,[X|Rs]):-
 add_all(Xs,Ys,Rs).
 
 
-%%%   
+% variant of xprove, with nondeterministic part
+% confined to zreduce/2
 
-zprove0(T0):-toSortedHorn(T0,_).
+zprove0(T0):-toSortedHorn(T0,_). % baseline for benchmarks
 
-zprove(T0):-
-  toSortedHorn(T0,T),
-  %ppp(T),
-  ljz(T,[]),!.
-
-%:-table(ljz/2).
+zprove(T0):-toSortedHorn(T0,T),ljz(T,[]),!.
 
 ljz(A,Vs):-memberchk(A,Vs),!. 
 ljz((B:-[B]),_):-!.
@@ -133,12 +128,14 @@ ljz_imp((D:-Cs),B,Vs1):-
   add_new((B:-[D]),Vs1,Vs2),
   ljz((D:-Cs),Vs2).
 
-% trims implications when statically equivalend to A->A
+% trims implications when statically equivalent to A->A
 qprove(T0):-
   trimImps(T0,T),
   %ppp(T),
   ljq(T,[]),!.
 
+qprove0(T0):-trimImps(T0,_). % for benchmarking baseline
+  
 ljq(A,Vs):-memberchk(A,Vs),!.
 ljq((A->B),Vs1):-!,add_new(A,Vs1,Vs2),ljq(B,Vs2). 
 ljq(G,Vs1):- % atomic(G),

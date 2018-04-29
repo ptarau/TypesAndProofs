@@ -1,3 +1,6 @@
+% Generates all trees of with N internal nodes and
+% it  collects their leaves to a list of logic variables
+
 genTree(N,Tree,Leaves):-genTree(Tree,N,0,Leaves,[]).
 
 genTree(V,N,N)-->[V].

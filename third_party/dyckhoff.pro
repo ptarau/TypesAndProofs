@@ -20,8 +20,8 @@
 % A is formula to prove
 % TIme is in millisec
 
-% reduced to implicational fragment, remove heuristics,
-% tested with all tautologies havbing proofs of size less then 13
+% reduced to implicational fragment, removed heuristics,
+% tested with all tautologies having proofs of size less then 14
 % ensured SWI-Prolog compatibility - Paul tarau, 2018
 
 

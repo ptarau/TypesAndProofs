@@ -1,6 +1,9 @@
 % sequent calculus-based classical propositional tautology prover
 % specialized to the implcational fragment
 
+% derived from Melvin Fitting's prover
+% specialized to implication and negation only
+
 /*
 the heart of the matter:
 thm(Lambda, Gamma) :-

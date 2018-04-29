@@ -1,5 +1,7 @@
 % random binary tree with N internal nodes 
 % (built with ->/2) and variables in Vs as leaves
+% declarative version not as fast as Knuth's algo R
+% but good up to a few thousand nodes
 
 remy(N,Tree,Vs):-remyP(N,Tree,Vs).
 

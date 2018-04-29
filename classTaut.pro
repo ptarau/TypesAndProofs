@@ -1,3 +1,6 @@
+% simple evaluator / truth table generator
+% for classic implicational formulas
+
 classEval(G):-
   varvars(G,F),
   term_variables(F,Vs),

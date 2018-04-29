@@ -1,5 +1,6 @@
 % counts function syms and constants in aterm
 % note: it collapses vars and nums as if $var/0 $num/0 constants
+
 funcount(T,Counts):-
   in_term(T,FNs),
   map_pair_sums(FNs,Counts).
