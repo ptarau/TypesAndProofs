@@ -1,17 +1,22 @@
-% tools
+% testing tools
+
 :-dynamic(sure/2).
+
+% nechmarks prover P on terms of size N
 
 bm(N,P):-
   N1 is N//2,
-  pbm(N,P,PT),
-  nbm(N1,P,NT),
+  pbm(N,P,PT), % on all positive examples
+  nbm(N1,P,NT), % on a blend, mostly negative examples
   T is PT+NT,
   writeln(time=[p=PT,n=NT,total=T]).
 
+% tests for false positves or negatives
 alltest(N,P):-N1 is N//2,
   ptest(N,P),
   ntest(N1,P).
 
+% same, when lambda terms are generated as proof witnesses  
 sprove1(T):-sprove1(T,_).
 
 sprove1(T,X):-
@@ -21,7 +26,8 @@ sprove1(T,X):-
   ),
   (X=@=X0->true;ppp(not_normal_form),ppp(X0),ppp(X)),
   true.
-  
+
+% tur a term in which variables are repsentede as Prolog vars  
 varvars(A,X):-
   maxvar(A,L0),L is L0+1,
   functor(D,x,L),
@@ -32,10 +38,14 @@ varvars(A->B,X->Y,D):-varvars(A,X,D),varvars(B,Y,D).
 varvars(A,V,D):-integer(A),I is A+1,arg(I,D,V).
 varvars(false,false,_).
 
+% variable with larges index
 maxvar(I,R):-integer(I),!,R=I.
 maxvar(false,0):-!.
 maxvar((A->B),R):-maxvar(A,I),maxvar(B,J),R is max(I,J).
 maxvar((A,B),R):-maxvar(A,I),maxvar(B,J),R is max(I,J).
+
+% turns a term int a ground one by banding
+% logic variables in it to 0,1,...
 
 natvars(T):-
   must_be(acyclic,T),
@@ -44,6 +54,8 @@ natvars(T):-
   L is L1-1,
   numlist(0,L,Vs).
 
+% same, but throws in atom "false"
+% as first variable to bind
 classvars(T):-
   must_be(acyclic,T),
   term_variables(T,[false|Vs]),
@@ -51,11 +63,14 @@ classvars(T):-
   L is L1-1,
   numlist(0,L,Vs).  
   
-% original prover by Dyckhoff 
-
+  
 % false negative only test
 ptest0(N,P):-ptest(fail,N,P).
 
+% catches terms on wich P succeeds
+% that are not theorems
+% by testing against the types of all normal forms
+% up to size N
 ptest(N,P):-ptest(true,N,P).
 
 ptest(NoVars,N,P):-
@@ -69,6 +84,8 @@ ptest(NoVars,N,P):-
   fail
 ; true.
 
+% just the terms, to testing, to help with
+% bencharkin g exact time spent in proving
 pbm0(N):-
   tnf(N,_:T),
   natvars(T),
@@ -76,6 +93,7 @@ pbm0(N):-
 ; true.
 
 
+% benchmark on type of normal forms of size N 
 pbm(N,P,Time):-
   time(pbm0(N),T0),
   time(ptest(N,P),T1),
@@ -85,20 +103,27 @@ pbm(N,P):-
   pbm(N,P,Time),
   writeln(time(pbm)=Time).
 
-
+% test that a prover aggrees that the Glivenko not-not 
+% transformation results in classical tautology
 dneg_taut(P,T,NNT):-
   ( call(P,NNT) -> \+taut(T),
         ppp('success_but_not_a tautology!'(T))
   ; taut(T), ppp('fails_but_is_tautology!'(NNT))
   ).
-  
+
+% test al all classical formulas, via (a->false)->false  
 ttest(N,P):-
   allClassFormulas(N,T,NNT),
   dneg_taut(P,T,NNT),
   fail
 ; true.
   
+% random typed NF with fixed seed
 genRanTyped:-genRanTyped(1003).
+
+
+% generates random typed NFs with given seed
+% Seed=random generates them pseudo-randomly
 
 genRanTyped(Seed):-
   retractall(sure(_,_)),
@@ -108,6 +133,7 @@ genRanTyped(Seed):-
   fail
 ; tell('test_data/sure.pro'),listing(sure),told.
   
+% test using surel well typed random terms in sure.pro
 mrptest(P):-
   consult('test_data/sure.pro'),
   sure(_,T),
@@ -116,7 +142,9 @@ mrptest(P):-
   ppp(T),
   fail
 ; true.
-  
+
+% sure terms turned from de Bruijn into
+% canonical lambda terms  vith logic variables in them
 lsure(X,T):-sure(X0,T),nb2l(X0,X).
 
 nb2l(A,T):-nb2l(A,T,_Vs).
@@ -124,10 +152,12 @@ nb2l(A,T):-nb2l(A,T,_Vs).
 nat1(0).
 nat1(s(_)).
 
+% from de Bruijn to canonical lambda term
 nb2l(I,V,Vs):-nat1(I),s2n(I,N),nth0(N,Vs,V).
 nb2l(a(A,B),a(X,Y),Vs):-nb2l(A,X,Vs),nb2l(B,Y,Vs).
 nb2l(l(A),l(V,Y),Vs):-nb2l(A,Y,[V|Vs]).
 
+% run test using sprove/2 that returns inhabitant X of T
 mrptest:-
   consult('test_data/sure.pro'),
   lsure(X0,T),
@@ -143,7 +173,7 @@ mrptest:-
   fail
 ; true.
 
-
+% test generation of random NFs of size 20
 test_ranNF:-ranNF(20,X:T,_),
    numbervars(X,10,_),numbervars(T,0,_),
    writeln(X),writeln(T),fail.
@@ -152,9 +182,10 @@ ranptest(N,P):-rptest(random,1,N,1,P).
   
 rptest(N,P):-rptest(1001,20,N,100,P).
 
+% test P against sure type T
 rptest(Seed,TSize,N,K,P):-
   parRanTNF(Seed,TSize,N,K,X:T,Size),
-  portray_clause(sure(T)),
+  portray_clause(sure(X:T)),
   \+((natvars(T),call(P,T))),
   ppp('false negative, for term size'(Size)),
   ppp(while_term_inhabiting_it=X),
@@ -162,16 +193,9 @@ rptest(Seed,TSize,N,K,P):-
   fail
 ; true.  
   
-% false positive with binary trees labeled in all possible ways  
+% banchark with binary 
+% trees labeled in all possible ways  
 
-nbm0(N):-call(allImpFormulas,N,_T), fail;true.
-
-nbm1(N,P):-
-  call(allImpFormulas,N,T),
-  call(P,T),
-  fail
-; true.
-  
 nbm(N,P,Time):-
   time(nbm0(N),T0),
   time(nbm1(N,P),T1),
@@ -181,6 +205,16 @@ nbm(N,P):-
   nbm(N,P,Time),
   writeln(time(nbm)=Time).
 
+  nbm1(N,P):-
+  call(allImpFormulas,N,T),
+  call(P,T),
+  fail
+; true.
+
+% basic generator for timing delta
+nbm0(N):-call(allImpFormulas,N,_T), fail;true.
+
+% test against Dyckhoff's prover as gold standard
 cntest(N,P):-
   allClassFormulas(N,T),ppp(T),
   ( call(P,T) -> \+dprove(T),ppp(false_pos(T))
@@ -189,7 +223,7 @@ cntest(N,P):-
   fail
 ; true.
 
-
+% test against sure tautologies
 ntest(N,P):-ntest(N,allImpFormulas,P).
 
 ntest(N,G,P):-
@@ -222,7 +256,7 @@ maybe_type(T):-
 
     
 
-
+% benchmark against large random terms
 rnbm:-rnbm(dprove).
 
 % replicable large random types
@@ -236,6 +270,7 @@ rnbm(Seed,N,K,Trim,P,Time):-
     Time
   ).
 
+% test prover P aginst K random instance of size N
 rntest(N,K,P):-rntest(10,random,N,K,P).
   
 rntest(Trim,Seed,N,K,P):-rntest(Trim,true,Seed,N,K,P).
@@ -256,15 +291,14 @@ rntest_maybe(P):-
      fail
   ;  true
   ).
-  
+
+% type of S-combinator  
 ts_(((A->(B->C))->((A->B)->(A->C)))).
-
-%rule4(((C->D)->B)->(D->B)->(C->D)->B).
-
-%apply_imp(P,Q,a(P,l(Q,l(Y,a(P,l(_,Y)))))).
 
 apply_imp(P,Q,a(P,a(Q,l(Y,a(P,l(_,Y)))))).
 
+% catches the case when a different inhabitant is found
+% no big deal as there might be a lot of them
 pstest(N,F):-
   tnf(N,X:T),copy_term(T,CT),
   %nl,ppp(X),ppp(T),
@@ -276,7 +310,7 @@ pstest(N,F):-
   fail.
 
   
-
+% catches if inahbitants type is unexpected
 rnstest(N,F):-
   G=ranImpFormula,
   call(G,N,F).
@@ -313,7 +347,7 @@ with(P,X):-
   varvars(X,T),
   call(P,T).
   
-% tests
+% a few  quick tests
 
 t1:-N=50,K=20,P=hprove,time(ran_typed(N,K,K,P,X:T)),ppp(X),ppp(T),fail.
 
@@ -431,7 +465,11 @@ cotest_one(Transformer,Gold,Silver,T, R):-
   ; R = agreement
   ).
   
-
+% shannot expansion - for (todo) use in fast classical
+% tautology checking
+shannon(V,T,T0,T1):-shannon0(V,T,T0),shannon1(V,T,T1).
+  
+  
 shannon0(V,(V->_),true):-!.
 shannon0(V,(X ->V),(NewX->false)):-!,shannon0(V,X,NewX).
 shannon0(V,W,W):-atomic(W),W\=V,!.
@@ -443,9 +481,8 @@ shannon1(V,W,W):-atomic(W),W\=V,!.
 shannon1(V,(X->Y),(A->B)):-shannon1(V,X,A),shannon1(V,Y,B).
 
 
-shannon(V,T,T0,T1):-shannon0(V,T,T0),shannon1(V,T,T1).
 
-
+% tests "proven" formulas against Melvin Fitting's prover 
 ftest2:-test_proven(tautology).
 
 test_proven(P):-  
@@ -455,4 +492,3 @@ test_proven(P):-
   fail
 ; true.
 
-  

@@ -2,6 +2,30 @@
 
 ## Type inference algorithms and intuitionistic propositional theorem provers solving type inhabitation problems. Combinatorial and random testers for the provers and type inferencers.
 
+Type
+
+```
+$ go
+```
+
+or
+
+```
+swipl -s tp.pro
+```
+and then something like
+
+```
+?- pprove(a->b->a).
+true.
+```
+
+```
+?- pprove((a->b)->a).
+false.
+```
+
+See a lot of examples of use in file *tester.pro*
 
 Given the Curry-Howard isomorphism, solving the type inhabitation problem is equivalent to finding propositional implicational intuitionistic tautology proofs.
 
@@ -19,13 +43,13 @@ These tools implement Prolog-based algorithms on the two sides of the *Curry-How
 - de Bruijn notation for lambda terms
 - beta reduction with de Bruijn indices
 - normal forms of lambda terms
-- combinatorial generation of trees
-- random generation with Boltzmann samplers
+- combinatorial generation of trees, set partitions
 - random set-partition generation with urn-algorithms 
+- random term generation with Boltzmann samplers
 - Gentzen's LJ calculus
 - Vorobeev-Hudelmayer-Dyckhoff's LJT calculus
 - Glivenko's double negation translation
-- Fitting's tautology checker
+- Fitting's classical tautology checker
 
 
 ### The provers to be tested and compared are:
