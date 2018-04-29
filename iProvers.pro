@@ -12,12 +12,13 @@ intu0(T0,X):-N=16,intu0(N,T0,X).
 
 intu0(N,T0,X):-tnfs(N,X,T),T0=@=T.
 
+% for testing - randomly succeds or fails
 badprove(_) :- 0 =:= random(2).
   
 % Dyckhoff's original LJT   
 dprove(A):-provable(A),!.
   
-% Dyckhoff's LJT - fig 2  
+% Dyckhoff's LJT - fig 2, enhanced with add_new avoid duplications
    
 lprove(T):-ljt(T,[]),!.
 
@@ -49,9 +50,36 @@ add_new(X,Xs,Ys):-memberchk(X,Xs),!,Ys=Xs.
 add_new(X,Xs,[X|Xs]).
   
 
+% Hudelmaier's O(n*log(n)) space algorithm
 
+nprove(T):-ljn(T,[],100,_),!.
+
+newvar(N,N,SN):-succ(N,SN).
+
+ljn(A,Vs)-->{memberchk(A,Vs)},!.
+ljn((A->B),Vs1)-->!,{add_new(A,Vs1,Vs2)},ljn(B,Vs2). 
+ljn(G,Vs1)--> % atomic(G),
+  {select((A->B),Vs1,Vs2)},
+  ljn_imp(A,B,Vs2),
+  !,
+  {add_new(B,Vs2,Vs3)},
+  ljn(G,Vs3).
+
+ljn_imp(A,_,Vs)-->{atomic(A),!,memberchk(A,Vs)}.   
+ljn_imp((C->D),B,Vs1)-->newvar(P),
+   { add_all([
+       C,
+       (D->P),
+       (P->B)
+     ],
+     Vs1,Vs2)
+   },
+   ljn(P,Vs2).
+
+   
 
 % simplest, with multisets, no contraction
+% with a single select/3 operation
 
 bprove(T0):-trimImps(T0,T),ljb(T,[]),!.
 
@@ -68,7 +96,8 @@ ljb_imp((C->D),B,Vs):-ljb(D,[(D->B),C|Vs]).
 
 
 
-%%%%%%%%%%%%%%
+% combines simplicity of bprove and
+% dupplicate avoidance with add_new
 
 pprove(T):-ljp(T,[]),!.
 
@@ -85,7 +114,10 @@ ljp_imp(A,_,Vs):-atomic(A),!,memberchk(A,Vs).
 ljp_imp((C->D),B,Vs1):-
    add_new((D->B),Vs1,Vs2),
    ljp((C->D),Vs2).
-   
+
+
+% same, with partially evaluated select
+
 mprove(T):-ljm(T,[]),!.
 
 ljm(A,Vs):-memberchk(A,Vs),!.
@@ -109,8 +141,13 @@ select_imp(G,[U|Vs],Us,End):-
   select_imp(G,Vs,[U|Us],End).
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
+% variant of pprove that produces
+% lambda terms as proofs
+
+sprove(T):-sprove(T,_).
+
+sprove(T,X):-ljs(X,T,[]),!.
+
 ljs(X,T):-ljs(X,T,[]),!.
 
 ljs(X,A,Vs):-memberchk(X:A,Vs),!. %----
@@ -127,11 +164,8 @@ ljs_imp(X,A,_,Vs):-atomic(A),!,memberchk(X:A,Vs).
 ljs_imp(E,(C->D),B,Vs1):-ljs(E,(C->D),[_:(D->B)|Vs1]).
 
 
-%%%%%%%%%%%%%%
 
-sprove(T):-sprove(T,_).
 
-sprove(T,X):-ljs(X,T,[]),!.
 
 
   

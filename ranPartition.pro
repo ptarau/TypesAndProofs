@@ -57,8 +57,9 @@ pickUrns(P1,N,B,U1,U3):-P1>0,
   P2 is P1-R,
   pickUrns(P2,N,B,U2,U3).
 
-  
+% arg/3, from 0 to n-1  
 arg0(I,T,X):-succ(I,J),arg(J,T,X).
+
 
 ranLoop(_Bs,_Norm,_,I,N,C,C):-I>=N.
 ranLoop(Bs,Norm,M,I,N,C1,C3):-I<N,

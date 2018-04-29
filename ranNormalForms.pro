@@ -1,4 +1,4 @@
-% random typable normal form
+% random typable normal form, using Boltzmann sampler
 
 ranNF(N,X:T,RepSize):-
   ranNF(random,N,X:T,RepSize).
