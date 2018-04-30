@@ -8,7 +8,7 @@ classEval(G):-
   ppp(Vs:R),
   fail.
 
-taut(X):- \+eval(X,0).
+taut(X):- \+ eval(X,0).
 
 taut0(G):-must_be(ground,G),
   varvars(G,X),
@@ -20,7 +20,7 @@ taut0(G):-must_be(ground,G),
 eval(G,R):-varvars(G,T),evalT(T,R).
 
 evalT(X,X):-var(X),!,bit(X).
-evalT(false,0).
+evalT(false,R):-!,R=0.
 evalT(X,R):-integer(X),!,R=X.
 evalT((A->B),R):-
   evalT(A,X),

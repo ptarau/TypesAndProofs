@@ -27,7 +27,7 @@ sprove1(T,X):-
   (X=@=X0->true;ppp(not_normal_form),ppp(X0),ppp(X)),
   true.
 
-% tur a term in which variables are repsentede as Prolog vars  
+% turns a term in which variables are repsentede as Prolog vars  
 varvars(A,X):-
   maxvar(A,L0),L is L0+1,
   functor(D,x,L),
@@ -44,7 +44,7 @@ maxvar(false,0):-!.
 maxvar((A->B),R):-maxvar(A,I),maxvar(B,J),R is max(I,J).
 maxvar((A,B),R):-maxvar(A,I),maxvar(B,J),R is max(I,J).
 
-% turns a term int a ground one by banding
+% turns a term into a ground one by banding
 % logic variables in it to 0,1,...
 
 natvars(T):-
@@ -84,7 +84,7 @@ ptest(NoVars,N,P):-
   fail
 ; true.
 
-% just the terms, to testing, to help with
+% just the terms, for testing, to help with
 % bencharkin g exact time spent in proving
 pbm0(N):-
   tnf(N,_:T),
@@ -103,7 +103,7 @@ pbm(N,P):-
   pbm(N,P,Time),
   writeln(time(pbm)=Time).
 
-% test that a prover aggrees that the Glivenko not-not 
+% test that a prover aggrees that the Glivenko's not-not 
 % transformation results in classical tautology
 dneg_taut(P,T,NNT):-
   ( call(P,NNT) -> \+taut(T),
@@ -111,7 +111,8 @@ dneg_taut(P,T,NNT):-
   ; taut(T), ppp('fails_but_is_tautology!'(NNT))
   ).
 
-% test al all classical formulas, via (a->false)->false  
+% test al all classical formulas, via (a->false)->false 
+% e.g ?- ttest(6,cprove).
 ttest(N,P):-
   allClassFormulas(N,T,NNT),
   dneg_taut(P,T,NNT),
@@ -193,7 +194,7 @@ rptest(Seed,TSize,N,K,P):-
   fail
 ; true.  
   
-% banchark with binary 
+% banchmark with binary 
 % trees labeled in all possible ways  
 
 nbm(N,P,Time):-
@@ -214,7 +215,8 @@ nbm(N,P):-
 % basic generator for timing delta
 nbm0(N):-call(allImpFormulas,N,_T), fail;true.
 
-% test against Dyckhoff's prover as gold standard
+% test against Dyckhoff's original prover as gold standard
+% needs replacing the reduced one with :-iclude(..)
 cntest(N,P):-
   allClassFormulas(N,T),ppp(T),
   ( call(P,T) -> \+dprove(T),ppp(false_pos(T))
@@ -223,7 +225,8 @@ cntest(N,P):-
   fail
 ; true.
 
-% test against sure tautologies
+% test against all well formed implicational expressions
+
 ntest(N,P):-ntest(N,allImpFormulas,P).
 
 ntest(N,G,P):-
@@ -245,11 +248,19 @@ ntest_with(Trim,TestCorrectness,P,T):-
   (TestCorrectness->must_be_taut(T);true).
   
 must_be_taut(T):-
+  GoldIntu=dprove,
+  %GoldIntu=intu,
+  GoldClass=tautology,
+  %GoldClass=taut,
   %intu=>taut
   %\+taut => \+intu
-  \+taut(T),\+intu(T,_),
+  ( \+call(GoldClass,T)-> ppp('not a classical tautology!!!')
+  ; \+ call(GoldIntu,T)->ppp('not an intuitionistic tautology!!!')
+  ; fail
+  ),
   ppp('false positive!!!'),
-  ppp(proof_of_non_tautology_should_fail=T).
+  ppp(proof_of_non_tautology_should_fail=T),
+  ppp('------------').
 
 maybe_type(T):-
   ranImpFormulas(15,5,5,T).
@@ -411,34 +422,11 @@ sound:-
   
 
 clastest:-
-  proven(_V,T),dneg(T,TT),dprove(TT),write(TT),write('.'),nl,fail.
+  proven(_V,T),dneg(T,TT),
+  dprove(TT),
+  write(TT),
+  write('.'),nl,fail.
 
-
-  /*
-  %%%   
-zprove(T0):-toSortedHorn(T0,T),ljz(T,[]),!.
-
-ljz(A,Vs):-memberchk(A,Vs),!. 
-ljz((B:-[B]),_):-!.
-%ljz((B:-As),_):-memberchk(B,As),!.
-ljz((B:-As),Vs1):-!,add_all(As,Vs1,Vs2),ljz(B,Vs2).
-ljz(G,Vs1):-zreduce(Vs1,Vs2),ljz(G,Vs2).
-
-zreduce(Vs1,Vs4):-
-  select((B:-As),Vs1,Vs2),
-  select(A,As,Bs), 
-  ljz_imp(A,B,D,Vs2,Vs3),
-  ljz(D,Vs3),
-  !,
-  trimmed((B:-Bs),NewB),
-  add_new(NewB,Vs3,Vs4).
-
-ljz_imp(A,_B,A,Vs,Vs):-atomic(A),!.
-ljz_imp((D:-Cs),B,D,Vs1,Vs2):-
-  add_all([(B:-[D])|Cs],Vs1,Vs2).
-  
-  
-  */
   
 cotest1(N):-cotest(N,(=),dprove,pprove).
   
