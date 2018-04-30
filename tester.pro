@@ -446,29 +446,30 @@ cotest(N,Transformer,Gold,Silver):-
   
 cotest_one(Transformer,Gold,Silver,T, R):-
   call(Transformer,T,TT),
-  %ppp((T-->TT)),
   ( call(Silver,T) -> \+ call(Gold,TT), R = wrong_success
   ; % \+ Silver
     call(Gold,TT) -> R = wrong_failure
   ; R = agreement
   ).
   
-% shannot expansion - for (todo) use in fast classical
-% tautology checking
-shannon(V,T,T0,T1):-shannon0(V,T,T0),shannon1(V,T,T1).
+
+gold_test(N,Silver,Culprit,Unexpected):-
+  gold_test(N,allImpFormulas,dprove,Silver, Culprit,Unexpected).
+
+gold_test(N,Generator,Gold,Silver, Term, Res):-
+  call(Generator,N,Term),
+  gold_test_one(Gold,Silver,Term, Res),
+  Res\=agreement.
+  
+gold_test_one(Gold,Silver,T, Res):-
+  ( call(Silver,T) -> \+ call(Gold,T), 
+    Res = wrong_success
+  ; call(Gold,T) -> % \+ Silver
+    Res = wrong_failure
+  ; Res = agreement
+  ).
   
   
-shannon0(V,(V->_),true):-!.
-shannon0(V,(X ->V),(NewX->false)):-!,shannon0(V,X,NewX).
-shannon0(V,W,W):-atomic(W),W\=V,!.
-shanoon0(V,(X->Y),(A->B)):-shannon0(V,X,A),shannon0(V,Y,B).
-
-shannon1(V,(_ -> V),true):-!.
-shannon1(V,(V -> X),NewX):-!,shannon1(V,X,NewX).
-shannon1(V,W,W):-atomic(W),W\=V,!.
-shannon1(V,(X->Y),(A->B)):-shannon1(V,X,A),shannon1(V,Y,B).
-
-
 
 % tests "proven" formulas against Melvin Fitting's prover 
 ftest2:-test_proven(tautology).

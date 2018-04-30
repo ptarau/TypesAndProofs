@@ -45,7 +45,8 @@ ljt(G,Vs1):- %atomic(G),                % imp => 1, atom A
   
   
 
-% Dyckhoff's LJT - fig 2, enhanced with add_new avoid duplications
+% Dyckhoff's LJT - (fig 2 in his paper), 
+% enhanced with add_new avoid duplications
    
 lprove1(T):-ljt1(T,[]),!.
 

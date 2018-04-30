@@ -35,3 +35,19 @@ impl(1,1,1).
 bit(0).
 bit(1).
 
+% TODO
+
+% shannon expansion - for (todo) use in fast classical
+% tautology checking
+shannon(V,T,T0,T1):-shannon0(V,T,T0),shannon1(V,T,T1).
+  
+  
+shannon0(V,(V->_),true):-!.
+shannon0(V,(X ->V),(NewX->false)):-!,shannon0(V,X,NewX).
+shannon0(V,W,W):-atomic(W),W\=V,!.
+shanoon0(V,(X->Y),(A->B)):-shannon0(V,X,A),shannon0(V,Y,B).
+
+shannon1(V,(_ -> V),true):-!.
+shannon1(V,(V -> X),NewX):-!,shannon1(V,X,NewX).
+shannon1(V,W,W):-atomic(W),W\=V,!.
+shannon1(V,(X->Y),(A->B)):-shannon1(V,X,A),shannon1(V,Y,B).
