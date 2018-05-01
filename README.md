@@ -29,7 +29,7 @@ See a lot of examples of use in file *tester.pro*
 
 Given the Curry-Howard isomorphism, solving the type inhabitation problem is equivalent to finding propositional implicational intuitionistic tautology proofs.
 
-These tools implement Prolog-based algorithms on the two sides of the *Curry-Howard isomorphism*, including combinatorial and redom testers, centered around:
+These tools implement Prolog-based algorithms on the two sides of the *Curry-Howard isomorphism*, including combinatorial and random testers, centered around:
 
 - generating all candidate type expressions
 - generating all simple types
@@ -60,7 +60,7 @@ These tools implement Prolog-based algorithms on the two sides of the *Curry-How
 
 The programs are tested with SWI Prolog 7.7.12.
 
-Except for those using the multi-threading the main code, consisting of the the provers and the testers is likely to run on most Prologs.
+Except for those using SWI-Prolog's multi-threading the code, the provers and the testers are likely to run on most Prologs.
 
-A Python version of our lightweight implcational logic prover is also included.
+A Python version of one of our lightweight implicational logic provers is also included.
 
