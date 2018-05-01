@@ -29,6 +29,14 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('parProgs.pro'). % parallel variants of some of the programs
 
+:-include('inputTransformers.pro').
+
+:-include('testGenerators.pro').
+
+:-include('testProvers.pro').
+
+:-include('benchmarks.pro').
+
 :-include('tester.pro'). % soup of testing and benchmarcking programs
 
 :-include('third_party/dyckhoff.pro'). % implicational variant of Roy Dyckhoff's prover  
