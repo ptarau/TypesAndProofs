@@ -40,23 +40,23 @@ expand_neg((A->B),(X->Y)):-expand_neg(A,X),expand_neg(B,Y).
 % assumes all hypotheses at once
 % while avoiding duplicates
 
-hprove(T):-ljh(T,[]),!.
+aprove(T):-lja(T,[]),!.
 
-ljh(A,Vs):-memberchk(A,Vs),!.
-ljh(As,Vs1):-As=(_->_),!,
+lja(A,Vs):-memberchk(A,Vs),!.
+lja(As,Vs1):-As=(_->_),!,
   assume_all(As,B,Vs1,Vs2),
-  ljh(B,Vs2). 
-ljh(G,Vs1):- % atomic(G),
+  lja(B,Vs2). 
+lja(G,Vs1):- % atomic(G),
   select((A->B),Vs1,Vs2),
-  ljh_imp(A,B,Vs2),
+  lja_imp(A,B,Vs2),
   !,
   add_new(B,Vs2,Vs3),
-  ljh(G,Vs3).
+  lja(G,Vs3).
 
-ljh_imp(A,_,Vs):-atomic(A),!,memberchk(A,Vs).   
-ljh_imp((C->D),B,Vs1):-
+lja_imp(A,_,Vs):-atomic(A),!,memberchk(A,Vs).   
+lja_imp((C->D),B,Vs1):-
    add_new((D->B),Vs1,Vs2),
-   ljh((C->D),Vs2).
+   lja((C->D),Vs2).
   
 assume_all(A,Last,As,As):-atomic(A),!,Last=A.
 assume_all(A->B,Last,As,Bs):-
@@ -70,22 +70,22 @@ assume_all(A->B,Last,As,[A|Bs]):-
 % preporcessing from implicational form
 % from which the translation is reversible except for order
 
-xprove(T0):-toHorn(T0,T),ljx(T,[]),!.
+hprove(T0):-toHorn(T0,T),ljh(T,[]),!.
 
-xprove_init(T0):-toHorn(T0,_).
+hprove_init(T0):-toHorn(T0,_).
 
-ljx(A,Vs):-memberchk(A,Vs),!. 
-ljx((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljx(B,Vs2).
-ljx(G,Vs1):- % atomic(G), G not on Vs
+ljh(A,Vs):-memberchk(A,Vs),!. 
+ljh((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljh(B,Vs2).
+ljh(G,Vs1):- % atomic(G), G not on Vs
   select((B:-As),Vs1,Vs2),
   select(A,As,Bs), 
-  ljx_imp(A,B,Vs2),
+  ljh_imp(A,B,Vs2),
   !,
   trimmed((B:-Bs),NewB),
-  ljx(G,[NewB|Vs2]).
+  ljh(G,[NewB|Vs2]).
   
-ljx_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
-ljx_imp((D:-Cs),B,Vs):- ljx((D:-Cs),[(B:-[D])|Vs]).
+ljh_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
+ljh_imp((D:-Cs),B,Vs):- ljh((D:-Cs),[(B:-[D])|Vs]).
 
 trimmed((A:-[]),A).
 trimmed((A:-[B|Bs]),A:-[B|Bs]).
@@ -125,12 +125,10 @@ add_all([X|Xs],Ys,[X|Rs]):-
 add_all(Xs,Ys,Rs).
 
 
-
-
 % variant of xprove, with nondeterministic part
 % confined to zreduce/2
 
-zprove0(T0):-toSortedHorn(T0,_). % baseline for benchmarks
+zprove_init(T0):-toSortedHorn(T0,_). % baseline for benchmarks
 
 zprove(T0):-toSortedHorn(T0,T),ljz(T,[]),!.
 

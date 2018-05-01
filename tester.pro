@@ -92,6 +92,13 @@ pbm0(N):-
   fail
 ; true.
 
+hpbm0(N):-
+  tnf(N,_:T),
+  natvars(T),
+  toHorn(T,_),
+  fail
+; true.
+
 
 % benchmark on type of normal forms of size N 
 pbm(N,P,Time):-
@@ -103,6 +110,16 @@ pbm(N,P):-
   pbm(N,P,Time),
   writeln(time(pbm)=Time).
 
+% same counting Horn caluse transfor time
+hpbm(N,P,Time):-
+  time(hpbm0(N),T0),
+  time(ptest(N,P),T1),
+  Time is T1-T0.  
+
+hpbm(N,P):-
+  hpbm(N,P,Time),
+  writeln(time(pbm)=Time).  
+  
 % test that a prover aggrees that the Glivenko's not-not 
 % transformation results in classical tautology
 dneg_taut(P,T,NNT):-

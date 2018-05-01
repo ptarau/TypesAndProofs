@@ -23,7 +23,7 @@ badprove(_) :- 0 =:= random(2).
 dprove(A):-provable(A),!.
   
 
-% derived directly from Dyckhoff LJT calculus
+% derived directly from Dyckhoff's LJT calculus
 lprove(T):-ljt(T,[]),!.
 
 ljt(A,Vs):-memberchk(A,Vs),!.     % axiom
@@ -43,7 +43,25 @@ ljt(G,Vs1):- %atomic(G),                % imp => 1, atom A
   !,
   ljt(G,[B|Vs2]).
   
-  
+
+% simplest, with multisets, no contraction
+% with a single select/3 operation
+
+bprove(T):-ljb(T,[]),!.
+
+ljb(A,Vs):-memberchk(A,Vs),!.
+ljb((A->B),Vs):-!,ljb(B,[A|Vs]). 
+ljb(G,Vs1):-
+  select((A->B),Vs1,Vs2),
+  ljb_imp(A,B,Vs2),
+  !,
+  ljb(G,[B|Vs2]).
+
+ljb_imp((C->D),B,Vs):-!,ljb((C->D),[(D->B)|Vs]).
+ljb_imp(A,_,Vs):-atomic(A),memberchk(A,Vs).   
+
+
+
 
 % Dyckhoff's LJT - (fig 2 in his paper), 
 % enhanced with add_new avoid duplications
@@ -74,10 +92,7 @@ ljt1(G,Vs1):- %atomic(G),                % imp => 1, atom A
   add_new(B,Vs2,Vs3),
   ljt1(G,Vs3).
 
-add_new(X,Xs,Ys):-memberchk(X,Xs),!,Ys=Xs.
-add_new(X,Xs,[X|Xs]).
   
-
 % Hudelmaier's O(n*log(n)) space algorithm
 
 nprove(T):-ljn(T,[],100,_),!.
@@ -106,22 +121,7 @@ ljn_imp((C->D),B,Vs1)-->newvar(P),
 
    
 
-% simplest, with multisets, no contraction
-% with a single select/3 operation
-
-bprove(T):-ljb(T,[]),!.
-
-ljb(A,Vs):-memberchk(A,Vs),!.
-ljb((A->B),Vs):-!,ljb(B,[A|Vs]). 
-ljb(G,Vs1):-
-  select((A->B),Vs1,Vs2),
-  ljb_imp(A,B,Vs2),
-  !,
-  ljb(G,[B|Vs2]).
-
-ljb_imp(A,_,Vs):-atomic(A),!,memberchk(A,Vs).   
-ljb_imp((C->D),B,Vs):-ljb(D,[(D->B),C|Vs]).
-
+   
 
 
 % combines simplicity of bprove and
@@ -143,6 +143,9 @@ ljp_imp((C->D),B,Vs1):-
    add_new((D->B),Vs1,Vs2),
    ljp((C->D),Vs2).
 
+add_new(X,Xs,Ys):-memberchk(X,Xs),!,Ys=Xs.
+add_new(X,Xs,[X|Xs]).
+  
 
 % same, with partially evaluated select
 
@@ -169,7 +172,7 @@ select_imp(G,[U|Vs],Us,End):-
   select_imp(G,Vs,[U|Us],End).
 
 
-% variant of pprove that produces
+% variant of bprove that produces
 % lambda terms as proofs
 
 sprove(T):-sprove(T,_).
@@ -178,18 +181,18 @@ sprove(T,X):-ljs(X,T,[]),!.
 
 ljs(X,T):-ljs(X,T,[]),!.
 
-ljs(X,A,Vs):-memberchk(X:A,Vs),!. %----
+ljs(X,A,Vs):-memberchk(X:A,Vs),!. % leaf variable
 
-ljs(l(X,E),(A->B),Vs):-!,ljs(E,B,[X:A|Vs]).   % ---
+ljs(l(X,E),(A->B),Vs):-!,ljs(E,B,[X:A|Vs]).  % lambda term
 
-ljs(E,G,Vs1):- % atomic(G),
-  select(S:(A->B),Vs1,Vs2),
-  ljs_imp(T,A,B,Vs2),
+ljs(E,G,Vs1):- 
+  select(S:(A->B),Vs1,Vs2),   % source of application
+  ljs_imp(T,A,B,Vs2),         % target of application
   !,
-  ljs(E,G,[a(S,T):B|Vs2]).
+  ljs(E,G,[a(S,T):B|Vs2]).    % application
 
 ljs_imp(X,A,_,Vs):-atomic(A),!,memberchk(X:A,Vs).   
-ljs_imp(E,(C->D),B,Vs1):-ljs(E,(C->D),[_:(D->B)|Vs1]).
+ljs_imp(E,(C->D),B,Vs):-ljs(E,(C->D),[_:(D->B)|Vs]).
 
 
 

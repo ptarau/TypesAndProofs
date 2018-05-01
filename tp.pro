@@ -14,6 +14,10 @@ c:-['tp.pro']. % quick iteractive reloader
 :-include('allTypedNFs.pro'). % generator for simply typed normal forms
 :-include('ranNormalForms.pro'). % random normal form generator (Boltzmann)
 
+:-include('allImpFormulas.pro').
+
+:-include('ranImpFormulas.pro'). % random implicational formulas
+
 :-include('classTaut.pro'). % basic classical tautology testers
 
 :-include('iProvers.pro'). % provers of implicational intuitionistic logic
@@ -31,53 +35,3 @@ c:-['tp.pro']. % quick iteractive reloader
 :-include('third_party/fitting.pro'). % implicational variant of M. Fitting's prover
 
 
-% API elements
-
-% all implicational logic formulas of size N
-allImpFormulas(N,T):-
-  genTree(N,T,Vs),
-  vpartitions(Vs),
-  natvars(Vs).
- 
-allClassFormulas(N,T):-
-  genTree(N,T,Vs),
-  vpartitions(Vs),
-  classvars(Vs).
-  
-% all Glivenko classic formulas  
-allClassFormulas(N,T,NNT):-
-  genTree(N,T,Vs),
-  vpartitions(Vs),
-  dneg(T,NNT),
-  natvars(Vs).
- 
-dneg(X,((X->false)->false)).
- 
-% random implicational logic formulas
-
-ranImpFormula(N,T):-ranImpFormula(random,N,T).
-
-ranImpFormula(Seed,N,T):-
-  set_random(seed(Seed)),
-  N1 is N+1,
-  ranSetPart(N1,Vs),
-  remy(N,T,Vs).
-
-ranImpFormulas(N,K,T):-ranImpFormulas(random,N,K,T).
-
-ranImpFormulas(Seed,N,K,T):-
-  Count is round(sqrt(K)),
-  ranImpFormulas(Seed,N,Count,Count,T).
-  
-ranImpFormulas(Seed,N,PartCount,TreeCount,T):-
-  set_random(seed(Seed)),
-  N1 is N+1,
-  bell(N1,Bell),
-  between(1,TreeCount,_),
-  remy(N,T,Vs),
-  between(1,PartCount,_),
-  ranPart(N1,Bell,Vs).
-  
-
-  
-  
