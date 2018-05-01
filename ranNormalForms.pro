@@ -119,4 +119,14 @@ repSize(s(_),0).
 repSize(l(A),S):-repSize(A,P),S is P+1.
 repSize(a(A,B),S):-repSize(A,S1),repSize(B,S2),S is S1+S2+2.
 
+% optional transformer from de Bruij to canonical forms
+nb2l(A,T):-nb2l(A,T,_Vs).
+
+nat1(0).
+nat1(s(_)).
+
+% from de Bruijn to canonical lambda term
+nb2l(I,V,Vs):-nat1(I),s2n(I,N),nth0(N,Vs,V).
+nb2l(a(A,B),a(X,Y),Vs):-nb2l(A,X,Vs),nb2l(B,Y,Vs).
+nb2l(l(A),l(V,Y),Vs):-nb2l(A,Y,[V|Vs]).
 

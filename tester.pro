@@ -1,18 +1,6 @@
 % various testing tools
 
-
-
-nb2l(A,T):-nb2l(A,T,_Vs).
-
-nat1(0).
-nat1(s(_)).
-
-% from de Bruijn to canonical lambda term
-nb2l(I,V,Vs):-nat1(I),s2n(I,N),nth0(N,Vs,V).
-nb2l(a(A,B),a(X,Y),Vs):-nb2l(A,X,Vs),nb2l(B,Y,Vs).
-nb2l(l(A),l(V,Y),Vs):-nb2l(A,Y,[V|Vs]).
-
-
+:-dynamic(proven/2).
 
    
 ranptest(N,P):-rptest(random,1,N,1,P).
@@ -63,6 +51,8 @@ t10:-time(nstest(6,sprove)).
 
 
 t11:-allImpFormulas(5,T),toHorn(T,H),toHorn(TT,H),ppp(H),ppp(T==TT),nl,fail.
+
+t12:-parRanTNF(42,50,50,10,XT,S),ppp((S->XT)),fail.
 
 htest:-hard(T),natvars(T),mprove(T).
 
