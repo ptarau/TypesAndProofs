@@ -17,5 +17,4 @@ allClassFormulas(N,T,NNT):-
   dneg(T,NNT),
   natvars(Vs).
  
-dneg(X,((X->false)->false)).
  

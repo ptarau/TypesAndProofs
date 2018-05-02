@@ -5,12 +5,38 @@
 
 :- op(425,  fy,  ~ ). % negation
 
+gprove(T0):-dneg(T0,T),kprove(T).
+
+dneg(X,((X->false)->false)).
+
+kprove(T0):-expand_neg(T0,T),ljk(T,[]),!.
+ 
+ljk(_,Vs):-memberchk(false,Vs),!.
+ljk(A,Vs):-memberchk(A,Vs),!.
+ljk((A->B),Vs):-!,ljk(B,[A|Vs]). 
+ljk(G,Vs1):-
+  select((A->B),Vs1,Vs2),
+  ljk_imp(A,B,Vs2),
+  !,
+  ljk(G,[B|Vs2]).
+
+ljk_imp((C->D),B,Vs):-!,ljk((C->D),[(D->B)|Vs]).
+ljk_imp(A,_,Vs):-memberchk(A,Vs).   
+
+expand_neg(A,R):-atomic(A),!,R=A.
+expand_neg(~A,R):-!,expand_neg(A,B),R=(B->false).
+expand_neg((A->B),(X->Y)):-expand_neg(A,X),expand_neg(B,Y).
+
+
 % classicall logic propositional prover
 % using Glivenko's double negation translation
 
-% supports also negation seen as A->false
-clprove(T0):-dneg(T0,T),cprove(T).
+% Glivenko's translation of a classical tautology
+% is an intuitionistic tautology
+cgprove(T0):-dneg(T0,T),cprove(T).
 
+% handles also the atom "false" as a special case
+% supports also negation seen as A->false
 cprove(T0):-
  must_be(ground,T0),
  expand_neg(T0,T),
@@ -27,15 +53,11 @@ ljc(G,Vs1):- % atomic(G),
   add_new(B,Vs2,Vs3),
   ljc(G,Vs3).
 
-ljc_imp(A,_,Vs):-integer(A),!,memberchk(A,Vs).   
-ljc_imp((C->D),B,Vs1):- 
+
+ljc_imp((C->D),B,Vs1):-!, 
    add_new((D->B),Vs1,Vs2),
    ljc((C->D),Vs2).
-
-expand_neg(A,R):-atomic(A),!,R=A.
-expand_neg(~A,R):-!,expand_neg(A,B),R=(B->false).
-expand_neg((A->B),(X->Y)):-expand_neg(A,X),expand_neg(B,Y).
-
+ljc_imp(A,_,Vs):-memberchk(A,Vs).   
 
 % assumes all hypotheses at once
 % while avoiding duplicates

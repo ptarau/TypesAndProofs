@@ -122,7 +122,10 @@ gold_test_one(Gold,Silver,T, Res):-
   ).
   
   
-
+gold_classical_test(N,Silver,Culprit,Unexpected):-
+  gold_test(N,allClassFormulas,tautology,Silver, Culprit,Unexpected).
+  
+  
 % tests "proven" formulas against Melvin Fitting's prover 
 ftest2:-test_proven(tautology).
 

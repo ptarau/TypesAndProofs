@@ -94,12 +94,15 @@ nbm0(N):-call(allImpFormulas,N,_T), fail;true.
 
 
 
-% test against Dyckhoff's original prover as gold standard
-% needs replacing the reduced one with :-iclude(..)
+% test against Fitting's prover as gold standard
+% needs replacing the reduced one with :-include(..orig...)
+% ?-cntest(6,taut).
+% >-cntest(6,cprove).
+
 cntest(N,P):-
-  allClassFormulas(N,T),ppp(T),
-  ( call(P,T) -> \+dprove(T),ppp(false_pos(T))
-  ; dprove(T) -> dprove(T),ppp(false_neg(T))
+  allClassFormulas(N,T), %ppp(T),
+  ( call(P,T) -> \+tautology(T),ppp(false_pos(T))
+  ; dprove(T) -> tautology(T),ppp(false_neg(T))
   ), 
   fail
 ; true.
