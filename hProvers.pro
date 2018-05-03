@@ -117,6 +117,9 @@ trimmed((A:-[B|Bs]),A:-[B|Bs]).
 % preporcessing from implicational form
 % from which the translation is reversible except for order
 
+
+xprove(T0):-toHorn(T0,T),ljy(T,[]),!.
+
 yprove(T0):-toSortedHorn(T0,T),ljy(T,[]),!.
 
 yprove_init(T0):-toSortedHorn(T0,_).

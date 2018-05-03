@@ -2,17 +2,32 @@
 
 xbm0:-xbm(10,12).
 
-xbm:-tell('bm.txt'),xbm(13,15),told.
+xbm:-tell('bm.txt'),xbm(12,15),told.
 
 xbm(From,To):-
-  member(P,[dprove,lprove,bprove,sprove,pprove]),
+  member(P,[lprove,bprove,sprove,pprove]),
   nl,between(From,To,N),
     bm(N,P),
   fail
-; nl,between(From,To,N),
-   hbm(N,hprove),
+; member(P,[hprove,xprove]),
+  nl,between(From,To,N),
+   hbm(N,P),
+  fail
+; nl,between(From,To,N),P=dprove,
+  timed_call(300,bm(N,P),Time),
+  (number(Time)->true;ppp(P=Time)),
   fail
 ; nl,writeln(done).
+  
+timed_call(Secs,Goal,Time):-
+  get_time(T0),
+  catch(
+      call_with_time_limit(Secs,Goal),
+      Exc,
+      true
+  ),
+  get_time(T1),
+  (var(Exc) -> Time is T1-T0 ; Time = timeout_after(Secs)).
   
 bm(N,P):-
   N1 is N//2,
