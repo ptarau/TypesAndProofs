@@ -11,6 +11,9 @@ ranImpFormula(Seed,N,T):-
 
 ranImpFormulas(N,K,T):-ranImpFormulas(random,N,K,T).
 
+% variant neede for gold standard tester
+genRanImpFormulas(K,N,T):-ranImpFormulas(N,K,T).
+
 ranImpFormulas(Seed,N,K,T):-
   Count is round(sqrt(K)),
   ranImpFormulas(Seed,N,Count,Count,T).

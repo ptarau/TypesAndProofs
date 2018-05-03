@@ -1,18 +1,32 @@
 % benchmarks prover P on terms of size N
 
+xbm0:-xbm(10,12).
+
+xbm:-tell('bm.txt'),xbm(13,15),told.
+
+xbm(From,To):-
+  member(P,[dprove,lprove,bprove,sprove,pprove]),
+  nl,between(From,To,N),
+    bm(N,P),
+  fail
+; nl,between(From,To,N),
+   hbm(N,hprove),
+  fail
+; nl,writeln(done).
+  
 bm(N,P):-
   N1 is N//2,
   pbm(N,P,PT), % on all positive examples
   nbm(N1,P,NT), % on a blend, mostly negative examples
   T is PT+NT,
-  writeln(time=[p=PT,n=NT,total=T]).
+  writeln(time=[prog=P,size=N,pos=PT,neg=NT,total=T]).
 
 hbm(N,P):-
   N1 is N//2,
   hpbm(N,P,PT), % on all positive examples
   hnbm(N1,P,NT), % on a blend, mostly negative examples
   T is PT+NT,
-  writeln(time=[p=PT,n=NT,total=T]).  
+  writeln(time=[prog=P,size=N,pos=PT,neg=NT,total=T]). 
   
   % benchmark on type of normal forms of size N 
 pbm(N,P,Time):-

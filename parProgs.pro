@@ -2,6 +2,7 @@
 % using give Prover to filter random formulas
 % works in parallel, the first thread proving or disproving
 % discard the others
+
 ran_typed(N,PartCount,TreeCount,Prover,X:T):-
   Gen=ranImpFormulas(N,PartCount,TreeCount,G),
   Exec=call(Prover,G),

@@ -124,7 +124,14 @@ gold_test_one(Gold,Silver,T, Res):-
   
 gold_classical_test(N,Silver,Culprit,Unexpected):-
   gold_test(N,allClassFormulas,tautology,Silver, Culprit,Unexpected).
-  
+ 
+ 
+ 
+gold_ran_imp_test(N,K, Silver, Culprit, Unexpected):-
+  gold_test(N,genRanImpFormulas(K),dprove,Silver, Culprit, Unexpected).  
+
+rtest1:-
+ gold_ran_imp_test(50,100,hprove, Culprit, Unexpected),ppp(Culprit, Unexpected).
   
 % tests "proven" formulas against Melvin Fitting's prover 
 ftest2:-test_proven(tautology).
