@@ -53,6 +53,8 @@ true.
 [prog=hprove,size=17,pos=433.95,neg=109.58,total=543.54]
 true.
 
+?- hbm(18,hprove).
+[prog=hprove,size=18,pos=2122.84,neg=2413.12,total=4535.96]
 */
 
 hbm(N,P):-

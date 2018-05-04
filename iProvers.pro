@@ -194,9 +194,3 @@ ljs(E,G,Vs1):-
 ljs_imp(X,A,_,Vs):-atomic(A),!,memberchk(X:A,Vs).   
 ljs_imp(E,(C->D),B,Vs):-ljs(E,(C->D),[_:(D->B)|Vs]).
 
-
-
-
-
-
-  
