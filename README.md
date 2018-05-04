@@ -64,3 +64,4 @@ Except for those using SWI-Prolog's multi-threading the code, the provers and th
 
 A Python version of one of our lightweight implicational logic provers is also included.
 
+This work-in-progress [paper](https://github.com/ptarau/TypesAndProofs/tree/master/docs/iprover.pdf) documents some key components of this code repository.
