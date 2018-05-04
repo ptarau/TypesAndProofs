@@ -88,6 +88,7 @@ assume_all(A->B,Last,As,Bs):-
 assume_all(A->B,Last,As,[A|Bs]):-
    assume_all(B,Last,As,Bs).
 
+  
 % works on Horn clauses - includes
 % preporcessing from implicational form
 % from which the translation is reversible except for order

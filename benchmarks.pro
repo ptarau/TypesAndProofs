@@ -2,7 +2,7 @@
 
 xbm0:-xbm(10,12).
 
-xbm:-tell('bm.txt'),xbm(12,15),told.
+xbm:-tell('bm.txt'),xbm(13,15),told.
 
 xbm(From,To):-
   member(P,[lprove,bprove,sprove,pprove]),
@@ -14,7 +14,7 @@ xbm(From,To):-
    hbm(N,P),
   fail
 ; nl,between(From,To,N),P=dprove,
-  timed_call(300,bm(N,P),Time),
+  timed_call(600,bm(N,P),Time),
   (number(Time)->true;ppp(P=Time)),
   fail
 ; nl,writeln(done).
@@ -34,14 +34,37 @@ bm(N,P):-
   pbm(N,P,PT), % on all positive examples
   nbm(N1,P,NT), % on a blend, mostly negative examples
   T is PT+NT,
-  writeln(time=[prog=P,size=N,pos=PT,neg=NT,total=T]).
+  maplist(nice_num,
+     [N,PT,NT,T],
+     [NN,PT1,NT1,T1]
+  ),
+  writeln([prog=P,size=NN,pos=PT1,neg=NT1,total=T1]).
+
+  
+nice_num(X,R):-R is (truncate(X*100))/100.
+
+/*
+
+?- hbm(16,hprove).
+[prog=hprove,size=16,pos=88.26,neg=105.37,total=193.64]
+true.
+
+?- hbm(17,hprove).
+[prog=hprove,size=17,pos=433.95,neg=109.58,total=543.54]
+true.
+
+*/
 
 hbm(N,P):-
   N1 is N//2,
   hpbm(N,P,PT), % on all positive examples
   hnbm(N1,P,NT), % on a blend, mostly negative examples
   T is PT+NT,
-  writeln(time=[prog=P,size=N,pos=PT,neg=NT,total=T]). 
+  maplist(nice_num,
+     [N,PT,NT,T],
+     [NN,PT1,NT1,T1]
+  ),
+  writeln([prog=P,size=NN,pos=PT1,neg=NT1,total=T1]). 
   
   % benchmark on type of normal forms of size N 
 pbm(N,P,Time):-
