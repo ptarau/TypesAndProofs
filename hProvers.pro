@@ -24,6 +24,7 @@ trimmed(ABs,ABs).
 
 fprove(T0):-toListHorn(T0,T),ljf(T,[]),!.
 
+%ljf(A,Vs):-ppp((A-->Vs)),fail.
 ljf(A,Vs):-memberchk(A,Vs),!. 
 ljf([B|As],Vs1):-!,append(As,Vs1,Vs2),ljf(B,Vs2).
 ljf(G,Vs1):- % atomic(G), G not on Vs
