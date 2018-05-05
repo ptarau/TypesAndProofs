@@ -7,6 +7,22 @@ toHorn(H,H).
 toHorns((A->B),[HA|Bs],H):-!,toHorn(A,HA),toHorns(B,Bs,H).
 toHorns(H,[],H).    
 
+toListHorn((A->B),[H|Bs]):-!,toListHorns((A->B),Bs,H).
+toListHorn(H,H).
+
+toListHorns((A->B),[HA|Bs],H):-!,
+  toListHorn(A,HA),
+  toListHorns(B,Bs,H).
+toListHorns(H,[],H).    
+
+toHornLike((A->B),[H|Bs]-End):-!,toHornLikes((A->B),Bs,H-End).
+toHornLike(H,H).
+
+toHornLikes((A->B),[HA|Bs],H-End):-!,
+  toHornLike(A,HA),
+  toHornLikes(B,Bs,H-End).
+toHornLikes(H,End,H-End).
+
 
 % same, but the Horn clause bodies are sorted, and 
 % clauses like A:-[...,A,...] are trimmed to A:-[A]. 

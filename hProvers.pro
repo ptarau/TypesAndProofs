@@ -1,17 +1,16 @@
 % works on Horn clauses - includes
-% preporcessing from implicational form
-% from which the translation is reversible except for order
+% preprocessing from implicational form
+% from which the translation is reversible
 
 hprove(T0):-toHorn(T0,T),ljh(T,[]),!.
 
-hprove_init(T0):-toHorn(T0,_).
 
 ljh(A,Vs):-memberchk(A,Vs),!. 
 ljh((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljh(B,Vs2).
 ljh(G,Vs1):- % atomic(G), G not on Vs
   select((B:-As),Vs1,Vs2),
   select(A,As,Bs), 
-  ljh_imp(A,B,Vs2),
+  ljh_imp(A,B,Vs2), % A element of the body of B
   !,
   trimmed((B:-Bs),NewB),
   ljh(G,[NewB|Vs2]).
@@ -19,10 +18,49 @@ ljh(G,Vs1):- % atomic(G), G not on Vs
 ljh_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
 ljh_imp((D:-Cs),B,Vs):- ljh((D:-Cs),[(B:-[D])|Vs]).
 
-trimmed((A:-[]),A).
-trimmed((A:-[B|Bs]),A:-[B|Bs]).
+trimmed((A:-[]),R):-!,R=A.
+trimmed(ABs,ABs).
 
 
+fprove(T0):-toListHorn(T0,T),ljf(T,[]),!.
+
+ljf(A,Vs):-memberchk(A,Vs),!. 
+ljf([B|As],Vs1):-!,append(As,Vs1,Vs2),ljf(B,Vs2).
+ljf(G,Vs1):- % atomic(G), G not on Vs
+  select([B|As],Vs1,Vs2),
+  select(A,As,Bs), 
+  ljf_imp(A,B,Vs2), % A element of the body of B
+  !,
+  ftrimmed([B|Bs],NewB),
+  ljf(G,[NewB|Vs2]).
+  
+ljf_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
+ljf_imp([D|Cs],B,Vs):- ljf([D|Cs],[[B,D]|Vs]).
+
+ftrimmed([A],R):-!,R=A.
+ftrimmed(ABs,ABs).
+
+
+
+vprove(T0):-toListHorn(T0,T),ljv(T,[]),!.
+
+ljv(A,Vs):-memberchk(A,Vs),!. 
+ljv([B|As],Vs1):-!,append(As,Vs1,Vs2),ljv(B,Vs2).
+ljv(G,Vs1):-ljv_choice(G,Vs1,End,End).
+  
+ljv_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
+ljv_imp([D|Cs],B,Vs):- ljv([D|Cs],[[B,D]|Vs]).
+
+ljv_choice(G,[[B|As]|End],Vs2,End):-
+  select(A,As,Bs),
+  ljv_imp(A,B,Vs2),
+  !,
+  ftrimmed([B|Bs],NewB),
+  ljv(G,[NewB|Vs2]).
+ljv_choice(G,[Ys|Vs1],Vs2,End):-
+  ljv_choice(G,Vs1,[Ys|Vs2],End).
+
+  
 % works on Horn clauses - includes
 % preporcessing from implicational form
 % from which the translation is reversible except for order
@@ -32,7 +70,6 @@ xprove(T0):-toHorn(T0,T),ljy(T,[]),!.
 
 yprove(T0):-toSortedHorn(T0,T),ljy(T,[]),!.
 
-yprove_init(T0):-toSortedHorn(T0,_).
 
 ljy(A,Vs):-memberchk(A,Vs),!. 
 ljy((B:-[B]),_):-!.
