@@ -22,8 +22,9 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('iProvers.pro'). % provers of implicational intuitionistic logic
 
-:-include('hProvers.pro'). % other provers (also with embedded Horn clauses)
+:-include('hProvers.pro'). % other provers with embedded Horn clauses
 
+:-include('aProvers.pro'). % other provers (including for classical logic)
 
 :-include('toHorn.pro'). % translators to/from embeded Horn Clauses
 
@@ -40,6 +41,7 @@ c:-['tp.pro']. % quick iteractive reloader
 :-include('tester.pro'). % soup of testing and benchmarcking programs
 
 :-include('third_party/dyckhoff.pro'). % implicational variant of Roy Dyckhoff's prover  
+
 :-include('third_party/fitting.pro'). % implicational variant of M. Fitting's prover
 
 
