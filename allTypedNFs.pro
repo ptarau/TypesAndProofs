@@ -1,4 +1,4 @@
-% generate simply typed normal forms
+% generate all simply typed normal forms of given size
 
 % typable normal form of size N
 tnf(N,X:T):-n2s(N,S),tnf(X,T,[],S,0,Gs,true),Gs.

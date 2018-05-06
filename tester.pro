@@ -9,7 +9,7 @@ rptest(N,P):-rptest(1001,20,N,100,P).
 
 % test P against sure type T
 rptest(Seed,TSize,N,K,P):-
-  parRanTNF(Seed,TSize,N,K,X:T,Size),
+  parRanTypedTNF(Seed,TSize,N,K,X:T,Size),
   portray_clause(sure(X:T)),
   \+((natvars(T),call(P,T))),
   ppp('false negative, for term size'(Size)),
@@ -54,13 +54,15 @@ t10:-time(nstest(6,sprove)).
 
 t11:-allImpFormulas(5,T),toHorn(T,H),toHorn(TT,H),ppp(H),ppp(T==TT),nl,fail.
 
-t12:-parRanTNF(42,50,50,10,XT,S),ppp((S->XT)),fail.
+t12:-parRanTypedTNF(42,50,50,10,XT,S),ppp((S->XT)),fail.
 
 
 
 htest:-hard(T),natvars(T),mprove(T).
 
 ihard(H):-hard(H),natvars(H).
+
+hhard(H):-ihard(I),toListHorn(I,H).
 
 % false
 hard(Term):-Term=(((A->B->C->((D->C)->E)->F)->_G)->H->C->E->(((((I->J)->((K->L)->M)->L)->(((C->F)->A)->N)->O)->P->N->Q)->R)->S->(D->T->U->(((((F->F->V->T)->Q->Q)->K->N)->E)->W)->J->((M->Q)->L->L)->P->_X->Q->D)->(E->((F->(((O->Q)->I)->H->F->N)->(((N->L->P->M)->(((A->D)->J->(Q->Y)->H)->F)->Z)->Z)->V)->M)->M->P)->(((K->V)->W)->K)->(C->I->S)->Z->L->U->((Q->R->(((_A1->B1->B)->W)->((D->W)->Y)->W)->B1)->((U->E)->U)->C->Y)->J).
@@ -135,7 +137,7 @@ gold_ran_imp_test(N,K, Silver, Culprit, Unexpected):-
   gold_test(N,genRanImpFormulas(K),dprove,Silver, Culprit, Unexpected).  
 
 rtest1:-
- gold_ran_imp_test(50,100,hprove, Culprit, Unexpected),ppp(Culprit, Unexpected).
+ gold_ran_imp_test(50,100,hprove, Culprit, Unexpected),ppp(Culprit=Unexpected).
   
 % tests "proven" formulas against Melvin Fitting's prover 
 ftest2:-test_proven(tautology).

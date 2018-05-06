@@ -3,14 +3,24 @@
 % works in parallel, the first thread proving or disproving
 % discard the others
 
-ran_typed(N,PartCount,TreeCount,Prover,X:T):-
-  Gen=ranImpFormulas(N,PartCount,TreeCount,G),
+ran_typed(Seed,PartCount,TreeCount,Prover,X:T):-
+  ran_typed_ground(Seed,PartCount,TreeCount,Prover,X:G),
+  varvars(G,T).
+
+ran_typed_ground(Seed,PartCount,TreeCount,Prover,X:G):-
+  Gen=ranImpFormulas(Seed,PartCount,TreeCount,G),
   Exec=call(Prover,G),
   nondet_first(G,Exec,Gen),
   ljs(X,G),
-  varvars(G,T),
   !.
- 
+  
+par_ran_horn_taut(Seed,PartCount,TreeCount,Prover,T):-
+  Gen=ranImpFormulas(Seed,PartCount,TreeCount,G),
+  Exec=call(Prover,G),
+  nondet_first(G,Exec,Gen),
+  toListHorn(G,T).
+  
+
 long_sprove(L,T,X):-sprove1(T,X),lsize(X,L0),L0>=L.
 
 ran_long_proof(N,L,K,X:T):-

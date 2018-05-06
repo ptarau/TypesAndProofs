@@ -36,13 +36,12 @@ bit(0).
 bit(1).
 
 
-
 tprove(F):-toImp(F,I),dneg(I,NNI),kprove(NNI).
 
 toImp(X,R):-atomic(X),!,R=X.
 toImp((X->Y),(A->B)):-toImp(X,A),toImp(Y,B).
 
-toImp(~X,(A->false)):-toImp(X,A).
+toImp(~(X),(A->false)):-toImp(X,A).
 toImp(X*Y,  ((A -> (B -> false))->false)):-
   toImp(X,A),
   toImp(Y,B).

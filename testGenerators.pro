@@ -7,7 +7,7 @@ genRanTyped:-genRanTyped(1003).
 
 genRanTyped(Seed):-
   retractall(sure(_,_)),
-  parRanTNF(Seed,50,70,1000,X:T,_),
+  parRanTypedTNF(Seed,50,70,1000,X:T,_),
   ppp(X),ppp(T),nl,
   assertz(sure(X,T)),
   fail

@@ -28,7 +28,9 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('toHorn.pro'). % translators to/from embeded Horn Clauses
 
-:-include('parProgs.pro'). % parallel variants of some of the programs
+:-include('parImpFormulas.pro'). % parallel variants of generators for  implicational tautologies
+
+:-include('parTypedNFs.pro'). % parallel variants of typed normal form generators
 
 :-include('inputTransformers.pro').
 

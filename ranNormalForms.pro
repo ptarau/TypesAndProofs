@@ -4,17 +4,14 @@
 ranNF(N,X:T,RepSize):-
   ranNF(random,N,X:T,RepSize).
   
-ranNF(Seed,N,X:T,RepSize):-N>2,
+ranNF(Seed,N,X:T,Size):-N>2,
   set_random(seed(Seed)),
   Max is N+2,
   Min=N-2,
   MaxSteps is 2^20,
-  ranTypableNF0(Max,Min,MaxSteps,X0,T,Size,Steps),
-  repSize(X0,RepSize),
-  writeln([randomSeed=Seed,repSize=RepSize,natSize=Size,steps=Steps]),
-  db2std(X0,X).
-  
-  
+  ranTypableNF0(Max,Min,MaxSteps,X,T,Size,Steps),
+  writeln([randomSeed=Seed,natSize=Size,steps=Steps]).
+    
 min_nf_size(50).
 max_nf_size(60).
 max_nf_steps(10000000).
@@ -46,43 +43,25 @@ ranTypableNF0(Max,Min,MaxSteps,X,T,Size,Steps):-
 tryRanTypableNF(Max,Min,TSize0,MaxSteps,X,T,Size,Steps):-
   between(1,MaxSteps,Steps),
     random(R),
-    ranTypableNF(Max,R,X,T,[],0,Size0),
+    ranTypableNF(Max,R,X0,T,[],0,Size0),
   Size0>=Min,
   tsize(T,TSize),TSize>=TSize0,
-  Size is Size0+1. 
-  
-
-% parallel version of the same
-% if seen a number instead of the atom 'random'
-% the generation is replicable/deterministic
-
-parRanTNF(Seed,TSize,N,K,X:T,Size):-
-  set_random(seed(Seed)),
-  MaxSteps=1000000,
-  Max is truncate(N*(11/10)),
-  Min is truncate(N*(9/10)),  
-  between(1,K,_),
-  parRanTypableNF(Max,Min,TSize,MaxSteps,X,T,Size,_Steps).
+  Size is Size0+1,
+  db2std(X0,X).
   
   
-parRanTypableNF(Max,Min,TSize,MaxSteps,X,T,Size,Steps):-
-  G=tryRanTypableNF(Max,Min,TSize,MaxSteps,X,T,Size,Steps),
-  thread_count(L),
-  ranseeds(L,Xs),
-  length(Gs,L),
-  maplist(add_seed(G),Xs,Gs),
-  first_solution(G,Gs,[on_fail(continue)]).
-  
+db2std(D,X):-db2std(D,[],X).
 
-add_seed(G,Seed,(set_random(seed(Seed)),G)). 
+db2std(0,[V|_],V).
+db2std(s(I),[_|Vs],V):-db2std(I,Vs,V).
+db2std(l(A),Vs,l(V,B)):-db2std(A,[V|Vs],B).
+db2std(a(A,B),Vs,a(X,Y)):-db2std(A,Vs,X),db2std(B,Vs,Y).
 
-ranseeds(L,Xs):-
-  findall(X,
-      (between(1,L,_),X is random(2^32)),
-  Xs).
+repSize(0,0).
+repSize(s(_),0).
+repSize(l(A),S):-repSize(A,P),S is P+1.
+repSize(a(A,B),S):-repSize(A,S1),repSize(B,S2),S is S1+S2+2.
 
-  tsize(A,R):-var(A),!,R=0.
-tsize(A->B,S):-tsize(A,S1),tsize(B,S2),S is 1+S1+S2.
 
 ranTypableNF(Max,R,l(A),(X->Xs),Vs,N1,N3):-
   boltzmann_nf_lambda(R),!, %lambda
@@ -105,19 +84,10 @@ pickIndexNF(Max,_,s(X),[_|Vs],V,N1,N3):- % successor
   pickIndexNF(Max,NewR,X,Vs,V,N2,N3).	
 
 next(Max,R,N1,N2):-N1<Max,N2 is N1+1,random(R).  
-  
 
-db2std(D,X):-db2std(D,[],X).
+tsize(A,R):-var(A),!,R=0.
+tsize(A->B,S):-tsize(A,S1),tsize(B,S2),S is 1+S1+S2.
 
-db2std(0,[V|_],V).
-db2std(s(I),[_|Vs],V):-db2std(I,Vs,V).
-db2std(l(A),Vs,l(V,B)):-db2std(A,[V|Vs],B).
-db2std(a(A,B),Vs,a(X,Y)):-db2std(A,Vs,X),db2std(B,Vs,Y).
-
-repSize(0,0).
-repSize(s(_),0).
-repSize(l(A),S):-repSize(A,P),S is P+1.
-repSize(a(A,B),S):-repSize(A,S1),repSize(B,S2),S is S1+S2+2.
 
 % optional transformer from de Bruij to canonical forms
 nb2l(A,T):-nb2l(A,T,_Vs).
