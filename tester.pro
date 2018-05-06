@@ -34,6 +34,8 @@ t1:-N=50,K=20,P=hprove,time(ran_typed(N,K,K,P,X:T)),ppp(X),ppp(T),fail.
 t2:-L=5,N=5,K=50,time(ran_long_proof(N,L,K,X:T)),ppp(X),ppp(T),fail.
 
 
+t3:- tprove((a * b + b*c + c*d) -> (a+b+c )).
+
 t4:-ran_typed(25,5,5,pprove,R),ppp(R),fail.
 
 
@@ -53,6 +55,8 @@ t10:-time(nstest(6,sprove)).
 t11:-allImpFormulas(5,T),toHorn(T,H),toHorn(TT,H),ppp(H),ppp(T==TT),nl,fail.
 
 t12:-parRanTNF(42,50,50,10,XT,S),ppp((S->XT)),fail.
+
+
 
 htest:-hard(T),natvars(T),mprove(T).
 

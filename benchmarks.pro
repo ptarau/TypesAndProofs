@@ -161,6 +161,39 @@ cntest(N,P):-
   fail
 ; true.
 
+do(Goal):-
+  Goal,
+  fail
+; true.
+
+do(G1,G2):-
+  G1,G2,
+  fail
+; true.
+
+do(G1,G2,G3):-
+  G1,G2,G3,
+  fail
+; true.
+
+do(G1,G2,G3,G4):-
+  G1,G2,G3,G4,
+  fail
+; true.
+
+cbm(N,P):-
+  time(sols(allClassFormulas(N,T),Sols),Time0),
+ 
+  time(
+    do(
+      allClassFormulas(N,T),
+      call(P,T)
+    ),
+  Time1),
+  Time2 is Time1-Time0,
+  nice_num(Time2,Time),
+  ppp([n=N,prog=P,sols=Sols,time=Time]).
+
 % benchmark against large random terms
 rnbm:-rnbm(dprove).
 

@@ -3,7 +3,7 @@
 % via Glivenko's translation from classical to intuitionistic
 % propositional calculus
 
-:- op(425,  fy,  ~ ). % negation
+:- op(150,  fy,  ~ ). % negation
 
 gprove(T0):-dneg(T0,T),kprove(T).
 
@@ -38,7 +38,6 @@ cgprove(T0):-dneg(T0,T),cprove(T).
 % handles also the atom "false" as a special case
 % supports also negation seen as A->false
 cprove(T0):-
- must_be(ground,T0),
  expand_neg(T0,T),
  ljc(T,[]),
  !.

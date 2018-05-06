@@ -35,6 +35,27 @@ impl(1,1,1).
 bit(0).
 bit(1).
 
+
+
+tprove(F):-toImp(F,I),dneg(I,NNI),kprove(NNI).
+
+toImp(X,R):-atomic(X),!,R=X.
+toImp((X->Y),(A->B)):-toImp(X,A),toImp(Y,B).
+
+toImp(~X,(A->false)):-toImp(X,A).
+toImp(X*Y,  ((A -> (B -> false))->false)):-
+  toImp(X,A),
+  toImp(Y,B).
+toImp(X+Y,  (A->false)->B) :-
+  toImp(X,A),
+  toImp(Y,B).
+toImp(X=Y,R):-
+  toImp((X->Y)*(Y->X),R).
+toImp(X^Y, R):-
+  toImp(~(X->Y) + ~(Y->X), R).
+
+/*
+  
 % TODO
 
 % shannon expansion - for (todo) use in fast classical
@@ -51,3 +72,5 @@ shannon1(V,(_ -> V),true):-!.
 shannon1(V,(V -> X),NewX):-!,shannon1(V,X,NewX).
 shannon1(V,W,W):-atomic(W),W\=V,!.
 shannon1(V,(X->Y),(A->B)):-shannon1(V,X,A),shannon1(V,Y,B).
+*/
+
