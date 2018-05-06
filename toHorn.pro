@@ -15,20 +15,12 @@ toListHorns((A->B),[HA|Bs],H):-!,
   toListHorns(B,Bs,H).
 toListHorns(H,[],H).    
 
-toHornLike((A->B),[H|Bs]-End):-!,toHornLikes((A->B),Bs,H-End).
-toHornLike(H,H).
-
-toHornLikes((A->B),[HA|Bs],H-End):-!,
-  toHornLike(A,HA),
-  toHornLikes(B,Bs,H-End).
-toHornLikes(H,End,H-End).
-
 
 % same, but the Horn clause bodies are sorted, and 
 % clauses like A:-[...,A,...] are trimmed to A:-[A]. 
 toSortedHorn((A->B),(H:-Ts)):-!,
    toSortedHorns((A->B),Bs,H),
-   revsort(Bs,Xs),
+   sort(Bs,Xs),
    trimHorn(H,Xs,Ts).
    
 toSortedHorn(H,H).
@@ -38,8 +30,6 @@ toSortedHorns((A->B),[HA|Bs],H):-!,
   toSortedHorns(B,Bs,H).
 toSortedHorns(H,[],H).    
 
-trimHorn(A,Bs,R):-memberchk(A,Bs),!,R=[A].
-trimHorn(_,Bs,Bs).
 
 
 % lends the sorting and trimming to implicational form
@@ -60,37 +50,55 @@ toRandomHorns((A->B),[HA|Bs],H):-!,
   toRandomHorns(B,Bs,H).
 toRandomHorns(H,[],H).    
 
-randomize(ImpTerm,R):-
-  toRandomHorn(ImpTerm,Horn),
-  toHorn(R,Horn).
+trimHorn(A,Bs,R):-memberchk(A,Bs),!,R=[A].
+trimHorn(_,Bs,Bs).
+
 
 % single threaded randomized run  
 rprove(T):-
-  randomize(T,RT),
-  %ppp(RT),
-  pprove(RT).
+  toRandomHorn(T,RT),
+  hprove(RT).
   
 rprove(T,V):-rprove(T),!,V=true.
 rprove(_,false).
 
-% variant of pprove returning true/false
-pprove(T,V):-pprove(T),!,V=true.
-pprove(_,false).
 
 % creates as many randomized variants
 % as number of (useful) availbel threads
-ranPermuted(K,T,RT):-
+
+ranHornPermuted(K,T,Horn):-
   thread_count(K),
   between(1,K,_),
-  randomize(T,RT).
+  toRandomHorn(T,Horn).
+   
+ranPermuted(K,T,RT):-
+  ranHornPermuted(K,T,Horn),
+  toHorn(RT,Horn).
   
 % parallel execution on a set of equivalent
 % randomized variants of the initial goal
-rrprove(T):-
+
+parProve(T):-parProve(pprove,T).
+
+parProve(P,T):-
  thread_count(K),
  Sol=YesNo,
  ExecGen=ranPermuted(K,T,RT),
- Exec=pprove(RT,YesNo),
+ Exec=proveYesNo(P,RT,YesNo),
+ nondet_first_with(K,Sol,Exec,ExecGen),
+ Sol=true.
+ 
+parProveHorn(T):-parProveHorn(hprove,T).
+
+parProveHorn(P,T):-
+ thread_count(K),
+ Sol=YesNo,
+ ExecGen=ranHornPermuted(K,T,RT),
+ Exec=proveYesNo(P,RT,YesNo),
  nondet_first_with(K,Sol,Exec,ExecGen),
  Sol=true.
    
+proveYesNo(P,T,YesNo):-
+  call(P,T)->YesNo=true
+; YesNo=false.
+  
