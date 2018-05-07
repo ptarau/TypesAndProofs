@@ -16,9 +16,7 @@ intu0(T0,X):-N=16,intu0(N,T0,X).
 
 intu0(N,T0,X):-tnfs(N,X,T),T0=@=T.
 
-% for testing - randomly succeds or fails
-badprove(_) :- 0 =:= random(2).
-  
+
 % Dyckhoff's original LJT   
 dprove(A):-provable(A),!.
   
@@ -194,3 +192,22 @@ ljs(E,G,Vs1):-
 ljs_imp(X,A,_,Vs):-atomic(A),!,memberchk(X:A,Vs).   
 ljs_imp(E,(C->D),B,Vs):-ljs(E,(C->D),[_:(D->B)|Vs]).
 
+% deliberately bad provers
+% for testing - randomly succeds or fails
+
+badProve(_) :- 0 =:= random(2).
+
+% will have false positives
+
+badSolve(A):-badSolve(A,[]).
+
+badSolve(A,Vs):-atomic(A),!,memberchk(A,Vs).
+badSolve((A->B),Vs):-badSolve(B,[A|Vs]).
+badSolve(_,Vs):-badReduce(Vs).
+
+badReduce([]):-!.
+badReduce(Vs):-
+  select(V,Vs,NewVs),
+  badSolve(V,NewVs),
+  badReduce(NewVs).
+  

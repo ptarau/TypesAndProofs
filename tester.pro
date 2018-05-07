@@ -46,7 +46,7 @@ t6:-rntest(10,42,10,5,pprove).
 
 t8 :- ranptest(15,pprove).
 
-t9:-alltest(2,badprove).
+t9:-alltest(2,badProve).
 
 t10:-time(nstest(6,sprove)).
 
