@@ -95,8 +95,6 @@ ljt1(G,Vs1):- %atomic(G),                % imp => 1, atom A
 
 nprove(T):-ljn(T,[],100,_),!.
 
-newvar(N,N,SN):-succ(N,SN).
-
 ljn(A,Vs)-->{memberchk(A,Vs)},!.
 ljn((A->B),Vs1)-->!,{add_new(A,Vs1,Vs2)},ljn(B,Vs2). 
 ljn(G,Vs1)--> % atomic(G),
@@ -117,8 +115,15 @@ ljn_imp((C->D),B,Vs1)-->newvar(P),
    },
    ljn(P,Vs2).
 
-   
+newvar(N,N,SN):-succ(N,SN).
 
+add_all([],Ys,Ys):-!.
+add_all([X|Xs],Ys,Rs):-
+   memberchk(X,Ys),
+   !,
+   add_all(Xs,Ys,Rs).
+add_all([X|Xs],Ys,[X|Rs]):-
+add_all(Xs,Ys,Rs).
    
 
 

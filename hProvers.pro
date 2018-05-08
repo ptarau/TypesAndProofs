@@ -18,8 +18,8 @@ ljh(G,Vs1):- % atomic(G), G not on Vs
 ljh_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
 ljh_imp((D:-Cs),B,Vs):- ljh((D:-Cs),[(B:-[D])|Vs]).
 
-trimmed((A:-[]),R):-!,R=A.
-trimmed(ABs,ABs).
+trimmed((B:-[]),R):-!,R=B.
+trimmed(BBs,BBs).
 
 
 
@@ -38,8 +38,8 @@ ljf(G,Vs1):- % atomic(G), G not on Vs
 ljf_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
 ljf_imp([D|Cs],B,Vs):- ljf([D|Cs],[[B,D]|Vs]).
 
-ftrimmed([A],R):-!,R=A.
-ftrimmed(ABs,ABs).
+ftrimmed([B],R):-!,R=B.
+ftrimmed(BBs,BBs).
 
 
 % fastest on bm/2, at this point
@@ -88,14 +88,6 @@ ljy_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
 ljy_imp((D:-Cs),B,Vs1):-
    add_new((B:-[D]),Vs1,Vs2),
    ljy((D:-Cs),Vs2).
-
-add_all([],Ys,Ys):-!.
-add_all([X|Xs],Ys,Rs):-
-   memberchk(X,Ys),
-   !,
-   add_all(Xs,Ys,Rs).
-add_all([X|Xs],Ys,[X|Rs]):-
-add_all(Xs,Ys,Rs).
 
 
 % variant of xprove, with nondeterministic part
