@@ -40,16 +40,16 @@ These tools implement Prolog-based algorithms on the two sides of the *Curry-How
 
 - elements of sequent calculus and natural deduction
 - type inference algorithms for lambda terms
-- de Bruijn notation for lambda terms
-- beta reduction with de Bruijn indices
 - normal forms of lambda terms
 - combinatorial generation of trees, set partitions
 - random set-partition generation with urn-algorithms 
 - random term generation with Boltzmann samplers
 - Gentzen's LJ calculus
-- Vorobeev-Hudelmayer-Dyckhoff's LJT calculus
+- Vorobe'v-Hudelmaier-Dyckhoff's LJT calculus
 - Glivenko's double negation translation
 - Fitting's classical tautology checker
+- de Bruijn notation for lambda terms
+- beta reduction with de Bruijn indices
 
 
 ### The provers to be tested and compared are:
