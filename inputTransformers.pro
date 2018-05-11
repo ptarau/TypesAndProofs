@@ -36,3 +36,10 @@ classvars(T):-
   L is L1-1,
   numlist(0,L,Vs).  
   
+imp2eqs(Imp,R-Es):-imp2eqs(Imp,R,Es,[]).
+
+imp2eqs(A->B,R)-->!,
+  imp2eqs(A,X),
+  imp2eqs(B,Y),
+  [R=X-Y].
+imp2eqs(A,A)-->[].
