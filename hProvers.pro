@@ -22,6 +22,9 @@ trimmed((B:-[]),R):-!,R=B.
 trimmed(BBs,BBs).
 
 
+hhprove(T0):-toSortedHorn(T0,T),ljh(T,[]),!.
+
+
 
 fprove(T0):-toListHorn(T0,T),ljf(T,[]),!.
 
@@ -115,4 +118,6 @@ ljz_imp((D:-Cs),B,Vs1):-
   add_new((B:-[D]),Vs1,Vs2), % assume that A's head implies B
   ljz((D:-Cs),Vs2).          % prove A under that assumption
 
+  
+  
   

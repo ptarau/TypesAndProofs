@@ -39,6 +39,7 @@ c:-['tp.pro']. % quick iteractive reloader
 :-include('testProvers.pro').
 
 :-include('benchmarks.pro').
+:-include('bm.pro').
 
 :-include('tester.pro'). % soup of testing and benchmarcking programs
 

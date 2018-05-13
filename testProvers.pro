@@ -90,7 +90,7 @@ ntest_with(Trim,TestCorrectness,P,T):-
   assert(proven(R,T)),
   (TestCorrectness->must_be_taut(T);true).
   
-must_be_taut(T):-
+ntest_with(T):-
   GoldIntu=dprove,
   %GoldIntu=intu,
   GoldClass=tautology,

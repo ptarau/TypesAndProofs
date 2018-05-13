@@ -5,12 +5,16 @@
 
 :- op(150,  fy,  ~ ). % negation
 
-gprove(T0):-dneg(T0,T),kprove(T).
+gprove(T0):-dneg_expand(T0,T),ljk(T).
 
 dneg(X,((X->false)->false)).
 
-kprove(T0):-expand_neg(T0,T),ljk(T,[]),!.
+dneg_expand(T0,T):-expand_neg(T0,T1),dneg(T1,T).
+
+kprove(T0):-expand_neg(T0,T),ljk(T).
  
+ljk(T):-ljk(T,[]),!.
+
 ljk(_,Vs):-memberchk(false,Vs),!.
 ljk(A,Vs):-memberchk(A,Vs),!.
 ljk((A->B),Vs):-!,ljk(B,[A|Vs]). 

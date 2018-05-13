@@ -54,11 +54,11 @@ t10:-time(nstest(6,sprove)).
 
 t11:-allImpFormulas(5,T),toHorn(T,H),toHorn(TT,H),ppp(H),ppp(T==TT),nl,fail.
 
-t12:-parRanTypedTNF(42,50,50,10,XT,S),ppp((S->XT)),fail.
+t12:-parRanTypedTNF(42,50,50,10,XT,S),natvars(XT),ppp((size(S)=XT)),fail.
 
 
 
-htest:-hard(T),natvars(T),mprove(T).
+htest:-hard(T),natvars(T),hhprove(T).
 
 ihard(H):-hard(H),natvars(H).
 
