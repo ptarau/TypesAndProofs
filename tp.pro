@@ -18,13 +18,11 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('ranImpFormulas.pro'). % random implicational formulas
 
-:-include('classTaut.pro'). % basic classical tautology testers
-
 :-include('iProvers.pro'). % provers of implicational intuitionistic logic
 
 :-include('hProvers.pro'). % other provers with embedded Horn clauses
 
-:-include('aProvers.pro'). % other provers (including for classical logic)
+:-include('cProvers.pro'). % provers  for classical logic
 
 :-include('toHorn.pro'). % translators to/from embeded Horn Clauses
 

@@ -200,6 +200,37 @@ ljs(E,G,Vs1):-
 ljs_imp(X,A,_,Vs):-atomic(A),!,memberchk(X:A,Vs).   
 ljs_imp(E,(C->D),B,Vs):-ljs(E,(C->D),[_:(D->B)|Vs]).
 
+
+
+% assumes all hypotheses at once
+% while avoiding duplicates
+
+aprove(T):-lja(T,[]),!.
+
+lja(A,Vs):-memberchk(A,Vs),!.
+lja(As,Vs1):-As=(_->_),!,
+  assume_all(As,B,Vs1,Vs2),
+  lja(B,Vs2). 
+lja(G,Vs1):- % atomic(G),
+  select((A->B),Vs1,Vs2),
+  lja_imp(A,B,Vs2),
+  !,
+  add_new(B,Vs2,Vs3),
+  lja(G,Vs3).
+
+lja_imp(A,_,Vs):-atomic(A),!,memberchk(A,Vs).   
+lja_imp((C->D),B,Vs1):-
+   add_new((D->B),Vs1,Vs2),
+   lja((C->D),Vs2).
+  
+assume_all(A,Last,As,As):-atomic(A),!,Last=A.
+assume_all(A->B,Last,As,Bs):-
+   memberchk(A,As),
+   !,
+   assume_all(B,Last,As,Bs).
+assume_all(A->B,Last,As,[A|Bs]):-
+   assume_all(B,Last,As,Bs).
+
 % deliberately bad provers
 % for testing - randomly succeds or fails
 

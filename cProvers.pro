@@ -62,6 +62,25 @@ ljc_imp((C->D),B,Vs1):-!,
    ljc((C->D),Vs2).
 ljc_imp(A,_,Vs):-memberchk(A,Vs).   
 
+
+tprove(F):-toImp(F,I),dneg(I,NNI),kprove(NNI).
+
+toImp(X,R):-atomic(X),!,R=X.
+toImp((X->Y),(A->B)):-toImp(X,A),toImp(Y,B).
+
+toImp(~(X),(A->false)):-toImp(X,A).
+toImp(X*Y,  ((A -> (B -> false))->false)):-
+  toImp(X,A),
+  toImp(Y,B).
+toImp(X+Y,  (A->false)->B) :-
+  toImp(X,A),
+  toImp(Y,B).
+toImp(X=Y,R):-
+  toImp((X->Y)*(Y->X),R).
+toImp(X^Y, R):-
+  toImp(~(X->Y) + ~(Y->X), R).
+  
+  
 % trims implications when statically equivalent to A->A
 qprove(T0):-
   trimImps(T0,T),
@@ -93,31 +112,41 @@ imphead(H,H).
 impsel(A,(A->Bs),Bs).
 impsel(A,(B->Bs),(B->Cs)):-impsel(A,Bs,Cs).  
 
-% assumes all hypotheses at once
-% while avoiding duplicates
 
-aprove(T):-lja(T,[]),!.
+% simple evaluator / truth table generator
+% for classic implicational formulas
 
-lja(A,Vs):-memberchk(A,Vs),!.
-lja(As,Vs1):-As=(_->_),!,
-  assume_all(As,B,Vs1,Vs2),
-  lja(B,Vs2). 
-lja(G,Vs1):- % atomic(G),
-  select((A->B),Vs1,Vs2),
-  lja_imp(A,B,Vs2),
-  !,
-  add_new(B,Vs2,Vs3),
-  lja(G,Vs3).
+classEval(G):-
+  varvars(G,F),
+  term_variables(F,Vs),
+  evalT(F,R),
+  ppp(Vs:R),
+  fail.
 
-lja_imp(A,_,Vs):-atomic(A),!,memberchk(A,Vs).   
-lja_imp((C->D),B,Vs1):-
-   add_new((D->B),Vs1,Vs2),
-   lja((C->D),Vs2).
-  
-assume_all(A,Last,As,As):-atomic(A),!,Last=A.
-assume_all(A->B,Last,As,Bs):-
-   memberchk(A,As),
-   !,
-   assume_all(B,Last,As,Bs).
-assume_all(A->B,Last,As,[A|Bs]):-
-   assume_all(B,Last,As,Bs).
+taut(X):- \+ eval(X,0).
+
+taut0(G):-must_be(ground,G),
+  varvars(G,X),
+  term_variables(X,Vs),
+  ppp(X:Vs),
+  evalT(X,R),
+  ppp(X:Vs=R),fail;true.
+
+eval(G,R):-varvars(G,T),evalT(T,R).
+
+evalT(X,X):-var(X),!,bit(X).
+evalT(false,R):-!,R=0.
+evalT(X,R):-integer(X),!,R=X.
+evalT((A->B),R):-
+  evalT(A,X),
+  evalT(B,Y),
+  impl(X,Y,R).
+
+impl(0,0,1).
+impl(0,1,1).
+impl(1,0,0).
+impl(1,1,1).
+
+bit(0).
+bit(1).
+

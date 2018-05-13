@@ -99,6 +99,7 @@ preprocessor(vprove,toListHorn).
 preprocessor(fprove,toListHorn).
 preprocessor(gprove,dneg_expand).
 preprocessor(kprove,expand_neg).
+preprocessor(tprove,(=)).
 preprocessor(tautology,false2neg).
 preprocessor(badProve,(=)).
 preprocessor(looper,(=)).
