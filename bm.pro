@@ -7,10 +7,48 @@ cbm(N,P):-
   writeln(Res).
 
   
-bmark(N,P,Res):-prep(P,BL),!,bmark(N,P,nfTypes,allImpFormulas,BL,Res).
+bmark(N,P,Res):-prep(P,BL),!,
+ bmark(N,P,nfTypes,allImpFormulas,BL,Res).
 
-cbmark(N,P,Res):-prep(P,BL),!,bmark(N,P,nfTypes,allClassFormulas,BL,Res).
+cbmark(N,P,Res):-prep(P,BL),!,
+ bmark(N,P,nfTypes,allClassFormulas,BL,Res).
 
+rbmark(N,P,Res):-prep(P,BL),!,
+  bmark(N,P,ranSeededTNF,ranImpSeededFormulas,BL,Res).
+
+ranSeededTNF(N,T):-
+  Seed=42,K=100,
+  ranSeededTNF(Seed,N,K,T),
+  ppp(T),
+  true.
+
+ranImpSeededFormulas(N,T):-
+  Seed=42,K=100,
+  ranImpFormulas(Seed,N,K,T),
+  ppp(T),
+  true.
+  
+fbmark(MaxTime,P,Res):-
+  consult('test_data/proven.pro'),
+  prep(P,BL),
+  !,
+  bmark(0,maxTimed(MaxTime,P),fpos,fneg,BL,Res).
+  
+maxTimed(MaxTime,P,T):-
+  %ppp(T),
+  timed_call(MaxTime,call(P,T),R),
+  (number(R)->true;ppp(T),ppp(R),nl).
+  
+fpos(_,T):-
+  proven(true,T),
+  %ppp(T),
+  true.
+  
+fneg(_,T):-
+  proven(false,T),
+  %ppp(T),
+  true.
+  
 bmark(N,P,Pos,Neg,BL,Res):-
   N2 is N // 2,
   time(
@@ -47,22 +85,25 @@ bmark(N,P,Pos,Neg,BL,Res):-
   maplist(nice_num,[TP,TN,Tot],[XTP,XTN,XTot]),
   Res=[prog=P,size=N,pos=XTP,neg=XTN,total=XTot].
  
-prep(dprove,(=)).
-prep(lprove,(=)).
-prep(bprove,(=)).
-prep(pprove,(=)).
-prep(hprove,toHorn).
-prep(xprove,toHorn).
-prep(hhprove,toSortedHorn).
-prep(vprove,toListHorn).
-prep(fprove,toListHorn).
-prep(gprove,dneg_expand).
-prep(kprove,expand_neg).
-prep(tautology,false2neg).
+prep(Name,Proc):-preprocessor(Name,Proc),!.
+prep(Name,Prog):-throw(unknown_prep(Name,Prog)).
 
-do(Goal):-
-  Goal,
-  fail
-; true.
+preprocessor(dprove,(=)).
+preprocessor(lprove,(=)).
+preprocessor(bprove,(=)).
+preprocessor(pprove,(=)).
+preprocessor(hprove,toHorn).
+preprocessor(xprove,toHorn).
+preprocessor(hhprove,toSortedHorn).
+preprocessor(vprove,toListHorn).
+preprocessor(fprove,toListHorn).
+preprocessor(gprove,dneg_expand).
+preprocessor(kprove,expand_neg).
+preprocessor(tautology,false2neg).
+preprocessor(badProve,(=)).
+preprocessor(looper,(=)).
+preprocessor(rprove,(toRandomHorn)).
+
 
 nice_num(X,R):-R is (truncate(X*100))/100.
+

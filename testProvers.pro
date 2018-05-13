@@ -18,7 +18,6 @@ sprove1(T,X):-
   true.
 
   
-  
 % false negative only test
 ptest0(N,P):-ptest(fail,N,P).
 
@@ -73,12 +72,19 @@ pstest(N,F):-
 ntest(N,P):-ntest(N,allImpFormulas,P).
 
 ntest(N,G,P):-
+  do((
   call(G,N,T),
   call(P,T),
-  must_be_taut(T),   
-  fail
-; true.
+  must_be_taut(T)
+  )).  
+  
 
+must_be_taut(T):-
+  tautology(T),
+  dprove(T),
+  % intu(T), too slow
+  !.
+must_be_taut(T):-ppp(succeeded_but_not_a_tautology(T)),fail.
 
 ntest_with(P,T):-ntest_with(5,true,P,T).
 

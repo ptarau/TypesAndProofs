@@ -1,5 +1,5 @@
 % generator for random implicational formulas
-% using give Prover to filter random formulas
+% using given Prover to filter random formulas
 % works in parallel, the first thread proving or disproving
 % discard the others
 

@@ -19,5 +19,5 @@ maybe_type(T):-
 
   % show generation of random NFs of size 20
 show_ranNF:-ranNF(20,X:T,_),
-   numbervars(X,10,_),numbervars(T,0,_),
+   numbervars(X,10,_),
    writeln(X),writeln(T),fail.

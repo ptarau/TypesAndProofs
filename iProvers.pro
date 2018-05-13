@@ -1,6 +1,6 @@
 % minimal logic prover, via generate and test
 
-intu(T):-intu(10,T,_).
+intu(T):-intu(16,T,_).
 
 intu(T0,X):-intu(16,T0,X).
 
@@ -10,7 +10,10 @@ intu(N,T0,X):-intu(N,T0,X,_),!.
 % then try to see if any subsumes the query type T0
 % if so, we have found an inhabitant X
 % in fact, if generatting larger and 
-intu(N,T0,X,T):-tnfs(N,X,T),subsumes_term(T,T0).
+intu(N,GT,X,T):-
+  %varvars(GT,T0), % works if ground or not
+  GT=T0,
+  tnfs(N,X,T),subsumes_term(T,T0).
 
 intu0(T0,X):-N=16,intu0(N,T0,X).
 
@@ -201,6 +204,8 @@ ljs_imp(E,(C->D),B,Vs):-ljs(E,(C->D),[_:(D->B)|Vs]).
 % for testing - randomly succeds or fails
 
 badProve(_) :- 0 =:= random(2).
+
+looper(_):-repeat,sleep(1),fail.
 
 % will have false positives
 

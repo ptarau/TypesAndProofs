@@ -2,20 +2,23 @@
   
 % turns a term in which variables are repsentede as Prolog vars  
 varvars(A,X):-
+  must_be(ground,A),
   maxvar(A,L0),L is L0+1,
   functor(D,x,L),
   varvars(A,X,D).
 
-varvars((A,B),(X->Y),D):-varvars(A,X,D),varvars(B,Y,D).
-varvars(A->B,X->Y,D):-varvars(A,X,D),varvars(B,Y,D).
-varvars(A,V,D):-integer(A),I is A+1,arg(I,D,V).
-varvars(false,false,_).
+varvars((A,B),(X->Y),D):-!,varvars(A,X,D),varvars(B,Y,D).
+varvars(A->B,X->Y,D):-!,varvars(A,X,D),varvars(B,Y,D).
+varvars(false,false,_):-!.
+varvars(A,V,D):-I is A+1,arg(I,D,V).
+
 
 % variable with larges index
-maxvar(I,R):-integer(I),!,R=I.
+
 maxvar(false,0):-!.
-maxvar((A->B),R):-maxvar(A,I),maxvar(B,J),R is max(I,J).
-maxvar((A,B),R):-maxvar(A,I),maxvar(B,J),R is max(I,J).
+maxvar((A->B),R):-!,maxvar(A,I),maxvar(B,J),R is max(I,J).
+maxvar((A,B),R):-!,maxvar(A,I),maxvar(B,J),R is max(I,J).
+maxvar(I,R):-must_be(integer,I),R=I.
 
 % turns a term into a ground one by banding
 % logic variables in it to 0,1,...

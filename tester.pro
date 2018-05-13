@@ -11,7 +11,7 @@ rptest(N,P):-rptest(1001,20,N,100,P).
 rptest(Seed,TSize,N,K,P):-
   parRanTypedTNF(Seed,TSize,N,K,X:T,Size),
   portray_clause(sure(X:T)),
-  \+((natvars(T),call(P,T))),
+  \+(call(P,T)),
   ppp('false negative, for term size'(Size)),
   ppp(while_term_inhabiting_it=X),
   ppp(no__inhabitant_found_for=T),nl,
@@ -111,11 +111,22 @@ cotest_one(Transformer,Gold,Silver,T, R):-
   ).
   
 
-gold_test(N,Silver,Culprit,Unexpected):-
-  gold_test(N,allImpFormulas,dprove,Silver, Culprit,Unexpected).
+gotest1(N):-do((
+  gold_test(N,bprove,Culprit,Unexpected),
+  ppp([Culprit,Unexpected])
+)).
+  
+gotest2(N):-do((
+  gold_classical_test(N,gprove,Culprit,Unexpected),
+  ppp([Culprit,Unexpected])
+  )).
 
-gold_test(N,Generator,Gold,Silver, Term, Res):-
-  call(Generator,N,Term),
+gold_test(N,Silver,Culprit,Unexpected):-
+  gold_test(N,allImpFormulas,(=),dprove,Silver, Culprit,Unexpected).
+
+gold_test(N,Generator,Transformer,Gold,Silver, Term0, Res):-
+  call(Transformer,Term0,Term),
+  call(Generator,N,Term0),
   gold_test_one(Gold,Silver,Term, Res),
   Res\=agreement.
   
@@ -129,7 +140,7 @@ gold_test_one(Gold,Silver,T, Res):-
   
   
 gold_classical_test(N,Silver,Culprit,Unexpected):-
-  gold_test(N,allClassFormulas,tautology,Silver, Culprit,Unexpected).
+  gold_test(N,allClassFormulas,(=),tautology,Silver, Culprit,Unexpected).
  
  
  

@@ -9,8 +9,9 @@ ranNF(Seed,N,X:T,Size):-N>2,
   Max is N+2,
   Min=N-2,
   MaxSteps is 2^20,
-  ranTypableNF0(Max,Min,MaxSteps,X,T,Size,Steps),
-  writeln([randomSeed=Seed,natSize=Size,steps=Steps]).
+  ranTypableNF0(Max,Min,MaxSteps,X,T,Size,_Steps),
+  natvars(T).
+  %writeln([randomSeed=Seed,natSize=Size,steps=Steps]).
     
 min_nf_size(50).
 max_nf_size(60).
@@ -22,13 +23,17 @@ boltzmann_nf_leaf(R):-R<0.6666841735813065.   % neutral: 0, otherwise s/1
 
 ranTNF(N,X:T,TSize):-ranTNF(random,N,1,X:T,_Size),tsize(T,TSize).
 
+ranSeededTNF(Seed,N,K,T):-ranTNF(Seed,N,K,_X:T,_Size).
+
+% API - replicable
 ranTNF(Seed,N,K,X:T,Size):-
   set_random(seed(Seed)),
   MaxSteps=1000000,
   Max is truncate(N*(11/10)),
   Min is truncate(N*(9/10)),  
   between(1,K,_),
-  ranTypableNF0(Max,Min,MaxSteps,X,T,Size,_Steps).
+  ranTypableNF0(Max,Min,MaxSteps,X,T,Size,_Steps),
+  natvars(T).
 
 ranTypableNF(X,T,Size,Steps):-
   max_nf_size(Max),

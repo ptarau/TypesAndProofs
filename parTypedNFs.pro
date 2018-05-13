@@ -8,7 +8,8 @@ parRanTypedTNF(Seed,TSize,N,K,X:T,Size):-
   Max is truncate(N*(11/10)),
   Min is truncate(N*(9/10)),  
   between(1,K,_),
-  parRanTypableNF(Max,Min,TSize,MaxSteps,X,T,Size,_Steps).
+  parRanTypableNF(Max,Min,TSize,MaxSteps,X,T,Size,_Steps),
+  natvars(T).
   
   
 parRanTypableNF(Max,Min,TSize,MaxSteps,X,T,Size,Steps):-
