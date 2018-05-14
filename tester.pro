@@ -43,6 +43,8 @@ t5:-allImpFormulas(2,T),ppp(T),fail.
 
 t6:-rntest(10,42,10,5,pprove).
 
+t7:-allImpFormulas(2,T),
+    abduce_for(hprove,T,R),ppp((R-->T)),fail.
 
 t8 :- ranptest(15,pprove).
 
@@ -56,13 +58,36 @@ t11:-allImpFormulas(5,T),toHorn(T,H),toHorn(TT,H),ppp(H),ppp(T==TT),nl,fail.
 
 t12:-parRanTypedTNF(42,50,50,10,XT,S),natvars(XT),ppp((size(S)=XT)),fail.
 
+% K combinator
+k_(0->1->0).
+% S combinator
+s_( (0->1->2)->(0->1)->(0->2)).
+% Pierces's law
+p_(((0 -> 1) -> 0) -> 0).
+% derived from modus ponens
+mp_(0->(0->1)->1).
 
+axtest:-
+  maplist(call,[k_,s_,mp_],Ts),
+  maplist(bprove,Ts).
+
+
+ptest:-p_(T),ppp(T),nl,abduce_imp(bprove,T,R),ppp(R),fail.
 
 htest:-hard(T),natvars(T),hhprove(T).
 
 ihard(H):-hard(H),natvars(H).
 
 hhard(H):-ihard(I),toListHorn(I,H).
+
+
+abtest(N,P):-
+  allImpFormulas(N,T),
+  \+ call(P,T),
+  once(abduce_imp(P,T,AbT)),
+  ppp(AbT),
+  fail.
+
 
 % false
 hard(Term):-Term=(((A->B->C->((D->C)->E)->F)->_G)->H->C->E->(((((I->J)->((K->L)->M)->L)->(((C->F)->A)->N)->O)->P->N->Q)->R)->S->(D->T->U->(((((F->F->V->T)->Q->Q)->K->N)->E)->W)->J->((M->Q)->L->L)->P->_X->Q->D)->(E->((F->(((O->Q)->I)->H->F->N)->(((N->L->P->M)->(((A->D)->J->(Q->Y)->H)->F)->Z)->Z)->V)->M)->M->P)->(((K->V)->W)->K)->(C->I->S)->Z->L->U->((Q->R->(((_A1->B1->B)->W)->((D->W)->Y)->W)->B1)->((U->E)->U)->C->Y)->J).

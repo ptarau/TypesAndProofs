@@ -1,29 +1,46 @@
 
-[prog=lprove,size=13,pos=1.4,neg=0.28,total=1.68]
-[prog=lprove,size=14,pos=6.86,neg=6.33,total=13.2]
-[prog=lprove,size=15,pos=56.93,neg=6.56,total=63.49]
+[prog=lprove,size=13,pos=1.34,neg=0.26,total=1.61]
+[prog=lprove,size=14,pos=6.62,neg=6.1,total=12.73]
+[prog=lprove,size=15,pos=55.66,neg=6.18,total=61.84]
 
-[prog=bprove,size=13,pos=0.95,neg=0.21,total=1.16]
-[prog=bprove,size=14,pos=4.53,neg=4.46,total=8.99]
-[prog=bprove,size=15,pos=32.83,neg=4.46,total=37.3]
+[prog=bprove,size=13,pos=0.91,neg=0.2,total=1.11]
+[prog=bprove,size=14,pos=4.32,neg=4.27,total=8.6]
+[prog=bprove,size=15,pos=31.66,neg=4.47,total=36.13]
 
-[prog=sprove,size=13,pos=1.39,neg=0.3,total=1.69]
-[prog=sprove,size=14,pos=6.63,neg=6.32,total=12.95]
-[prog=sprove,size=15,pos=49.07,neg=6.2,total=55.28]
+[prog=sprove,size=13,pos=1.36,neg=0.28,total=1.65]
+[prog=sprove,size=14,pos=6.25,neg=5.92,total=12.18]
+[prog=sprove,size=15,pos=46.91,neg=5.92,total=52.84]
 
-[prog=pprove,size=13,pos=1.42,neg=0.27,total=1.69]
-[prog=pprove,size=14,pos=6.45,neg=5.29,total=11.75]
-[prog=pprove,size=15,pos=30.31,neg=5.3,total=35.62]
+[prog=pprove,size=13,pos=1.37,neg=0.25,total=1.63]
+[prog=pprove,size=14,pos=6.25,neg=5.05,total=11.31]
+[prog=pprove,size=15,pos=29.41,neg=5.04,total=34.45]
 
-[prog=hprove,size=13,pos=0.93,neg=0.26,total=1.2]
-[prog=hprove,size=14,pos=4.13,neg=5.18,total=9.32]
-[prog=hprove,size=15,pos=19.1,neg=5.18,total=24.28]
+[prog=hprove,size=13,pos=0.87,neg=0.25,total=1.13]
+[prog=hprove,size=14,pos=3.9,neg=4.87,total=8.77]
+[prog=hprove,size=15,pos=18.04,neg=4.84,total=22.89]
 
-[prog=xprove,size=13,pos=1.38,neg=0.35,total=1.73]
-[prog=xprove,size=14,pos=6.09,neg=6.73,total=12.82]
-[prog=xprove,size=15,pos=28.1,neg=6.96,total=35.06]
+[prog=xprove,size=13,pos=1.28,neg=0.33,total=1.61]
+[prog=xprove,size=14,pos=5.69,neg=6.25,total=11.94]
+[prog=xprove,size=15,pos=27.06,neg=6.5,total=33.57]
 
-[prog=dprove,size=13,pos=2.18,neg=0.35,total=2.53]
-[prog=dprove,size=14,pos=10.96,neg=6.25,total=17.21]
-[prog=dprove,size=15,pos=1100.72,neg=5.76,total=1106.49]
+[prog=hhprove,size=13,pos=0.88,neg=0.22,total=1.1]
+[prog=hhprove,size=14,pos=3.96,neg=4.19,total=8.15]
+[prog=hhprove,size=15,pos=18.66,neg=4.21,total=22.87]
 
+[prog=dprove,size=13,pos=2.05,neg=0.32,total=2.37]
+[prog=dprove,size=14,pos=10.29,neg=5.52,total=15.82]
+dprove=timeout_after(600)
+
+[prog=kprove,size=13,pos=1.33,neg=0.27,total=1.6]
+[prog=kprove,size=14,pos=6.25,neg=5.69,total=11.95]
+[prog=kprove,size=15,pos=43.26,neg=5.53,total=48.8]
+
+[prog=gprove,size=13,pos=1.59,neg=2.24,total=3.83]
+[prog=gprove,size=14,pos=7.23,neg=366.73,total=373.96]
+[prog=gprove,size=15,pos=32.81,neg=368.29,total=401.11]
+
+[prog=tautology,size=13,pos=3.37,neg=1.03,total=4.4]
+[prog=tautology,size=14,pos=15.84,neg=20.87,total=36.71]
+[prog=tautology,size=15,pos=77.03,neg=20.96,total=97.99]
+
+done

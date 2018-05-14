@@ -6,7 +6,6 @@ cbm(N,P):-
   bmark(N,P,Res),
   writeln(Res).
 
-  
 bmark(N,P,Res):-prep(P,BL),!,
  bmark(N,P,nfTypes,allImpFormulas,BL,Res).
 
@@ -92,6 +91,7 @@ preprocessor(dprove,(=)).
 preprocessor(lprove,(=)).
 preprocessor(bprove,(=)).
 preprocessor(pprove,(=)).
+preprocessor(sprove,(=)).
 preprocessor(hprove,toHorn).
 preprocessor(xprove,toHorn).
 preprocessor(hhprove,toSortedHorn).

@@ -91,6 +91,7 @@ pickIndexNF(Max,_,s(X),[_|Vs],V,N1,N3):- % successor
 next(Max,R,N1,N2):-N1<Max,N2 is N1+1,random(R).  
 
 tsize(A,R):-var(A),!,R=0.
+tsize(A,R):-atomic(A),!,R=0.
 tsize(A->B,S):-tsize(A,S1),tsize(B,S2),S is 1+S1+S2.
 
 
