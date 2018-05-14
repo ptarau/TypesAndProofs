@@ -8,6 +8,7 @@ hprove(T0):-toHorn(T0,T),ljh(T,[]),!.
 ljh(A,Vs):-memberchk(A,Vs),!. 
 ljh((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljh(B,Vs2).
 ljh(G,Vs1):- % atomic(G), G not on Vs
+  memberchk((G:-_),Vs1), % if not, we just fail
   select((B:-As),Vs1,Vs2),
   select(A,As,Bs), 
   ljh_imp(A,B,Vs2), % A element of the body of B
@@ -31,6 +32,7 @@ fprove(T0):-toListHorn(T0,T),ljf(T,[]),!.
 ljf(A,Vs):-memberchk(A,Vs),!. 
 ljf([B|As],Vs1):-!,append(As,Vs1,Vs2),ljf(B,Vs2).
 ljf(G,Vs1):- % atomic(G), G not on Vs
+  memberchk([G|_],Vs1),
   select([B|As],Vs1,Vs2),
   select(A,As,Bs), 
   ljf_imp(A,B,Vs2), % A element of the body of B
@@ -50,7 +52,9 @@ vprove(T0):-toListHorn(T0,T),ljv(T,[]),!.
 
 ljv(A,Vs):-memberchk(A,Vs),!. 
 ljv([B|As],Vs1):-!,append(As,Vs1,Vs2),ljv(B,Vs2).
-ljv(G,Vs1):-ljv_choice(G,Vs1,End,End).
+ljv(G,Vs1):-
+  memberchk([G|_],Vs1),
+  ljv_choice(G,Vs1,End,End).
   
 ljv_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
 ljv_imp([D|Cs],B,Vs):- ljv([D|Cs],[[B,D]|Vs]).
@@ -118,6 +122,21 @@ ljz_imp((D:-Cs),B,Vs1):-
   add_new((B:-[D]),Vs1,Vs2), % assume that A's head implies B
   ljz((D:-Cs),Vs2).          % prove A under that assumption
 
+hgprove(T0):-toHorn(T0,T),ljg(T,[]),!.
+
+hhgprove(T0):-toSortedHorn(T0,T),ljg(T,[]),!.
+
+ljg(A,Vs):-memberchk(A,Vs),!. 
+ljg((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljg(B,Vs2).
+ljg(G,Vs0):- % G is atomic
+  select((G:-Gs),Vs0,Vs1),!, % bring a G:-.. first
+  select((B:-As),[(G:-Gs)|Vs1],Vs2),
+  select(A,As,Bs), 
+  ljg_imp(A,B,Vs2), % A element of the body of B
+  !,
+  trimmed((B:-Bs),NewB),
+  ljg(G,[NewB|Vs2]).
   
-  
-  
+ljg_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
+ljg_imp((D:-Cs),B,Vs):- ljg((D:-Cs),[(B:-[D])|Vs]).
+
