@@ -1,10 +1,18 @@
 % simple abductive reasoning - just atomics
-% guesses what assumptions (if any) make the formula true
+% guess what assumptions (if any) make the formula true
+% guess what assumptions make a true formula false if removed
 
+%trimleaf(A,A):-atomic(A).
+trimleaf(A->B,B):-atomic(A).
+trimleaf(A->B,A):-atomic(B).
+trimleaf(A->B,X->B):-trimleaf(A,X).
+trimleaf(A->B,A->Y):-trimleaf(B,Y).
 
 abtest(N,P,ST):-
   allImpFormulas(N,T),
   once(abduce_st(P,T,ST)).
+
+ab(FT,TT):-abduce_st(pprove,FT,TT).
 
 abduce_st(P,T,T):-call(P,T).
 abduce_st(P,T,(S->T)):-
@@ -22,6 +30,15 @@ subterm_of(Term,X) :-
   subterm_of(Arg,X).
 subterm_of(X, X).
   
+
+rev_ord_subterm_of(T,S):-
+  findall(U,unique_subterm_of(T,U),Us),
+  revkeysort(Us,Sorted),
+  member(_-S,Sorted).
+ 
+revkeysort(RXs, RevRXs) :-
+sort(1, @>=, RXs, RevRXs).
+
 ord_subterm_of(T,S):-
   findall(U,unique_subterm_of(T,U),Us),
   keysort(Us,Sorted),
@@ -72,7 +89,7 @@ genArrow(Ns,Arr):-
 
  
  there's a strict subformula that turns
- andy failing formula into a taultology?
+ any failing formula into a taultology?
  
  A->A is one, but that's not interesting
  
@@ -80,7 +97,7 @@ genArrow(Ns,Arr):-
  
  open quest:
  
- is the smallest one that does always a subformula?
+ is the smallest one that does, always a subformula?
  
  
  */

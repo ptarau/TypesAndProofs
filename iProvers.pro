@@ -63,6 +63,22 @@ ljb_imp(A,_,Vs):-atomic(A),memberchk(A,Vs).
 
 
 
+eprove(T):-lje(T,[]),!.
+
+lje(A,Vs):-memberchk(A,Vs),!.
+lje((A->B),Vs):-!,lje(B,[A|Vs]). 
+lje(G,Vs1):-
+  member(T,Vs1),head_of(T,G),!,
+  select((A->B),Vs1,Vs2),
+  lje_imp(A,B,Vs2),
+  !,
+  lje(G,[B|Vs2]).
+
+lje_imp((C->D),B,Vs):-!,lje((C->D),[(D->B)|Vs]).
+lje_imp(A,_,Vs):-atomic(A),memberchk(A,Vs).   
+
+head_of(_->B,G):-!,head_of(B,G).
+head_of(G,G).
 
 % Dyckhoff's LJT - (fig 2 in his paper), 
 % enhanced with add_new avoid duplications
@@ -138,6 +154,7 @@ pprove(T):-ljp(T,[]),!.
 ljp(A,Vs):-memberchk(A,Vs),!.
 ljp((A->B),Vs1):-!,add_new(A,Vs1,Vs2),ljp(B,Vs2). 
 ljp(G,Vs1):- % atomic(G),
+  member(T,Vs1),head_of(T,G),!,
   select((A->B),Vs1,Vs2),
   ljp_imp(A,B,Vs2),
   !,
@@ -192,6 +209,7 @@ ljs(X,A,Vs):-memberchk(X:A,Vs),!. % leaf variable
 ljs(l(X,E),(A->B),Vs):-!,ljs(E,B,[X:A|Vs]).  % lambda term
 
 ljs(E,G,Vs1):- 
+  member(_:V,Vs1),head_of(V,G),!,
   select(S:(A->B),Vs1,Vs2),   % source of application
   ljs_imp(T,A,B,Vs2),         % target of application
   !,

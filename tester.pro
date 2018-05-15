@@ -81,10 +81,11 @@ ihard(H):-hard(H),natvars(H).
 hhard(H):-ihard(I),toListHorn(I,H).
 
 
-abtest(N,P):-
+
+abfix(N,P):-
   allImpFormulas(N,T),
   \+ call(P,T),
-  once(abduce_imp(P,T,AbT)),
+  once(abduce_st(P,T,AbT)),
   ppp(AbT),
   fail.
 
@@ -92,7 +93,8 @@ abtest(N,P):-
 % false
 hard(Term):-Term=(((A->B->C->((D->C)->E)->F)->_G)->H->C->E->(((((I->J)->((K->L)->M)->L)->(((C->F)->A)->N)->O)->P->N->Q)->R)->S->(D->T->U->(((((F->F->V->T)->Q->Q)->K->N)->E)->W)->J->((M->Q)->L->L)->P->_X->Q->D)->(E->((F->(((O->Q)->I)->H->F->N)->(((N->L->P->M)->(((A->D)->J->(Q->Y)->H)->F)->Z)->Z)->V)->M)->M->P)->(((K->V)->W)->K)->(C->I->S)->Z->L->U->((Q->R->(((_A1->B1->B)->W)->((D->W)->Y)->W)->B1)->((U->E)->U)->C->Y)->J).
 
-  
+habtest:-ihard(H),abduce_st(hprove,H,T),ppp(H),nl,ppp(T),!,fail.
+
 sound:-
   T0=(((C->D)->B)->G),
   T1=(C->(D->B)->D->G),
@@ -170,7 +172,7 @@ gold_classical_test(N,Silver,Culprit,Unexpected):-
  
  
 gold_ran_imp_test(N,K, Silver, Culprit, Unexpected):-
-  gold_test(N,genRanImpFormulas(K),dprove,Silver, Culprit, Unexpected).  
+  gold_test(N,genRanImpFormulas(K),(=),dprove,Silver, Culprit, Unexpected).  
 
 rtest1:-
  gold_ran_imp_test(50,100,hprove, Culprit, Unexpected),ppp(Culprit=Unexpected).

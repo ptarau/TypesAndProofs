@@ -63,12 +63,14 @@ ljv_choice(G,[[B|As]|End],Vs2,End):-
   select(A,As,Bs),
   ljv_imp(A,B,Vs2),
   !,
-  ftrimmed([B|Bs],NewB),
-  ljv(G,[NewB|Vs2]).
+  vtrimmed(Bs,B,G,Vs2).
 ljv_choice(G,[Ys|Vs1],Vs2,End):-
   ljv_choice(G,Vs1,[Ys|Vs2],End).
 
-  
+
+vtrimmed([],B,G,Vs):-ljv(G,[B|Vs]).
+vtrimmed([BB|Bs],B,G,Vs):-ljv(G,[[B,BB|Bs]|Vs]).
+
 % works on Horn clauses - includes
 % preporcessing from implicational form
 % from which the translation is reversible except for order

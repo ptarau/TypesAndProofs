@@ -90,6 +90,7 @@ prep(Name,Prog):-throw(unknown_prep(Name,Prog)).
 preprocessor(dprove,(=)).
 preprocessor(lprove,(=)).
 preprocessor(bprove,(=)).
+preprocessor(eprove,(=)).
 preprocessor(pprove,(=)).
 preprocessor(sprove,(=)).
 preprocessor(hprove,toHorn).
