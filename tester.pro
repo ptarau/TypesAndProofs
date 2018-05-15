@@ -177,6 +177,10 @@ gold_ran_imp_test(N,K, Silver, Culprit, Unexpected):-
 rtest1:-
  gold_ran_imp_test(50,100,hprove, Culprit, Unexpected),ppp(Culprit=Unexpected).
   
+rtest2:-time(
+ gold_ran_imp_test(1000,1000,hprove, Culprit, Unexpected),ppp(Culprit=Unexpected)
+).
+
 % tests "proven" formulas against Melvin Fitting's prover 
 ftest2:-test_proven(tautology).
 
@@ -187,3 +191,15 @@ test_proven(P):-
   fail
 ; true.
 
+biglamb:-
+  ranImpFormulas(42,1000,1000,T),hprove(T),sprove(T,X),
+  type_of(X,TT),
+  ppp(X),
+  ppp(T),
+  ppp(TT),
+  nl,
+  fail
+; ppp(done).
+
+  
+  

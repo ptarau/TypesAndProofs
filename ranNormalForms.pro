@@ -45,6 +45,7 @@ ranTypableNF0(Max,Min,MaxSteps,X,T,Size,Steps):-
   tryRanTypableNF(Max,Min,0,MaxSteps,X,T,Size,Steps),
   !.
 
+% API element  
 tryRanTypableNF(Max,Min,TSize0,MaxSteps,X,T,Size,Steps):-
   between(1,MaxSteps,Steps),
     random(R),

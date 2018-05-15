@@ -18,13 +18,13 @@ rbmark(N,P,Res):-prep(P,BL),!,
 ranSeededTNF(N,T):-
   Seed=42,K=100,
   ranSeededTNF(Seed,N,K,T),
-  ppp(T),
+  %ppp(T),
   true.
 
 ranImpSeededFormulas(N,T):-
   Seed=42,K=100,
   ranImpFormulas(Seed,N,K,T),
-  ppp(T),
+  %ppp(T),
   true.
   
 fbmark(MaxTime,P,Res):-

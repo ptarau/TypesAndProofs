@@ -43,6 +43,8 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('tester.pro'). % soup of testing and benchmarcking programs
 
+:-include('printers.pro'). % shows trees and other things in ASCII and LaTeX
+
 :-include('third_party/dyckhoff.pro'). % implicational variant of Roy Dyckhoff's prover  
 
 :-include('third_party/fitting.pro'). % implicational variant of M. Fitting's prover

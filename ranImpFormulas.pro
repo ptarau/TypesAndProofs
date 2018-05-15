@@ -26,3 +26,21 @@ ranImpFormulas(Seed,N,PartCount,TreeCount,T):-
   remy(N,T,Vs),
   between(1,PartCount,_),
   ranPart(N1,Bell,Vs).
+
+  
+ranTypedImp(MaxSeed,M,N,T):-
+  between(1,MaxSeed,Seed),
+  ranImpFormula(Seed,M,T),
+  vprove(T),
+  sprove(T,X),
+  type_of(X,TT),
+  tsize(TT,Size),
+  Size>N.
+  
+bigTypedImp(T):-ranTypedImp(20000,36,16,T).  
+
+/*
+
+Can we generate a formula (that has a proof!) that is so hard that we cannot prove it?
+
+*/
