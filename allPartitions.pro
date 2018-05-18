@@ -18,8 +18,17 @@ mcomplement_of(U,[X|Xs],NewZs):-
 mplace_element(U,U,Zs,Zs).
 mplace_element(_,X,Zs,[X|Zs]).
 
-% set aprtitions via variable equlaities for length N
-vpartitions(N,Ps):-length(Ps,N),mpart_of(Ps,_).
-
 % just the partitions as equalities
 vpartitions(Vs):-mpart_of(Vs,_).
+
+
+% set aprtitions via variable equlaities for length N
+% counted by Bell numbers: A000110
+% 1, 1, 2, 5, 15, 52, 203, 877, 4140, 21147, 115975, 678570,...
+vpartitions(N,Ps):-length(Ps,N),mpart_of(Ps,_).
+
+
+/*
+?- findall(S,(between(0,10,N),sols(vpartitions(N,_),S)),Xs),ppp(Xs).
+Xs = [1,1,2,5,15,52,203,877,4140,21147,115975].
+*/

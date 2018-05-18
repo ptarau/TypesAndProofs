@@ -38,6 +38,8 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('testProvers.pro').
 
+:-include('tools.pro').
+
 :-include('benchmarks.pro').
 :-include('bm.pro').
 

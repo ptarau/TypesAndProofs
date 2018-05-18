@@ -44,6 +44,12 @@ ord_subterm_of(T,S):-
   keysort(Us,Sorted),
   member(_-S,Sorted).
 
+  
+subterms_of(T,Ts):-
+  findall(U,(unique_subterm_of(T,U),\+arg(2,U,T)),Us),
+  keysort(Us,Sorted),
+  maplist(arg(2),Sorted,Ts).
+  
 abduce_imp(P,T,T):-call(P,T).
 abduce_imp(P,T,Fixed):-
   maxvar(T,M), 

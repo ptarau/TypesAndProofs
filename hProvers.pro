@@ -7,13 +7,13 @@ hprove(T0):-toHorn(T0,T),ljh(T,[]),!.
 
 ljh(A,Vs):-memberchk(A,Vs),!. 
 ljh((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljh(B,Vs2).
-ljh(G,Vs1):- % atomic(G), G not on Vs
+ljh(G,Vs1):- % atomic(G), G not on Vs1
   memberchk((G:-_),Vs1), % if not, we just fail
-  select((B:-As),Vs1,Vs2),
-  select(A,As,Bs), 
+  select((B:-As),Vs1,Vs2), % outer select loop
+  select(A,As,Bs),         % inner select loop
   ljh_imp(A,B,Vs2), % A element of the body of B
   !,
-  trimmed((B:-Bs),NewB),
+  trimmed((B:-Bs),NewB), % trim empty bodies
   ljh(G,[NewB|Vs2]).
   
 ljh_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
