@@ -109,5 +109,30 @@ preprocessor(looper,(=)).
 preprocessor(rprove,(toRandomHorn)).
 
 
-nice_num(X,R):-R is (truncate(X*100))/100.
+nice_num(X,R):-R is (truncate(X*1000))/1000.
 
+
+
+hbm(N,P,Counts,Time=T2-T1):-
+  new_ctr(All),
+  time(
+  do((
+   allSortedHorn(N,T),
+   ctr_inc(All)
+  )),
+  T1
+  ),
+  new_ctr(Proven),
+  time(
+  do((
+   allSortedHorn(N,T),
+   call(P,T),
+   ctr_inc(Proven)
+  )),
+  T2
+  ),
+  Time is T2-T1,
+  ctr_get(Proven,Pr),
+  ctr_get(All,Tot),
+  Counts=Pr/Tot.
+  

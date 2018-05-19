@@ -44,7 +44,7 @@ t5:-allImpFormulas(2,T),ppp(T),fail.
 t6:-rntest(10,42,10,5,pprove).
 
 t7:-allImpFormulas(2,T),
-    abduce_for(hprove,T,R),ppp((R-->T)),fail.
+    abduce_for1(hprove,T,R),ppp((R-->T)),fail.
 
 t8 :- ranptest(15,pprove).
 
@@ -57,6 +57,9 @@ t10:-time(nstest(6,sprove)).
 t11:-allImpFormulas(5,T),toHorn(T,H),toHorn(TT,H),ppp(H),ppp(T==TT),nl,fail.
 
 t12:-parRanTypedTNF(42,50,50,10,XT,S),natvars(XT),ppp((size(S)=XT)),fail.
+
+
+t13:- do hbm(8,ljh,T),ppp(T).
 
 % K combinator
 k_(0->1->0).

@@ -45,6 +45,4 @@ ranselect(X,Xs,Rs):-
    Rs=[X0|Rs1]
  ).
  
-% sorts and trims, but in reverse standard order 
-revsort(Xs,Rs):-sort(0,(@>),Xs,Rs).
  

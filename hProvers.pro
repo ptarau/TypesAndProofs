@@ -4,6 +4,7 @@
 
 hprove(T0):-toHorn(T0,T),ljh(T,[]),!.
 
+ljh(A):-ljh(A,[]),!.
 
 ljh(A,Vs):-memberchk(A,Vs),!. 
 ljh((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljh(B,Vs2).

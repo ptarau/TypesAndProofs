@@ -91,28 +91,13 @@ genArrow(Ns,Arr):-
  A\=B,
  member(Arr,[(A->B),(B->A)]).
  
- /*
-
  
- there's a strict subformula that turns
- any failing formula into a taultology?
- 
- A->A is one, but that's not interesting
- 
- B->(A->B) is another one
- 
- open quest:
- 
- is the smallest one that does, always a subformula?
- 
- 
- */
  
  % assume Horn, for simplicity - minimal abduction trivial
  
- trivYes((H:-Bs),(H:-[H|Bs])).
+trivYes((H:-Bs),(H:-[H|Bs])).
  
- trivNo((H:-Bs),(H:-Ds)):-
+trivNo((H:-Bs),(H:-Ds)):-
    delete(H,Bs,Cs),
    delete((H:-_),Cs,Ds).
    

@@ -1,4 +1,17 @@
 % all implicational logic formulas of size N
+allHornFormulas(N,T):-
+  succ(N,SN),length(Vs,SN),
+  mpart_of(Vs,Ps),
+  natvars(Ps),
+  genHorn(N,T,Vs).
+
+allSortedHorn(N,T):-
+  succ(N,SN),length(Vs,SN),
+  mpart_of(Vs,Ps),
+  natvars(Ps),
+  genSortedHorn(N,T,Vs).
+  
+% all implicational logic formulas of size N
 allImpFormulas(N,T):-
   genTree(N,T,Vs),
   vpartitions(Vs),
