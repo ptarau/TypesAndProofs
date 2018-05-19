@@ -25,7 +25,12 @@ trimmed(BBs,BBs).
 
 hhprove(T0):-toSortedHorn(T0,T),ljh(T,[]),!.
 
+timed_hprove(T):-timed_hprove(600,T).
 
+timed_hprove(Max,T):-
+  timed_call(Max,hprove(T),Time),
+  (compound(Time)->ppp(Time:T);true).
+  
 
 fprove(T0):-toListHorn(T0,T),ljf(T,[]),!.
 

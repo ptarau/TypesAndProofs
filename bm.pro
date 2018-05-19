@@ -94,6 +94,8 @@ preprocessor(eprove,(=)).
 preprocessor(pprove,(=)).
 preprocessor(sprove,(=)).
 preprocessor(hprove,toHorn).
+preprocessor(timed_hprove,toHorn).
+preprocessor(timed_hprove(_),toHorn).
 preprocessor(xprove,toHorn).
 preprocessor(hhprove,toSortedHorn).
 preprocessor(vprove,toListHorn).

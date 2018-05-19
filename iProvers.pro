@@ -209,7 +209,7 @@ ljs(X,A,Vs):-memberchk(X:A,Vs),!. % leaf variable
 ljs(l(X,E),(A->B),Vs):-!,ljs(E,B,[X:A|Vs]).  % lambda term
 
 ljs(E,G,Vs1):- 
-  member(_:V,Vs1),head_of(V,G),!,
+  member(_:V,Vs1),head_of(V,G),!, % fail if non-tautology
   select(S:(A->B),Vs1,Vs2),   % source of application
   ljs_imp(T,A,B,Vs2),         % target of application
   !,

@@ -107,3 +107,14 @@ genArrow(Ns,Arr):-
  
  
  */
+ 
+ % assume Horn, for simplicity - minimal abduction trivial
+ 
+ trivYes((H:-Bs),(H:-[H|Bs])).
+ 
+ trivNo((H:-Bs),(H:-Ds)):-
+   delete(H,Bs,Cs),
+   delete((H:-_),Cs,Ds).
+   
+ 
+ 
