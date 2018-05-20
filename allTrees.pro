@@ -23,9 +23,13 @@ genHorns([B|Bs],SN1,N3)-->{succ(N1,SN1)},
   genHorns(Bs,N2,N3).
 
 countGenHorn(M,Rs):-
-  findall(R,(between(1,M,N),sols(genHorn(N,_,_),R)),Rs).
+  findall(R,(
+    between(1,M,N),
+    sols(genHorn(N,_,_),R)
+  ),Rs).
   
 /*  
+% [1,2,7,38,266,2263,22300,247737]
 genSortedHorn(N,Tree,Leaves):-
   genSortedHorn(Tree,N,0,Leaves,[]).
 
@@ -60,3 +64,11 @@ genSortedHorns(B,[C|Bs],SN1,N3)-->{succ(N1,SN1)},
   genSortedHorn(C,N1,N2),
   {B@<C},
   genSortedHorns(C,Bs,N2,N3).
+  
+countSortedHorn(M,Rs):-
+  findall(R,(
+    between(1,M,N),
+    sols(genSortedHorn(N,_,_),R)
+  ),Rs).
+  
+  

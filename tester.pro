@@ -59,7 +59,7 @@ t11:-allImpFormulas(5,T),toHorn(T,H),toHorn(TT,H),ppp(H),ppp(T==TT),nl,fail.
 t12:-parRanTypedTNF(42,50,50,10,XT,S),natvars(XT),ppp((size(S)=XT)),fail.
 
 
-t13:- do hbm(8,ljh,T),ppp(T).
+t13:- do hbm(8,ljh,Counts,T),ppp(T),K is Counts,ppp(K).
 
 % K combinator
 k_(0->1->0).

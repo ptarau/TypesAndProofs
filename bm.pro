@@ -122,6 +122,7 @@ hbm(N,P,Counts,Time=T2-T1):-
   )),
   T1
   ),
+   ppp(t1=T1),
   new_ctr(Proven),
   time(
   do((

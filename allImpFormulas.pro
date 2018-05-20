@@ -138,7 +138,9 @@ tratio(D):-
   ppp(Qs),
   plotl(Qs).
   
-  
+
+countSortedHorn(M):-ncounts(M,allSortedHorn(_,_)).
+
 /*
 ?- time(seqCountProvenFormulas(8,hprove,A,B)).
 % 2,243,311,670 inferences, 217.446 CPU in 217.577 seconds (100% CPU, 10316659 Lips)

@@ -1,26 +1,6 @@
 % random typable normal form, using Boltzmann sampler
 % combined with fast type inference algorithm
 
-ranNF(N,X:T,RepSize):-
-  ranNF(random,N,X:T,RepSize).
-  
-ranNF(Seed,N,X:T,Size):-N>2,
-  set_random(seed(Seed)),
-  Max is N+2,
-  Min=N-2,
-  MaxSteps is 2^20,
-  ranTypableNF0(Max,Min,MaxSteps,X,T,Size,_Steps),
-  natvars(T).
-  %writeln([randomSeed=Seed,natSize=Size,steps=Steps]).
-    
-min_nf_size(50).
-max_nf_size(60).
-max_nf_steps(10000000).
-
-boltzmann_nf_lambda(R):-R<0.3333158264186935. % an l/1, otherwise neutral
-boltzmann_nf_index(R):-R<0.5062759837493023.  % neutral: index, not a/2
-boltzmann_nf_leaf(R):-R<0.6666841735813065.   % neutral: 0, otherwise s/1
-
 ranTNF(N,X:T,TSize):-ranTNF(random,N,1,X:T,_Size),tsize(T,TSize).
 
 ranSeededTNF(Seed,N,K,T):-ranTNF(Seed,N,K,_X:T,_Size).
@@ -34,27 +14,29 @@ ranTNF(Seed,N,K,X:T,Size):-
   between(1,K,_),
   ranTypableNF0(Max,Min,MaxSteps,X,T,Size,_Steps),
   natvars(T).
-
-ranTypableNF(X,T,Size,Steps):-
-  max_nf_size(Max),
-  min_nf_size(Min),
-  max_nf_steps(MaxSteps),
-  ranTypableNF0(Max,Min,MaxSteps,X,T,Size,Steps).
   
+
+boltzmann_nf_lambda(R):-R<0.3333158264186935. % an l/1, otherwise neutral
+boltzmann_nf_index(R):-R<0.5062759837493023.  % neutral: index, not a/2
+boltzmann_nf_leaf(R):-R<0.6666841735813065.   % neutral: 0, otherwise s/1
+
 ranTypableNF0(Max,Min,MaxSteps,X,T,Size,Steps):-
   tryRanTypableNF(Max,Min,0,MaxSteps,X,T,Size,Steps),
   !.
 
 % API element  
 tryRanTypableNF(Max,Min,TSize0,MaxSteps,X,T,Size,Steps):-
+  tryRanTypableDbNF(Max,Min,TSize0,MaxSteps,X0,T,Size,Steps),
+  %assert(is_nf(X0)),
+  db2std(X0,X).
+  
+tryRanTypableDbNF(Max,Min,TSize0,MaxSteps,X0,T,Size,Steps):-
   between(1,MaxSteps,Steps),
     random(R),
     ranTypableNF(Max,R,X0,T,[],0,Size0),
   Size0>=Min,
   tsize(T,TSize),TSize>=TSize0,
-  Size is Size0+1,
-  db2std(X0,X).
-  
+  Size is Size0+1.
   
 db2std(D,X):-db2std(D,[],X).
 
@@ -107,3 +89,8 @@ nb2l(I,V,Vs):-nat1(I),s2n(I,N),nth0(N,Vs,V).
 nb2l(a(A,B),a(X,Y),Vs):-nb2l(A,X,Vs),nb2l(B,Y,Vs).
 nb2l(l(A),l(V,Y),Vs):-nb2l(A,Y,[V|Vs]).
 
+is_nf(0).
+is_nf(s(_)).
+is_nf(l(A)):-is_nf(A).
+is_nf(a(l(_),_)):-!,fail.
+is_nf(a(A,B)):-is_nf(A),is_nf(B).
