@@ -6,17 +6,7 @@ alltest(N,P):-N1 is N//2,
   ptest(N,P),
   ntest(N1,P).
 
-% same, when lambda terms are generated as proof witnesses  
-sprove1(T):-sprove1(T,_).
-
-sprove1(T,X):-
-  sprove(T,X0),%ppp(X0),
-  ( cyclic_term(X0)-> (X=X0)
-  ; evalLambdaTterm(X0,X)
-  ),
-  (X=@=X0->true;ppp(not_normal_form),ppp(X0),ppp(X)),
-  true.
-
+  
   
 % false negative only test
 ptest0(N,P):-ptest(fail,N,P).
@@ -64,14 +54,26 @@ pstest(N,F):-
   call(F,CT,CX),
   ( \+type_of(CX,_)->
     ppp(sprove(CT,is_bad)),
-    ppp(untypable_lambda_term=CX),nl
-  ; fail, 
+    ppp(untypable_lambda_term=CX),nl,
+    assertion(type_of(CX,_))
+  ;  
     \+ (X=@=CX),
     ppp(while_term_inhabiting_it=X:T),
     ppp(other_inhabitant_found__=CX:CT),nl
   ),
   fail.
 
+  % same, when lambda terms are generated as proof witnesses  
+sprove1(T):-sprove1(T,_).
+
+sprove1(T,X):-
+  sprove(T,X0),%ppp(X0),
+  assertion(acyclic_term(X0)),
+  evalLambdaTterm(X0,X),
+  (X=@=X0->true;ppp(not_normal_form),ppp(X0),ppp(X)),
+  true.
+  
+  
 % test against all well formed implicational expressions
 
 ntest(N,P):-ntest(N,allImpFormulas,P).

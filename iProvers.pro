@@ -103,13 +103,11 @@ ljs(E,G,Vs1):-
 
 ljs_imp(E,A,_,Vs):-atomic(A),!,memberchk(E:A,Vs).   
 ljs_imp(l(X,l(Y,E)),(C->D),B,Vs):-
-  ljs(E,D,[X:C,Y:(D->B)|Vs]),
-  %ljs(E,(C->D),[_:(D->B)|Vs]),
-  true.
-  
-apply_imp(P,Q,a(P,a(Q,l(Y,a(P,l(_X,Y)))))).
-apply_atom(P,Q,a(P,Q)).
+  ljs(E,D,[X:C,Y:(D->B)|Vs]).
 
+head_of(_->B,G):-!,head_of(B,G).
+head_of(G,G).  
+  
 eprove(T):-lje(T,[]),!.
 
 lje(A,Vs):-memberchk(A,Vs),!.
@@ -124,8 +122,7 @@ lje(G,Vs1):-
 lje_imp((C->D),B,Vs):-!,lje((C->D),[(D->B)|Vs]).
 lje_imp(A,_,Vs):-atomic(A),memberchk(A,Vs).   
 
-head_of(_->B,G):-!,head_of(B,G).
-head_of(G,G).
+
 
 % Dyckhoff's LJT - (fig 2 in his paper), 
 % enhanced with add_new avoid duplications
