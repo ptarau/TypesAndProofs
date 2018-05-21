@@ -23,9 +23,6 @@
 [prog=xprove,size=14,pos=5.68,neg=6.33,total=12.02]
 [prog=xprove,size=15,pos=26.18,neg=6.33,total=32.51]
 
-[prog=hhprove,size=13,pos=0.92,neg=0.09,total=1.02]
-[prog=hhprove,size=14,pos=4.12,neg=1.65,total=5.78]
-[prog=hhprove,size=15,pos=19.1,neg=1.65,total=20.76]
 
 [prog=dprove,size=13,pos=2.07,neg=0.32,total=2.4]
 [prog=dprove,size=14,pos=10.43,neg=5.55,total=15.99]

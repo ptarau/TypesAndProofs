@@ -80,38 +80,6 @@ toImp(X=Y,R):-
 toImp(X^Y, R):-
   toImp(~(X->Y) + ~(Y->X), R).
   
-  
-% trims implications when statically equivalent to A->A
-qprove(T0):-
-  trimImps(T0,T),
-  %ppp(T),
-  ljq(T,[]),!.
-
-qprove0(T0):-trimImps(T0,_). % for benchmarking baseline
-  
-ljq(A,Vs):-memberchk(A,Vs),!.
-ljq((A->B),Vs1):-!,add_new(A,Vs1,Vs2),ljq(B,Vs2). 
-ljq(G,Vs1):- % atomic(G),
-  select(As,Vs1,Vs2),
-  imphead(As,B),
-  impsel(A,As,Bs),
-  ljq_imp(A,B,Vs2),
-  !,
-  add_new(Bs,Vs2,Vs3),
-  ljq(G,Vs3).
-
-ljq_imp(A,_,Vs):-atomic(A),!,memberchk(A,Vs).   
-ljq_imp((C->D),B,Vs1):-    
-    add_new((D->B),Vs1,Vs2),
-    add_new(C,Vs2,Vs3),
-    ljq(D,Vs3).
-
-imphead(_->As,H):-!,imphead(As,H).
-imphead(H,H).
-
-impsel(A,(A->Bs),Bs).
-impsel(A,(B->Bs),(B->Cs)):-impsel(A,Bs,Cs).  
-
 
 % simple evaluator / truth table generator
 % for classic implicational formulas

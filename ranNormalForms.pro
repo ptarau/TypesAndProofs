@@ -1,19 +1,22 @@
 % random typable normal form, using Boltzmann sampler
 % combined with fast type inference algorithm
 
-ranTNF(N,X:T,TSize):-ranTNF(random,N,1,X:T,_Size),tsize(T,TSize).
+ranTNF(N,X:T):-ranTNF(random,N,X:T).
 
-ranSeededTNF(Seed,N,K,T):-ranTNF(Seed,N,K,_X:T,_Size).
+ranTNF(Seed,N,XT):-ranTNF(Seed,N,XT,_Sizes).
+
+ranTNF(Seed,N,XT,Sizes):-ranTNF(Seed,N,1,XT,Sizes).
 
 % API - replicable
-ranTNF(Seed,N,K,X:T,Size):-
+ranTNF(Seed,N,K,X:T,Size:TSize):-
   set_random(seed(Seed)),
   MaxSteps=1000000,
   Max is truncate(N*(11/10)),
   Min is truncate(N*(9/10)),  
   between(1,K,_),
   ranTypableNF0(Max,Min,MaxSteps,X,T,Size,_Steps),
-  natvars(T).
+  natvars(T),
+  tsize(T,TSize).
   
 
 boltzmann_nf_lambda(R):-R<0.3333158264186935. % an l/1, otherwise neutral

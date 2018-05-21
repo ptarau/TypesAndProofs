@@ -13,11 +13,11 @@ cbmark(N,P,Res):-prep(P,BL),!,
  bmark(N,P,nfTypes,allClassFormulas,BL,Res).
 
 rbmark(N,P,Res):-prep(P,BL),!,
-  bmark(N,P,ranSeededTNF,ranImpSeededFormulas,BL,Res).
+  bmark(N,P,ranTNF,ranImpSeededFormulas,BL,Res).
 
 ranSeededTNF(N,T):-
   Seed=42,K=100,
-  ranSeededTNF(Seed,N,K,T),
+  ranTNF(Seed,N,K,T,_Sizes),
   %ppp(T),
   true.
 
@@ -90,14 +90,16 @@ prep(Name,Prog):-throw(unknown_prep(Name,Prog)).
 preprocessor(dprove,(=)).
 preprocessor(lprove,(=)).
 preprocessor(bprove,(=)).
+preprocessor(jprove,(=)).
 preprocessor(eprove,(=)).
 preprocessor(pprove,(=)).
+preprocessor(qprove,(=)).
 preprocessor(sprove,(=)).
 preprocessor(hprove,toHorn).
 preprocessor(timed_hprove,toHorn).
 preprocessor(timed_hprove(_),toHorn).
+preprocessor(iprove,toHorn).
 preprocessor(xprove,toHorn).
-preprocessor(hhprove,toSortedHorn).
 preprocessor(vprove,toListHorn).
 preprocessor(fprove,toListHorn).
 preprocessor(gprove,dneg_expand).
@@ -114,6 +116,7 @@ nice_num(X,R):-R is (truncate(X*1000))/1000.
 
 
 hbm(N,P,Counts,Time=T2-T1):-
+  assertion(member(P,[ljh,lji,ljy,ljz,ljg])),
   new_ctr(All),
   time(
   do((

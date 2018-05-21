@@ -62,9 +62,14 @@ pstest(N,F):-
   %nl,ppp(X),ppp(T),
   natvars(CT),
   call(F,CT,CX),
-  \+ (X=@=CX),
-  ppp(while_term_inhabiting_it=X:T),
-  ppp(other_inhabitant_found__=CX:CT),nl,
+  ( \+type_of(CX,_)->
+    ppp(sprove(CT,is_bad)),
+    ppp(untypable_lambda_term=CX),nl
+  ; fail, 
+    \+ (X=@=CX),
+    ppp(while_term_inhabiting_it=X:T),
+    ppp(other_inhabitant_found__=CX:CT),nl
+  ),
   fail.
 
 % test against all well formed implicational expressions

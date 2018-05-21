@@ -63,6 +63,53 @@ ljb_imp(A,_,Vs):-atomic(A),memberchk(A,Vs).
 
 
 
+jprove(T):-ljj(T,[]),!.
+
+ljj(A,Vs):-memberchk(A,Vs),!.
+ljj((A->B),Vs):-!,ljj(B,[A|Vs]). 
+ljj(G,Vs1):-
+  select((A->B),Vs1,Vs2),
+  ljj_imp(A,B,Vs2),
+  !,
+  ljj(G,[B|Vs2]).
+
+ljj_imp((C->D),B,Vs):-!,
+  ljj(D,[C,(D->B)|Vs]).
+ljj_imp(A,_,Vs):-
+  atomic(A),memberchk(A,Vs).   
+
+
+% variant of bprove that produces
+% lambda terms as proofs
+
+sprove(T):-sprove(T,_).
+
+sprove(T,X):-ljs(X,T,[]),!.
+
+ljs(X,T):-ljs(X,T,[]),!.
+
+%ljs(X,A,Vs):-ppp(ljs(X,A,Vs)),fail.
+
+ljs(X,A,Vs):-memberchk(X:A,Vs),!. % leaf variable
+
+ljs(l(X,E),(A->B),Vs):-!,ljs(E,B,[X:A|Vs]).  % lambda term
+
+ljs(E,G,Vs1):- 
+  member(_:V,Vs1),head_of(V,G),!, % fail if non-tautology
+  select(S:(A->B),Vs1,Vs2),   % source of application
+  ljs_imp(T,A,B,Vs2),         % target of application
+  !,
+  ljs(E,G,[a(S,T):B|Vs2]).    % application
+
+ljs_imp(E,A,_,Vs):-atomic(A),!,memberchk(E:A,Vs).   
+ljs_imp(l(X,l(Y,E)),(C->D),B,Vs):-
+  ljs(E,D,[X:C,Y:(D->B)|Vs]),
+  %ljs(E,(C->D),[_:(D->B)|Vs]),
+  true.
+  
+apply_imp(P,Q,a(P,a(Q,l(Y,a(P,l(_X,Y)))))).
+apply_atom(P,Q,a(P,Q)).
+
 eprove(T):-lje(T,[]),!.
 
 lje(A,Vs):-memberchk(A,Vs),!.
@@ -195,29 +242,36 @@ select_imp(G,[U|Vs],Us,End):-
   select_imp(G,Vs,[U|Us],End).
 
 
-% variant of bprove that produces
-% lambda terms as proofs
+% trims implications when statically equivalent to A->A
+qprove(T0):-
+  trimImps(T0,T),
+  %ppp(T),
+  ljq(T,[]),!.
 
-sprove(T):-sprove(T,_).
-
-sprove(T,X):-ljs(X,T,[]),!.
-
-ljs(X,T):-ljs(X,T,[]),!.
-
-ljs(X,A,Vs):-memberchk(X:A,Vs),!. % leaf variable
-
-ljs(l(X,E),(A->B),Vs):-!,ljs(E,B,[X:A|Vs]).  % lambda term
-
-ljs(E,G,Vs1):- 
-  member(_:V,Vs1),head_of(V,G),!, % fail if non-tautology
-  select(S:(A->B),Vs1,Vs2),   % source of application
-  ljs_imp(T,A,B,Vs2),         % target of application
+qprove0(T0):-trimImps(T0,_). % for benchmarking baseline
+  
+ljq(A,Vs):-memberchk(A,Vs),!.
+ljq((A->B),Vs1):-!,add_new(A,Vs1,Vs2),ljq(B,Vs2). 
+ljq(G,Vs1):- % atomic(G),
+  select(As,Vs1,Vs2),
+  imphead(As,B),
+  impsel(A,As,Bs),
+  ljq_imp(A,B,Vs2),
   !,
-  ljs(E,G,[a(S,T):B|Vs2]).    % application
+  add_new(Bs,Vs2,Vs3),
+  ljq(G,Vs3).
 
-ljs_imp(X,A,_,Vs):-atomic(A),!,memberchk(X:A,Vs).   
-ljs_imp(E,(C->D),B,Vs):-ljs(E,(C->D),[_:(D->B)|Vs]).
+ljq_imp(A,_,Vs):-atomic(A),!,memberchk(A,Vs).   
+ljq_imp((C->D),B,Vs1):-    
+    add_new((D->B),Vs1,Vs2),
+    add_new(C,Vs2,Vs3),
+    ljq(D,Vs3).
 
+imphead(_->As,H):-!,imphead(As,H).
+imphead(H,H).
+
+impsel(A,(A->Bs),Bs).
+impsel(A,(B->Bs),(B->Cs)):-impsel(A,Bs,Cs).  
 
 
 % assumes all hypotheses at once

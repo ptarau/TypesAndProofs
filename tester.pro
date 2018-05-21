@@ -24,9 +24,6 @@ rptest(Seed,TSize,N,K,P):-
 % type of S-combinator  
 ts_(((A->(B->C))->((A->B)->(A->C)))).
 
-apply_imp(P,Q,a(P,a(Q,l(Y,a(P,l(_,Y)))))).
-
-
 % a few  quick tests
 
 t1:-N=50,K=20,P=hprove,time(ran_typed(N,K,K,P,X:T)),ppp(X),ppp(T),fail.
@@ -77,7 +74,7 @@ axtest:-
 
 ptest:-p_(T),ppp(T),nl,abduce_imp(bprove,T,R),ppp(R),fail.
 
-htest:-hard(T),natvars(T),hhprove(T).
+htest:-hard(T),natvars(T),hprove(T).
 
 ihard(H):-hard(H),natvars(H).
 
@@ -204,5 +201,28 @@ biglamb:-
   fail
 ; ppp(done).
 
-  
-  
+% sprove?
+bug:- 
+   ranTNF(42,50,X:T),
+   ppp(x=X),
+   ppp(t=T),
+   type_of(X,T0),
+   subsumes_term(T0,T),
+   ppp(t0=T0),
+   T =T0,
+   sprove(T,XX),
+   ppp(xx=XX),
+   type_of(XX,TT),
+   ppp(TT).
+
+bug0:-
+   T=(0->(((1->2)->3)->2)->((1->2)->3)->3),
+   sprove(T,X),   
+   hprove(T),
+   ppp(t=T),
+   ppp(x=X),
+   %ppt(X),
+   type_of(X,TT),
+   ppp(tt=TT),
+   ppp(done).
+   

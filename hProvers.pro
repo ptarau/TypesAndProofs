@@ -2,7 +2,7 @@
 % preprocessing from implicational form
 % from which the translation is reversible
 
-hprove(T0):-toHorn(T0,T),ljh(T,[]),!.
+hprove(T0):-toHorn(T0,T),ljh(T).
 
 ljh(A):-ljh(A,[]),!.
 
@@ -23,16 +23,35 @@ ljh_imp((D:-Cs),B,Vs):- ljh((D:-Cs),[(B:-[D])|Vs]).
 trimmed((B:-[]),R):-!,R=B.
 trimmed(BBs,BBs).
 
-
-hhprove(T0):-toSortedHorn(T0,T),ljh(T,[]),!.
-
 timed_hprove(T):-timed_hprove(600,T).
 
 timed_hprove(Max,T):-
   timed_call(Max,hprove(T),Time),
   (compound(Time)->ppp(Time:T);true).
-  
+ 
+ 
+ 
+iprove(T0):-toHorn(T0,T),lji(T).  
 
+lji(A):-lji(A,[]),!.
+
+lji(A,Vs):-memberchk(A,Vs),!. 
+lji((B:-As),Vs1):-!,append(As,Vs1,Vs2),lji(B,Vs2).
+lji(G,Vs1):- % atomic(G), G not on Vs1
+  memberchk((G:-_),Vs1), % if not, we just fail
+  select((B:-As),Vs1,Vs2), % outer select loop
+  select(A,As,Bs),         % inner select loop
+  lji_imp(A,B,Bs,NewB,Vs2), % A element of the body of B
+  !,
+  lji(G,[NewB|Vs2]).
+
+lji_imp(A,B,[], B,Vs):-atomic(A),!,memberchk(A,Vs).
+lji_imp(A,B,Bs, (B:-Bs),Vs):-atomic(A),!,memberchk(A,Vs).
+lji_imp((D:-Cs),B,[], B,Vs):-!,lji((D:-Cs),[(B:-[D])|Vs]).
+lji_imp((D:-Cs),B,Bs, (B:-Bs),Vs):-lji((D:-Cs),[(B:-[D])|Vs]).
+
+  
+  
 fprove(T0):-toListHorn(T0,T),ljf(T,[]),!.
 
 ljf(A,Vs):-memberchk(A,Vs),!. 
@@ -82,10 +101,11 @@ vtrimmed([BB|Bs],B,G,Vs):-ljv(G,[[B,BB|Bs]|Vs]).
 % from which the translation is reversible except for order
 
 
-xprove(T0):-toHorn(T0,T),ljy(T,[]),!.
+xprove(T0):-toHorn(T0,T),ljy(T).
 
-yprove(T0):-toSortedHorn(T0,T),ljy(T,[]),!.
+yprove(T0):-toSortedHorn(T0,T),ljy(T).
 
+ljy(A):-ljy(A,[]),!.
 
 ljy(A,Vs):-memberchk(A,Vs),!. 
 ljy((B:-[B]),_):-!.
@@ -108,9 +128,9 @@ ljy_imp((D:-Cs),B,Vs1):-
 % variant of xprove, with nondeterministic part
 % confined to zreduce/2
 
-zprove_init(T0):-toSortedHorn(T0,_). % baseline for benchmarks
-
 zprove(T0):-toSortedHorn(T0,T),ljz(T,[]),!.
+
+ljz(A):-ljz(A,[]),!.
 
 ljz(A,Vs):-memberchk(A,Vs),!. 
 ljz((B:-[B]),_):-!.
@@ -130,9 +150,9 @@ ljz_imp((D:-Cs),B,Vs1):-
   add_new((B:-[D]),Vs1,Vs2), % assume that A's head implies B
   ljz((D:-Cs),Vs2).          % prove A under that assumption
 
-hgprove(T0):-toHorn(T0,T),ljg(T,[]),!.
+hgprove(T0):-toHorn(T0,T),ljg(T).
 
-hhgprove(T0):-toSortedHorn(T0,T),ljg(T,[]),!.
+ljg(A):-ljg(A,[]),!.
 
 ljg(A,Vs):-memberchk(A,Vs),!. 
 ljg((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljg(B,Vs2).
