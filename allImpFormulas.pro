@@ -29,13 +29,7 @@ allClassFormulas(N,T,NNT):-
   vpartitions(Vs),
   dneg(T,NNT),
   natvars(Vs).
- 
-showImpForms(N):-
-  do((
-    genTree(N,T,Vs),
-    vpartitions(Vs),
-    ppp(T)
-  )).
+  
 
 seqCountImpFormulas(N,TotalCount):-
   seqCountImpFormulas(_,N,TotalCount).

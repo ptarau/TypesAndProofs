@@ -23,14 +23,15 @@ ljh_imp((D:-Cs),B,Vs):- ljh((D:-Cs),[(B:-[D])|Vs]).
 trimmed((B:-[]),R):-!,R=B.
 trimmed(BBs,BBs).
 
+
+% timed variants
+
 timed_hprove(T):-timed_hprove(600,T).
 
 timed_hprove(Max,T):-
   timed_call(Max,hprove(T),Time),
   (compound(Time)->ppp(Time:T);true).
- 
- 
- 
+  
 iprove(T0):-toHorn(T0,T),lji(T).  
 
 lji(A):-lji(A,[]),!.

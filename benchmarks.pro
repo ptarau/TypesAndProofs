@@ -5,7 +5,7 @@ xbm0:-xbm(10,12).
 xbm:-tell('bm.txt'),xbm(13,15),told.
 
 xbm(From,To):-
-  member(P,[lprove,bprove,sprove,pprove,hprove,xprove,hhprove]),
+  member(P,[lprove,bprove,sprove,pprove,hprove,xprove]),
   nl,between(From,To,N),
     bm(N,P),
   fail

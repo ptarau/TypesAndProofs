@@ -26,18 +26,36 @@ ranImpFormulas(Seed,N,PartCount,TreeCount,T):-
   remy(N,T,Vs),
   between(1,PartCount,_),
   ranPart(N1,Bell,Vs).
-
-  
+ 
 ranTypedImp(MaxSeed,M,N,T):-
   between(1,MaxSeed,Seed),
   ranImpFormula(Seed,M,T),
-  vprove(T),
+  hprove(T),
   sprove(T,X),
   type_of(X,TT),
   tsize(TT,Size),
   Size>N.
   
 bigTypedImp(T):-ranTypedImp(20000,36,16,T).  
+
+bigtest:-do((bigTypedImp(T),hprove(T),ppp(T))).
+
+
+ranShow:-MSeed=1000,M=7,
+ do((
+   between(0,MSeed,Seed),
+   ranImpFormula(Seed,M,T0),
+   sprove1(T0,X),lsize(X,S),S>=M,
+   varvars(T0,T),
+   ppp(T),
+   ppp(X),
+   nl,
+   ppt(X:T),
+   qqq(X:T),
+   nl,
+   ppp('-------------')
+ )).
+  
 
 /*
 
