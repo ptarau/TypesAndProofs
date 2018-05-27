@@ -50,6 +50,8 @@ ljt(G,Vs1):- %atomic(G),                % imp => 1, atom A
 
 bprove(T):-ljb(T,[]),!.
 
+%ljb(A,Vs):-ppp((Vs-->A)),fail. % fo traing only
+
 ljb(A,Vs):-memberchk(A,Vs),!.
 ljb((A->B),Vs):-!,ljb(B,[A|Vs]). 
 ljb(G,Vs1):-
@@ -63,22 +65,6 @@ ljb_imp(A,_,Vs):-atomic(A),memberchk(A,Vs).
 
 
 
-jprove(T):-ljj(T,[]),!.
-
-ljj(A,Vs):-memberchk(A,Vs),!.
-ljj((A->B),Vs):-!,ljj(B,[A|Vs]). 
-ljj(G,Vs1):-
-  select((A->B),Vs1,Vs2),
-  ljj_imp(A,B,Vs2),
-  !,
-  ljj(G,[B|Vs2]).
-
-ljj_imp((C->D),B,Vs):-!,
-  ljj(D,[C,(D->B)|Vs]).
-ljj_imp(A,_,Vs):-
-  atomic(A),memberchk(A,Vs).   
-
-
 % variant of bprove that produces
 % lambda terms as proofs
 
@@ -88,7 +74,7 @@ sprove(T,X):-ljs(X,T,[]),!.
 
 ljs(X,T):-ljs(X,T,[]),!.
 
-%ljs(X,A,Vs):-ppp(ljs(X,A,Vs)),fail.
+%ljs(X,A,Vs):-ppp((Vs-->X:A)),fail. % just for tracing
 
 ljs(X,A,Vs):-memberchk(X:A,Vs),!. % leaf variable
 
@@ -101,10 +87,23 @@ ljs(E,G,Vs1):-
   !,
   ljs(E,G,[a(S,T):B|Vs2]).    % application
 
-ljs_imp(E,A,_,Vs):-atomic(A),!,memberchk(E:A,Vs).   
-ljs_imp(l(X,l(Y,E)),(C->D),B,Vs):-
-  ljs(E,D,[X:C,Y:(D->B)|Vs]).
 
+ljs_imp(E,A,_,Vs):-atomic(A),!,memberchk(E:A,Vs).   
+ljs_imp(l(X,E),(C->D),B,Vs):-ljs(E,(C->D),[X:(D->B)|Vs]).
+
+/*  
+ljs_imp(E,A,_,Vs):-atomic(A),!,memberchk(E:A,Vs).   
+ljs_imp(l(X,E),(C->D),B,Vs):-ljs(E,(C->D),[X:(D->B)|Vs]),
+  type_of(l(X,E),T),
+  varvars((C->D),TT),
+  ppp(l(X,E):has(TT)=inf(T)),
+  assertion(TT=T),
+  ppp(T),nl.
+*/
+
+%ljs_imp(E,A,_,Vs):-atomic(A),!,memberchk(E:A,Vs).   
+%ljs_imp(l(X,l(Y,E)),(C->D),B,Vs):-ljs(E,D,[X:C,Y:(D->B)|Vs]). 
+ 
 head_of(_->B,G):-!,head_of(B,G).
 head_of(G,G).  
   
@@ -112,9 +111,9 @@ eprove(T):-lje(T,[]),!.
 
 lje(A,Vs):-memberchk(A,Vs),!.
 lje((A->B),Vs):-!,lje(B,[A|Vs]). 
-lje(G,Vs1):-
-  member(T,Vs1),head_of(T,G),!,
-  select((A->B),Vs1,Vs2),
+lje(G,Vs0):-
+  select(T,Vs0,Vs1),head_of(T,G),!,
+  select((A->B),[T|Vs1],Vs2),
   lje_imp(A,B,Vs2),
   !,
   lje(G,[B|Vs2]).

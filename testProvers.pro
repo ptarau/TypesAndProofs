@@ -57,9 +57,9 @@ pstest(N,F):-
     ppp(untypable_lambda_term=CX),nl,
     assertion(type_of(CX,_))
   ;  
-    \+ (X=@=CX),
-    ppp(while_term_inhabiting_it=X:T),
-    ppp(other_inhabitant_found__=CX:CT),nl
+    \+ (X=@=CX)
+   % ,ppp(while_term_inhabiting_it=X:T),
+   % ppp(other_inhabitant_found__=CX:CT),nl
   ),
   fail.
 

@@ -7,6 +7,17 @@ toHorn(H,H).
 toHorns((A->B),[HA|Bs],H):-!,toHorn(A,HA),toHorns(B,Bs,H).
 toHorns(H,[],H).    
 
+
+
+toFullHorn((A->B),(H:-Bs)):-!,toFullHorns((A->B),Bs,H).
+toFullHorn(H,(H:-[])).
+
+toFullHorns((A->B),[HA|Bs],H):-!,
+  toFullHorn(A,HA),
+  toFullHorns(B,Bs,H).
+toFullHorns(H,[],H).    
+
+
 toListHorn((A->B),[H|Bs]):-!,toListHorns((A->B),Bs,H).
 toListHorn(H,H).
 

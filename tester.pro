@@ -58,6 +58,20 @@ t12:-parRanTypedTNF(42,50,50,10,XT,S),natvars(XT),ppp((size(S)=XT)),fail.
 
 t13:- do hbm(8,ljh,Counts,T),ppp(T),K is Counts,ppp(K).
 
+
+t14:- do((
+   T=(((a->b)->c) -> (a->(b->c))), 
+   ppp(t=T),
+   sprove(T,X),
+   ppp(x=X),
+   type_of(X,TT),
+   ppp(tt=TT),
+   natvars(TT),
+   sprove(TT,XX),
+   ppp(xx=XX)
+)).
+   
+
 % K combinator
 k_(0->1->0).
 % S combinator

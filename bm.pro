@@ -90,12 +90,13 @@ prep(Name,Prog):-throw(unknown_prep(Name,Prog)).
 preprocessor(dprove,(=)).
 preprocessor(lprove,(=)).
 preprocessor(bprove,(=)).
-preprocessor(jprove,(=)).
 preprocessor(eprove,(=)).
 preprocessor(pprove,(=)).
 preprocessor(qprove,(=)).
 preprocessor(sprove,(=)).
 preprocessor(hprove,toHorn).
+%preprocessor(uprove,toFullHorn).
+preprocessor(jprove,toHorn).
 preprocessor(timed_hprove,toHorn).
 preprocessor(timed_hprove(_),toHorn).
 preprocessor(iprove,toHorn).
@@ -116,7 +117,7 @@ nice_num(X,R):-R is (truncate(X*1000))/1000.
 
 
 hbm(N,P,Counts,Time=T2-T1):-
-  assertion(member(P,[ljh,lji,ljy,ljz,ljg])),
+  assertion(member(P,[ljh,ljj,lji,ljy,ljz,ljg])),
   new_ctr(All),
   time(
   do((

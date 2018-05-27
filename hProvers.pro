@@ -6,6 +6,7 @@ hprove(T0):-toHorn(T0,T),ljh(T).
 
 ljh(A):-ljh(A,[]),!.
 
+%ljh(A,Vs):-ppp((Vs->A)),fail. % just to trace steps
 ljh(A,Vs):-memberchk(A,Vs),!. 
 ljh((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljh(B,Vs2).
 ljh(G,Vs1):- % atomic(G), G not on Vs1
@@ -23,6 +24,36 @@ ljh_imp((D:-Cs),B,Vs):- ljh((D:-Cs),[(B:-[D])|Vs]).
 trimmed((B:-[]),R):-!,R=B.
 trimmed(BBs,BBs).
 
+
+jprove(T0):-toHorn(T0,T),ljj(T).
+
+ljj(A):-ljj(A,[]),!.
+
+ljj(A,Vs):-memberchk(A,Vs),!. 
+ljj((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljj(B,Vs2).
+ljj(G,Vs0):- % atomic(G), G not on Vs1
+  GGs=(G:-_),
+  select(GGs,Vs0,Vs1), % if not, we just fail
+  !,
+  ( (B:-As)=GGs,Vs1=Vs2 
+  ; select((B:-As),Vs1,Vs2)
+  ), % outer select loop
+  select(A,As,Bs),         % inner select loop
+  ljj_imp(A,B,Vs2), % A element of the body of B
+  !,
+  trimmed((B:-Bs),NewB), % trim empty bodies
+  ljj(G,[NewB|Vs2]).
+
+
+ljj_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
+ljj_imp((D:-Cs),B,Vs):- lju((D:-Cs),[(B:-[D])|Vs]).
+
+/*
+ljj_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
+ljj_imp((D:-Cs),B,Vs1):- 
+  append(Cs,Vs1,Vs2),
+  ljj(D,[(B:-[D])|Vs2]).
+*/
 
 % timed variants
 
