@@ -71,7 +71,26 @@ t14:- do((
    ppp(xx=XX)
 )).
    
-
+t15:-
+ A=(1->2->(5->((7->8->9)->6)->4)->0),
+ toHorn(A,H),
+ flattenHorn(9,H,F),
+ ppp(A),
+ ppt(A),
+ nl,
+ 
+ ppp(H),
+ ppt(H),
+ hdepth(H,DH),
+ ppp(hdepth=DH),
+ nl,
+ 
+ ppp(F),
+ ppt(F),
+ nl,
+ hdepth(F,DF),
+ ppp(hdepth=DF).
+ 
 % K combinator
 k_(0->1->0).
 % S combinator
@@ -216,7 +235,7 @@ biglamb:-
 ; ppp(done).
 
 % sprove?
-bug:- 
+nobug:- 
    ranTNF(42,50,X:T),
    ppp(x=X),
    ppp(t=T),
@@ -229,7 +248,7 @@ bug:-
    type_of(XX,TT),
    ppp(TT).
 
-bug0:-
+nobug0:-
    T=(0->(((1->2)->3)->2)->((1->2)->3)->3),
    sprove(T,X),   
    hprove(T),
@@ -240,3 +259,33 @@ bug0:-
    ppp(tt=TT),
    ppp(done).
    
+tamari:-
+  sprove(((0->1)->2) -> (0->(1->2))).
+  
+
+tam(T):-T=(((0->1)->2) -> (0->(1->2))).
+
+tamari1:-
+  T=(((0->1)->2) -> (0->(1->2))),
+  ppp(T),
+  ljs(X,T,[]),
+  ppp(X),
+  type_of(X,TT),natvars(TT),
+  ppp(TT),
+  ljs(XX,TT,[]),
+  ppp(XX),
+  type_of(XX,TTT),natvars(TTT),
+  ppp(TTT),
+  fail.
+  
+tamari2:-
+  T=(((A->B)->C) -> (A->(B->C))),
+  ppp(t_=T),natvars(T),
+  ljs(X,T,[]), 
+  type_of(X,TT),
+  ppp(tt=TT),
+  ppp(X),
+  T=TT, % not unifiable types
+  ppp(eq=T).
+  
+  

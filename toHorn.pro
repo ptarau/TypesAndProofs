@@ -113,3 +113,87 @@ proveYesNo(P,T,YesNo):-
   call(P,T)->YesNo=true
 ; YesNo=false.
   
+% equational forms - a flattening to a Horn clause
+% of at most depth 3
+
+hdepth(V,R):-(var(V);atomic(V)),!,R=0.
+hdepth((_:-Bs),D):-!,
+  maplist(hdepth,Bs,Ds),
+  max_list(Ds,M),
+  D is M+1.
+
+
+hsize((_:-Bs),D):-!,
+  maplist(hsize,Bs,Ds),
+  sum_list(Ds,M),
+  D is M+1.
+hsize(_,1).
+  
+% flattens to embedded Horn clauses of depth at most 3
+
+toFlatHorn(A,Horn3):-
+  toHorn(A,Horn),
+  maxvar(A,M),
+  flattenHorn(M,Horn,Horn3).
+  
+flattenHorn(M,(H:-Bs),(H:-Fs)):-  
+  collect_deep(Bs,Shallow,Deep),
+  maplist(flattenDeep,Deep,Heads,Fss,Vss),
+  append([Shallow,Heads|Fss],Fs),
+  append(Vss,Vs),
+  Min is M+1,
+  natvars(Min,Vs).
+
+flattenDeep(HBs,(H:-Bs),Fs,Vs):-
+  toHorn(A,HBs),
+  to_horneq(A,(H:-Bs),Es,[]),
+  toFlatEqs(Es,Vs,Fs,[]).
+  
+collect_deep([],[],[]).
+collect_deep([T|Ts],[T|Ls],Rs):-hdepth(T,D),D=<2,!,
+  collect_deep(Ts,Ls,Rs).
+collect_deep([T|Ts],Ls,[T|Rs]):-
+  collect_deep(Ts,Ls,Rs).  
+
+%toFlatHorn(A,FA):-toHorn(A,HA),hdepth(HA,D),D=<3,!,FA=HA.
+toFlatHorn1(A,(H:-Fs)):-
+  maxvar(A,M),Min is M+1,
+  toFlatHornEq(A,H,Fs,Vs),
+  natvars(Min,Vs).
+
+toFlatHornEq(A,H,Fs,Vs):-  
+ to_horneq(A,(H:-Bs),Es,[]),
+ toFlatEqs(Es,Vs,Fs,Bs).
+
+toFlatEqs([],[])-->[].
+toFlatEqs([V=(H:-Bs)|Es],[V|Vs])-->
+  [V:-[H:-Bs]],
+  [(H:-[V|Bs])],
+  toFlatEqs(Es,Vs).
+ 
+%%%  
+  
+toHornEq(A,(H:-Es)):- 
+  to_horneq(A,(H:-Bs),Es,Bs),
+  maxvar(A,M),Min is M+1,natvars(Min,Es).
+  
+to_horneq(A, HBs,Es):-to_horneq(A,HBs,Es,[]).
+
+to_horneq(A,H)-->{atomic(A)},!,{H=A}.
+to_horneq(A,(H:-Bs))-->to_horneqs(A,Bs,H).
+
+to_horneqs((A->B),[R|Bs],H)-->!,
+   to_horneq(A,HA),
+   to_eq(HA,R),
+   to_horneqs(B,Bs,H).
+to_horneqs(A,[],H)-->to_horneq(A,H).
+
+to_eq(HA,R)--> {atomic(HA)},
+  !,
+  {R=HA}.
+  to_eq(HA,V)-->[V=HA].
+  
+  
+
+
+  

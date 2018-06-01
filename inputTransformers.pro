@@ -23,12 +23,18 @@ maxvar(I,R):-must_be(integer,I),R=I.
 % turns a term into a ground one by banding
 % logic variables in it to 0,1,...
 
-natvars(T):-
+natvars(T):-natvars(0,T).
+
+natvars(Min,T):-
   must_be(acyclic,T),
   term_variables(T,Vs),
   length(Vs,L1),
+  L1>0,
+  !,
   L is L1-1,
-  numlist(0,L,Vs).
+  Max is Min+L,
+  numlist(Min,Max,Vs).
+natvars(_,_).
 
 % same, but throws in atom "false"
 % as first variable to bind

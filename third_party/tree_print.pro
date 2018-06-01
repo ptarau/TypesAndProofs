@@ -28,9 +28,19 @@ Out of print, now */
 ppt(Tree):-acyclic_term(Tree),!,ppt0(Tree).
 ppt(Tree):-term_factorized(Tree,Skel,Eqs),
   ppt0([Skel|Eqs]).
+
+listify(X,R):-(atomic(X);var(X)),!,R=X.  
+listify(Xs,T):-is_list(Xs),!,
+  maplist(listify,Xs,Ys),
+  T=..['[]'|Ys].
+listify(FXs,T):-FXs=..[F|Xs],
+  maplist(listify,Xs,Ys),
+  T=..[F|Ys].
+
+ppt0(T):-listify(T,LT),ppt1(LT).
   
-ppt0(Xs):-is_list(Xs),!,T=..['$list'|Xs],ppt1(T). 
-ppt0(T):-ppt1(T).
+%ppt0(Xs):-is_list(Xs),!,T=..['$list'|Xs],ppt1(T). 
+%ppt0(T):-ppt1(T).
 
 ppt1(Tree):-drucke_baum(Tree),fail;true.
 

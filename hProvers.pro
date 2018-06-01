@@ -6,7 +6,7 @@ hprove(T0):-toHorn(T0,T),ljh(T).
 
 ljh(A):-ljh(A,[]),!.
 
-%ljh(A,Vs):-ppp((Vs->A)),fail. % just to trace steps
+%ljh(A,Vs):-ppp((Vs-->A)),fail. % just to trace steps
 ljh(A,Vs):-memberchk(A,Vs),!. 
 ljh((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljh(B,Vs2).
 ljh(G,Vs1):- % atomic(G), G not on Vs1
@@ -24,6 +24,35 @@ ljh_imp((D:-Cs),B,Vs):- ljh((D:-Cs),[(B:-[D])|Vs]).
 trimmed((B:-[]),R):-!,R=B.
 trimmed(BBs,BBs).
 
+% transforms to an equational form, then depth at most 3 Horn
+
+wprove(A):-toFlatHorn(A,B),ljh(B).
+
+
+oprove(T0):-toHorn(T0,T),ljo(T).
+
+ljo(A):-ljo(A,[]),!.
+
+%ljo(A,Vs):-ppp((Vs-->A)),fail. % just to trace steps
+ljo(A,Vs):-memberchk(A,Vs),!. 
+ljo((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljo(B,Vs2).
+ljo(G,Vs1):- % atomic(G), G not on Vs1
+  selsel(G,A,B,Bs,Vs1,Vs2),
+  ljo_imp(A,B,Vs2), % A element of the body of B
+  !,
+  trimmed((B:-Bs),NewB), % trim empty bodies
+  ljo(G,[NewB|Vs2]).
+  
+ljo_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
+ljo_imp((D:-Cs),B,Vs):- ljo((D:-Cs),[(B:-[D])|Vs]).
+
+
+
+selsel(G,A,B,Bs,Vs1,Vs2):-
+  memberchk((G:-_),Vs1),
+  select(B:-As,Vs1,Vs2),
+  select(A,As,Bs).
+  
 
 jprove(T0):-toHorn(T0,T),ljj(T).
 
@@ -46,7 +75,7 @@ ljj(G,Vs0):- % atomic(G), G not on Vs1
 
 
 ljj_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
-ljj_imp((D:-Cs),B,Vs):- lju((D:-Cs),[(B:-[D])|Vs]).
+ljj_imp((D:-Cs),B,Vs):- ljj((D:-Cs),[(B:-[D])|Vs]).
 
 /*
 ljj_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
@@ -82,8 +111,6 @@ lji_imp(A,B,Bs, (B:-Bs),Vs):-atomic(A),!,memberchk(A,Vs).
 lji_imp((D:-Cs),B,[], B,Vs):-!,lji((D:-Cs),[(B:-[D])|Vs]).
 lji_imp((D:-Cs),B,Bs, (B:-Bs),Vs):-lji((D:-Cs),[(B:-[D])|Vs]).
 
-  
-  
 fprove(T0):-toListHorn(T0,T),ljf(T,[]),!.
 
 ljf(A,Vs):-memberchk(A,Vs),!. 
