@@ -29,7 +29,7 @@ trimmed(BBs,BBs).
 wprove(A):-toFlatHorn(A,B),ljh(B).
 
 
-% seiing a hprove as working on Horn clauses with compound heads
+% seeing  hprove as working on Horn clauses with compound heads
 
 hhprove(A):-toHorn(A,H),hlj(H),!.
 
@@ -68,14 +68,11 @@ ljo(G,Vs1):- % atomic(G), G not on Vs1
 ljo_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
 ljo_imp((D:-Cs),B,Vs):- ljo((D:-Cs),[(B:-[D])|Vs]).
 
-
-
 selsel(G,A,B,Bs,Vs1,Vs2):-
   memberchk((G:-_),Vs1),
   select((B:-As),Vs1,Vs2),
   select(A,As,Bs).
   
-
 jprove(T0):-toHorn(T0,T),ljj(T).
 
 ljj(A):-ljj(A,[]),!.

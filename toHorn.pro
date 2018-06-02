@@ -134,12 +134,24 @@ hsize(_,1).
 
 toFlatHorn(A,Horn3):-
   toHorn(A,Horn),
-  flattenIfNeeded(A,Horn,Horn3).
+  maxvar(A,M),
+  flattenIfNeeded(M,Horn,Horn3).
+
+flattenHorn(Horn,Horn3):-hdepth(Horn,D),D=<3,!,Horn3=Horn.
+flattenHorn(Horn,Horn3):-
+  limHornVar(Horn,Lim),
+  flattenHorn(Lim,Horn,Horn3).
+  
+limHornVar(A,M):-maxHornVar(A,M0),M is M0+1.
+
+maxHornVar(A,M):-integer(A),!,M=A.
+maxHornVar((H:-Bs),M):-
+  maplist(maxHornVar,Bs,Ms),
+  max_list(Ms,M0),
+  M is max(H,M0).
 
 flattenIfNeeded(_,Horn,Horn3):-hdepth(Horn,D),D=<3,!,Horn3=Horn.  
-flattenIfNeeded(A,Horn,Horn3):-  
-  maxvar(A,M),
-  flattenHorn(M,Horn,Horn3).
+flattenIfNeeded(M,Horn,Horn3):-flattenHorn(M,Horn,Horn3).
   
 flattenHorn(M,(H:-Bs),(H:-Fs)):-  
   collect_deep(Bs,Shallow,Deep),
@@ -184,16 +196,17 @@ toHornEq(A,(H:-Es)):-
   
 to_horneq(A, HBs,Es):-to_horneq(A,HBs,Es,[]).
 
-to_horneq(A,H)-->{atomic(A)},!,{H=A}.
+to_horneq(A,H)-->{atomic(A);var(A)},!,{H=A}.
 to_horneq(A,(H:-Bs))-->to_horneqs(A,Bs,H).
 
+to_horneqs(A,[],H)-->{atomic(A);var(A)},!,to_horneq(A,H).
 to_horneqs((A->B),[R|Bs],H)-->!,
    to_horneq(A,HA),
    to_eq(HA,R),
    to_horneqs(B,Bs,H).
-to_horneqs(A,[],H)-->to_horneq(A,H).
 
-to_eq(HA,R)--> {atomic(HA)},
+
+to_eq(HA,R)--> {atomic(HA);var(HA)},
   !,
   {R=HA}.
   to_eq(HA,V)-->[V=HA].
