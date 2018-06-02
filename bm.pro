@@ -95,6 +95,7 @@ preprocessor(pprove,(=)).
 preprocessor(qprove,(=)).
 preprocessor(sprove,(=)).
 preprocessor(hprove,toHorn).
+preprocessor(hhprove,toHorn).
 preprocessor(wprove,toFlatHorn).
 preprocessor(oprove,toHorn).
 preprocessor(jprove,toHorn).
@@ -118,7 +119,7 @@ nice_num(X,R):-R is (truncate(X*1000))/1000.
 
 
 hbm(N,P,Counts,Time=T2-T1):-
-  assertion(member(P,[ljh,ljj,lji,ljy,ljz,ljg])),
+  assertion(member(P,[hlj1,jlj,ljh,ljj,lji,ljy,ljz,ljg])),
   new_ctr(All),
   time(
   do((

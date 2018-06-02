@@ -5,6 +5,8 @@ allHornFormulas(N,T):-
   natvars(Ps),
   genHorn(N,T,Vs).
 
+% all Horn formulas with bodoies in canonical order
+% to break symmetries irrelevant for testing provers
 allSortedHorn(N,T):-
   succ(N,SN),length(Vs,SN),
   mpart_of(Vs,Ps),

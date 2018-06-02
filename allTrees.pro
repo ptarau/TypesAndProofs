@@ -50,6 +50,7 @@ sorted([_]):-!.
 sorted([X,Y|Xs]):-X@<Y,sorted([Y|Xs]).  
 */
 
+% A105633: [1,2,4,9,22,57,154,429,1223,3550,10455,31160,93802,284789]
 genSortedHorn(N,Tree,Leaves):-
   genSortedHorn(Tree,N,0,Leaves,[]).
 

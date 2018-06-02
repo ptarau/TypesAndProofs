@@ -131,8 +131,13 @@ hsize(_,1).
   
 % flattens to embedded Horn clauses of depth at most 3
 
+
 toFlatHorn(A,Horn3):-
   toHorn(A,Horn),
+  flattenIfNeeded(A,Horn,Horn3).
+
+flattenIfNeeded(_,Horn,Horn3):-hdepth(Horn,D),D=<3,!,Horn3=Horn.  
+flattenIfNeeded(A,Horn,Horn3):-  
   maxvar(A,M),
   flattenHorn(M,Horn,Horn3).
   

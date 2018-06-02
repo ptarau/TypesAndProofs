@@ -29,6 +29,28 @@ trimmed(BBs,BBs).
 wprove(A):-toFlatHorn(A,B),ljh(B).
 
 
+% seiing a hprove as working on Horn clauses with compound heads
+
+hhprove(A):-toHorn(A,H),hlj(H),!.
+
+hlj1(H):-hlj(H),!.
+
+hlj(A:-Vs):-memberchk(A,Vs),!. 
+hlj((B:-As):-Vs1):-!,append(As,Vs1,Vs2),hlj(B:-Vs2).
+hlj(G:-Vs1):- % atomic(G), G not on Vs1
+  memberchk((G:-_),Vs1), % if not, we just fail
+  select((B:-As),Vs1,Vs2), % outer select loop
+  select(A,As,Bs),         % inner select loop
+  hlj_imp(A,B,Vs2), % A element of the body of B
+  !,
+  trimmed((B:-Bs),NewB), % trim empty bodies
+  hlj(G:-[NewB|Vs2]).
+  
+hlj_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
+hlj_imp((D:-Cs),B,Vs):- hlj((D:-Cs):-[(B:-[D])|Vs]).
+
+
+
 oprove(T0):-toHorn(T0,T),ljo(T).
 
 ljo(A):-ljo(A,[]),!.
@@ -50,7 +72,7 @@ ljo_imp((D:-Cs),B,Vs):- ljo((D:-Cs),[(B:-[D])|Vs]).
 
 selsel(G,A,B,Bs,Vs1,Vs2):-
   memberchk((G:-_),Vs1),
-  select(B:-As,Vs1,Vs2),
+  select((B:-As),Vs1,Vs2),
   select(A,As,Bs).
   
 
@@ -65,7 +87,7 @@ ljj(G,Vs0):- % atomic(G), G not on Vs1
   select(GGs,Vs0,Vs1), % if not, we just fail
   !,
   ( (B:-As)=GGs,Vs1=Vs2 
-  ; select((B:-As),Vs1,Vs2)
+  ; select((B:-As),Vs1,Vs_),Vs2=[GGs|Vs_]
   ), % outer select loop
   select(A,As,Bs),         % inner select loop
   ljj_imp(A,B,Vs2), % A element of the body of B
