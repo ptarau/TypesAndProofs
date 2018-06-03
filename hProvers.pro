@@ -29,6 +29,41 @@ trimmed(BBs,BBs).
 wprove(A):-toFlatHorn(A,B),ljh(B).
 
 
+% reduces eagely, possibly better for Horn3
+% but tests do not confirm this
+h3prove(T0):-toHorn(T0,T),ljh3(T).
+
+w3prove(A):-toFlatHorn(A,B),ljh3(B).
+
+ljh3(A):-ljh3(A,[]),!.
+
+ljh3(A,Vs):-memberchk(A,Vs),!. 
+ljh3((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljh3(B,Vs2).
+ljh3(G,Vs1):-
+  memberchk((G:-_),Vs1),
+  ljh3_reduces(0,K,Vs1,Vs2_),K>0,sort(Vs2_,Vs2),
+  %ljh3_reduce(Vs1,Vs2),
+  %( K>5->ppp(K),ppp(Vs1),ppp(Vs2),nl;true),
+  ljh3(G,Vs2).
+
+ljh3_reduce(Vs1,[NewB|Vs2]):-
+  select((B:-As),Vs1,Vs2), % outer select loop
+  select(A,As,Bs),         % inner select loop
+  ljh3_imp(A,B,Vs2), % A element of the body of B
+  !,
+  trimmed((B:-Bs),NewB). % trim empty bodies
+  
+ljh3_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
+ljh3_imp((D:-Cs),B,Vs):- ljh((D:-Cs),[(B:-[D])|Vs]).
+
+% loops for reduce->reducesk
+ljh3_reduces(K1,K3,Vs1,Vs3):- succ(K1,K2),
+   ljh3_reduce(Vs1,Vs2),
+   %assertion(Vs1\=Vs2),
+   !,
+   ljh3_reduces(K2,K3,Vs2,Vs3).
+ljh3_reduces(K,K,Vs,Vs).
+
 % seeing  hprove as working on Horn clauses with compound heads
 
 hhprove(A):-toHorn(A,H),hlj(H),!.

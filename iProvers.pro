@@ -243,8 +243,6 @@ qprove(T0):-
   trimImps(T0,T),
   %ppp(T),
   ljq(T,[]),!.
-
-qprove0(T0):-trimImps(T0,_). % for benchmarking baseline
   
 ljq(A,Vs):-memberchk(A,Vs),!.
 ljq((A->B),Vs1):-!,add_new(A,Vs1,Vs2),ljq(B,Vs2). 

@@ -213,5 +213,17 @@ to_eq(HA,R)--> {atomic(HA);var(HA)},
   
   
 
-
+toFlatImp(A,B):-
+  toFlatHorn(A,F),
+  toHorn(B,F).
   
+  
+  
+horn2term(N,A):-integer(N),!,atom_number(A,N).
+horn2term((H:-Bs),T):-
+   maplist(horn2term,Bs,As),
+   atom_number(F,H),
+   T=..[F|As].
+
+   
+   

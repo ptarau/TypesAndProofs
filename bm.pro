@@ -95,8 +95,10 @@ preprocessor(pprove,(=)).
 preprocessor(qprove,(=)).
 preprocessor(sprove,(=)).
 preprocessor(hprove,toHorn).
+preprocessor(h3prove,toHorn).
 preprocessor(hhprove,toHorn).
 preprocessor(wprove,toFlatHorn).
+preprocessor(w3prove,toFlatHorn).
 preprocessor(oprove,toHorn).
 preprocessor(jprove,toHorn).
 preprocessor(timed_hprove,toHorn).
