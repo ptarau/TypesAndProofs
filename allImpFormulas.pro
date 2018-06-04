@@ -1,23 +1,29 @@
 % all implicational logic formulas of size N
 allHornFormulas(N,T):-
   succ(N,SN),length(Vs,SN),
-  mpart_of(Vs,Ps),
-  natvars(Ps),
+  natpartitions(Vs),
   genHorn(N,T,Vs).
 
-% all Horn formulas with bodoies in canonical order
+% all Horn formulas with bodies in canonical order
 % to break symmetries irrelevant for testing provers
 allSortedHorn(N,T):-
   succ(N,SN),length(Vs,SN),
-  mpart_of(Vs,Ps),
-  natvars(Ps),
+  natpartitions(Vs),
   genSortedHorn(N,T,Vs).
+
+% all Horn formulas with bodies in canonical order
+% to break symmetries irrelevant for testing provers
+% of depth at most 3, as deeper ones can be reduced to these
+
+allSortedHorn3(N,T):-
+  succ(N,SN),length(Vs,SN),
+  natpartitions(Vs),
+  genSortedHorn3(N,T,Vs).
   
 % all implicational logic formulas of size N
 allImpFormulas(N,T):-
   genTree(N,T,Vs),
-  vpartitions(Vs),
-  natvars(Vs).
+  natpartitions(Vs).
  
 % all classical implicational formulas  
 allClassFormulas(N,T):-

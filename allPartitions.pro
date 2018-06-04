@@ -1,3 +1,10 @@
+% partitions with variables replaced with natural numbers
+natpartitions(Vs):-
+   mpart_of(Vs,Ns),
+   length(Ns,SL),
+   succ(L,SL),
+   numlist(0,L,Ns).
+
 % computes set partitions seen as distinct logic variables
 % second arg has the unique variables
 
@@ -22,7 +29,8 @@ mplace_element(_,X,Zs,[X|Zs]).
 vpartitions(Vs):-mpart_of(Vs,_).
 
 
-% set aprtitions via variable equlaities for length N
+
+% set partitions via variable equalities for length N
 % counted by Bell numbers: A000110
 % 1, 1, 2, 5, 15, 52, 203, 877, 4140, 21147, 115975, 678570,...
 vpartitions(N,Ps):-length(Ps,N),mpart_of(Ps,_).

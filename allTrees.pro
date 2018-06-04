@@ -73,3 +73,26 @@ countSortedHorn(M,Rs):-
   ),Rs).
   
   
+genSortedHorn3(N,Tree,Leaves):-
+  genSortedHorn3(3,Tree,N,0,Leaves,[]).
+
+genSortedHorn3(_,V,N,N)-->[V].
+genSortedHorn3(SK,(A:-[B|Bs]),SN1,N3)-->{succ(N1,SN1),succ(K,SK)},
+  [A],
+  genSortedHorn3(K,B,N1,N2),
+  genSortedHorn3s(SK,B,Bs,N2,N3).
+  
+genSortedHorn3s(_,_,[],N,N)-->[].
+genSortedHorn3s(K,B,[C|Bs],SN1,N3)-->{succ(N1,SN1)},
+  genSortedHorn3(K,C,N1,N2),
+  {B@<C},
+  genSortedHorn3s(K,C,Bs,N2,N3).
+
+% 1,2,4,8,20,47,122,316,845,2284,6264,17337,48424,136196,385548  
+countSortedHorn3(M,Rs):-
+  findall(R,(
+    between(1,M,N),
+    sols(genSortedHorn3(N,_,_),R)
+    ),Rs).  
+    
+    
