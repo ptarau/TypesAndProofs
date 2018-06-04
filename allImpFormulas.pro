@@ -11,6 +11,16 @@ allSortedHorn(N,T):-
   natpartitions(Vs),
   genSortedHorn(N,T,Vs).
 
+countSortedHorn(M):-
+  findall(R,(
+      N to M,
+      gen_and_count(N,allSortedHorn,hprove,R)
+    ),
+    Rs
+  ),
+  maplist(ppp,Rs).
+
+  
 % all Horn formulas with bodies in canonical order
 % to break symmetries irrelevant for testing provers
 % of depth at most 3, as deeper ones can be reduced to these
@@ -19,12 +29,48 @@ allSortedHorn3(N,T):-
   succ(N,SN),length(Vs,SN),
   natpartitions(Vs),
   genSortedHorn3(N,T,Vs).
+
+countSortedHorn3(M):-
+  findall(R,(
+      N to M,
+      gen_and_count(N,allSortedHorn3,hprove,R)
+    ),
+    Rs
+  ),
+  maplist(ppp,Rs).
+
+countSortedHorn_alt(M):-ncounts(M,allSortedHorn(_,_)).
+  
+gen_and_count(N,G,P,[proven=Proven,total=Total,ratio=Ratio]):-
+  init(total_count),
+  init(proven_count),
+  do((
+    call(G,N,T),
+    inc(total_count),
+    call(P,T),
+    inc(proven_count)
+  )),
+  total(total_count,Total),
+  total(proven_count,Proven),
+  R is Proven/Total,
+  nice_num(R,Ratio).
+
   
 % all implicational logic formulas of size N
 allImpFormulas(N,T):-
   genTree(N,T,Vs),
   natpartitions(Vs).
  
+countAllImp(M):-
+  findall(R,(
+      N to M,
+      gen_and_count(N,allImpFormulas,hprove,R)
+    ),
+    Rs
+  ),
+  maplist(ppp,Rs).  
+  
+  
 % all classical implicational formulas  
 allClassFormulas(N,T):-
   genTree(N,T,Vs),
@@ -141,7 +187,7 @@ tratio(D):-
   plotl(Qs).
   
 
-countSortedHorn(M):-ncounts(M,allSortedHorn(_,_)).
+
 
 /*
 ?- time(seqCountProvenFormulas(8,hprove,A,B)).
@@ -210,6 +256,30 @@ x,y
 8,0.9555753446729897
 9,0.9535994950900377
 
+true.
+
+?- countSortedHorn(9).
+[proven=0,total=1,ratio=0]
+[proven=1,total=2,ratio=0.5]
+[proven=1,total=7,ratio=0.142]
+[proven=9,total=38,ratio=0.236]
+[proven=42,total=266,ratio=0.157]
+[proven=335,total=2263,ratio=0.148]
+[proven=2772,total=22300,ratio=0.124]
+[proven=27699,total=247737,ratio=0.111]
+[proven=303645,total=3049928,ratio=0.099]
+true.
+
+?- countSortedHorn3(9).
+[proven=0,total=1,ratio=0]
+[proven=1,total=2,ratio=0.5]
+[proven=1,total=7,ratio=0.142]
+[proven=9,total=38,ratio=0.236]
+[proven=42,total=214,ratio=0.196]
+[proven=329,total=1977,ratio=0.166]
+[proven=2438,total=16004,ratio=0.152]
+[proven=24342,total=174377,ratio=0.139]
+[proven=240323,total=1876093,ratio=0.128]
 true.
 
 

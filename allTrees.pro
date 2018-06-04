@@ -66,13 +66,6 @@ genSortedHorns(B,[C|Bs],SN1,N3)-->{succ(N1,SN1)},
   {B@<C},
   genSortedHorns(C,Bs,N2,N3).
   
-countSortedHorn(M,Rs):-
-  findall(R,(
-    between(1,M,N),
-    sols(genSortedHorn(N,_,_),R)
-  ),Rs).
-  
-  
 genSortedHorn3(N,Tree,Leaves):-
   genSortedHorn3(3,Tree,N,0,Leaves,[]).
 
