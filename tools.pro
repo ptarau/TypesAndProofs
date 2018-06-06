@@ -48,10 +48,7 @@ list(F/N):-
  
 ll(FN):-list(FN).
 
-:-op(888,fx,ll).
 
-
-:-op(800,xfx,(for)).
 
 (I<N) for {Goals}:-
 	must_be(integer,N),N1 is N-1,
@@ -63,14 +60,11 @@ ll(FN):-list(FN).
 ; true.
 
 
-:-op(1025,fy,do).
-
 do(Goal):-
   Goal,
   fail
 ; true.
 
-:-op(30,xfx,to).
 
 to(I,SN):-succ(N,SN),between(0,N,I).
 

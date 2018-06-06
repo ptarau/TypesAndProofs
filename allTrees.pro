@@ -87,5 +87,28 @@ countSortedHorn3(M,Rs):-
     between(1,M,N),
     sols(genSortedHorn3(N,_,_),R)
     ),Rs).  
+
+
+genHorn3(N,Tree):-
+  genHorn3(3,Tree,N,0).
+
+genHorn3(_,_V,N,N).
+genHorn3(SK,(_A:-[B|Bs]),SN1,N3):-succ(N1,SN1),succ(K,SK),
+  genHorn3(K,B,N1,N2),
+  genHorn3s(SK,B,Bs,N2,N3).
+  
+genHorn3s(_,_,[],N,N).
+genHorn3s(K,_B,[C|Bs],SN1,N3):-succ(N1,SN1),
+  genHorn3(K,C,N1,N2),
+  genHorn3s(K,C,Bs,N2,N3).
+
+% [1,1,2,5,13,37,109,331,1027,3241,10367,33531,109463] this
+% [1,1,2,5,14,42,132,429,1430,4862,16796,58786,208012] vs Catalans
+countHorn3(M,Rs):-
+  findall(R,(
+    between(1,M,N),
+    sols(genHorn3(N,_),R)
+    ),Rs).  
+  
     
-    
+  

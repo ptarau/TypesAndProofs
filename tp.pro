@@ -1,5 +1,10 @@
 c:-['tp.pro']. % quick iteractive reloader
 
+:-op(1025,fy,do).
+:-op(888,fx,ll).
+:-op(800,xfx,(for)).
+:-op(30,xfx,to).
+
 :-include('stats.pro'). % tools, including statistical and displayers
 
 :-include('allTrees.pro').

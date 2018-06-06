@@ -1,6 +1,7 @@
 p1:- do((s_(T),varvars(T,TT),(qqq(TT);ppt(TT)))).
 
- 
+pph(Horn):-horn2term(Horn,Term),ppt(Term).
+
 showImpForms(N):-
   do((
     genTree(N,T,Vs),
@@ -17,13 +18,9 @@ showSortedHorn(N):-
     nl
   )).
     
-
-pph(Horn):-horn2term(Horn,Term),ppt(Term).
-  
-
 showFlatHorn:-
- tell('docs/horn3.txt'),
- showFlatHorn(5),
+ tell('docs/horn3big.txt'),
+ showFlatHorn(9),
  told.
 
 showFlatHorn(N):-
