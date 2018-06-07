@@ -110,5 +110,4 @@ countHorn3(M,Rs):-
     sols(genHorn3(N,_),R)
     ),Rs).  
   
-    
-  
+

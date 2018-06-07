@@ -187,7 +187,27 @@ tratio(D):-
   plotl(Qs).
   
 
+unInhabitableTree(N,T):-
+  genSortedHorn(N,T,Vs),
+  \+ (
+    natpartitions(Vs),
+    hprove(T)
+  ).
+  
+unInhabitableVars(N,Vs):-N>0,
+  N1 is N-1,
+  vpartitions(N,Vs),natvars(Vs),
+  \+ (
+    genSortedHorn(N1,T,Vs),
+    hprove(T)
+  ).  
+    
+    
+% [1,0,1,1,4,7,23,53,163]
+countUnInhabitableTree(M):-ncounts(M,unInhabitableTree(_,_)).
 
+% [0,1,1,4,9,30,122,528,2517,12951]
+countUnInhabitableVars(M):-ncounts(M,unInhabitableVars(_,_)).
 
 /*
 ?- time(seqCountProvenFormulas(8,hprove,A,B)).
