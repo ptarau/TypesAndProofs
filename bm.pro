@@ -94,6 +94,7 @@ preprocessor(eprove,(=)).
 preprocessor(pprove,(=)).
 preprocessor(qprove,(=)).
 preprocessor(sprove,(=)).
+preprocessor(faprove,(=)).
 preprocessor(hprove,toHorn).
 preprocessor(h3prove,toHorn).
 preprocessor(hhprove,toHorn).

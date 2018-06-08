@@ -5,6 +5,14 @@ c:-['tp.pro']. % quick iteractive reloader
 :-op(800,xfx,(for)).
 :-op(30,xfx,to).
 
+:- op(425,  fy,  ~ ).
+:- op(450, yfx,  & ).    % left associative
+:- op(450, yfx,  v ).    % left associative
+:- op(500, xfx,  <-> ).  % non associative
+%:- op(500, xfy,  ->).    % right associative  
+%%% WARNING, this overwrites Prolog's ->
+                
+                
 :-include('stats.pro'). % tools, including statistical and displayers
 
 :-include('allTrees.pro').
@@ -24,6 +32,8 @@ c:-['tp.pro']. % quick iteractive reloader
 :-include('ranImpFormulas.pro'). % random implicational formulas
 
 :-include('iProvers.pro'). % provers of implicational intuitionistic logic
+
+:-include('fullProvers.pro'). % provers hadling all connectives
 
 :-include('hProvers.pro'). % other provers with embedded Horn clauses
 

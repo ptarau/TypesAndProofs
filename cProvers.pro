@@ -3,7 +3,6 @@
 % via Glivenko's translation from classical to intuitionistic
 % propositional calculus
 
-:- op(150,  fy,  ~ ). % negation
 
 gprove(T0):-dneg_expand(T0,T),ljk(T).
 

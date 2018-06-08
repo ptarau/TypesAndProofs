@@ -41,12 +41,6 @@ prove( _,false ).
 % Use of LWB concrete syntax from June 97
 % provided that one uses bracketmode "full"
 
-:- op(425,  fy,  ~ ).
-:- op(450, yfx,  & ).    % left associative
-:- op(450, yfx,  v ).    % left associative
-:- op(500, xfx,  <-> ).  % non associative
-%:- op(500, xfy,  ->).    % right associative  
-                %%% WARNING, this overwrites Prolog's ->
 
 
 % e.g.  formulae look like  ((a & b ) -> c) -> false, ~(~( a v (~a)))
