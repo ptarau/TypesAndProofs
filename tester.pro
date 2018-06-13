@@ -225,7 +225,8 @@ test_proven(P):-
 ; true.
 
 biglamb:-
-  ranImpFormulas(42,1000,1000,T),hprove(T),sprove(T,X),
+  ranImpFormulas(42,1000,1000,T),
+  hprove(T),sprove(T,X),
   type_of(X,TT),
   ppp(X),
   ppp(T),
@@ -288,4 +289,71 @@ tamari2:-
   T=TT, % not unifiable types
   ppp(eq=T).
   
+:-dynamic(fof/3).
+
+load_prob:-
+  atom_codes('.',[Dot]),
+  directory_files(probs,Fs0),
+  sort(Fs0,Fs),
+  do((    
+    member(F,Fs),
+   
+    atom_codes(F,[C|_]),
+    C=\=Dot,
+    atom_concat('probs/',F,InF),
+    is_theorem(InF,Theo),
+    load_prob(InF,_GVs,Res),
+    (Res\==Theo->ppp(F=is(Res)+should_be(Theo))
+    ;ppp(ok=F)
+    )
+  )).
   
+  
+  
+load_prob(InF,(G:-Vs),R):-
+   file2db(InF),
+   findall(A,prob:fof(_,axiom,A),Vs),
+   prob:fof(_,conjecture,G),
+   ( timed_call(10,faprove(G,Vs),Time) ->
+     (number(Time) -> R=true ; R=timed_out)
+   ; R=false
+   ).
+   
+file2terms(F,Ts,[]):-
+  read_file_to_terms(F,Ts,[]).
+
+f2c:-is_theorem('probs/SYN391+1.pl',X),ppp(X).
+
+ 
+is_theorem(F,true):-
+  atom_codes('% Status (intuit.) : Theorem',True),
+  file2comment(F,Cs),
+  append(True,_,Cs),
+  !.
+is_theorem(_,false).  
+
+file2comment(F,Cs):-
+  atom_codes('%',[Perc]),
+  open(F,'read',S,[]),
+  repeat,
+    read_line_to_codes(S,Cs,[]),
+    (Cs==[]->close(S),!,fail; Cs=[Perc|_]).
+    
+  
+    
+file2db(F):-Db=prob,
+  Db:retractall(fof(_,_,_)),
+  file2terms(F,Ts,_),
+  do(( member(T,Ts),
+    ( T=':-'(Cmd)->call(Db:Cmd)
+    ; assertz(Db:T)
+    )
+  )).
+  
+hard_equiv((
+( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( a1 <-> a2)  <-> a3)  <-> a4)  <-> a5)  <-> a6)  <-> a7)  <-> a8)  <-> a9)  <-> a10)  <-> a11)  <-> a12)  <-> a13)  <-> a14)  <-> a15)  <-> a16)  <-> a17)  <-> a18)  <-> a19)  <-> a20)  <-> ( a20 <-> ( a19 <-> ( a18 <-> ( a17 <-> ( a16 <-> ( a15 <-> ( a14 <-> ( a13 <-> ( a12 <-> ( a11 <-> ( a10 <-> ( a9 <-> ( a8 <-> ( a7 <-> ( a6 <-> ( a5 <-> ( a4 <-> ( a3 <-> ( a2 <-> a1) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) 
+)).
+
+bug(~(~(( a v ~(a) )))).
+
+

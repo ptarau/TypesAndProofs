@@ -68,3 +68,5 @@ do(Goal):-
 
 to(I,SN):-succ(N,SN),between(0,N,I).
 
+
+  
