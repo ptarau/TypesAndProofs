@@ -312,7 +312,9 @@ load_prob:-
   
 load_prob(InF,(G:-Vs),R):-
    file2db(InF),
-   findall(A,prob:fof(_,axiom,A),Vs),
+   findall(A,
+     (prob:fof(_,Axiom,A),Axiom\==conjecture),
+   Vs),
    prob:fof(_,conjecture,G),
    ( timed_call(10,faprove(G,Vs),Time) ->
      (number(Time) -> R=true ; R=timed_out)
@@ -350,10 +352,8 @@ file2db(F):-Db=prob,
     )
   )).
   
-hard_equiv((
-( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( a1 <-> a2)  <-> a3)  <-> a4)  <-> a5)  <-> a6)  <-> a7)  <-> a8)  <-> a9)  <-> a10)  <-> a11)  <-> a12)  <-> a13)  <-> a14)  <-> a15)  <-> a16)  <-> a17)  <-> a18)  <-> a19)  <-> a20)  <-> ( a20 <-> ( a19 <-> ( a18 <-> ( a17 <-> ( a16 <-> ( a15 <-> ( a14 <-> ( a13 <-> ( a12 <-> ( a11 <-> ( a10 <-> ( a9 <-> ( a8 <-> ( a7 <-> ( a6 <-> ( a5 <-> ( a4 <-> ( a3 <-> ( a2 <-> a1) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) 
-)).
 
-bug(~(~(( a v ~(a) )))).
+bug((
+  ( ( ( p1 & p2 ) v ( ( ~(~(p1)) -> f)  v ( p2 -> f)  ) ) -> f) )->f).
 
 

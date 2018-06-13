@@ -9,7 +9,7 @@ faprove(T0,Vs0):-
   ljfa(T,Vs),
   !.
 
-expand_full_neg(f,R):-!,R=false.
+%expand_full_neg(f,R):-!,R=false.
 expand_full_neg(A,R):-atomic(A),!,R=A.
 expand_full_neg(~(A),(B->false)):-!,
   expand_full_neg(A,B).
