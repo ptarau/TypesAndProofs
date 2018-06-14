@@ -26,6 +26,7 @@ ljfa(A,Vs):-memberchk(A,Vs),!.
 ljfa(_,Vs):-memberchk(false,Vs),!.
 ljfa((A->B),Vs):-!,ljfa(B,[A|Vs]). 
 ljfa(G,Vs1):-
+  member(T,Vs1),head_of(T,G),!,
   select(Red,Vs1,Vs2),
   reduce(Red,G,Vs2,Vs3),
   !,
@@ -72,4 +73,13 @@ ljfb_imp((C-> D),B,Vs,[B|Vs]):-!,ljfb((C->D),[(D->B)|Vs]).
 ljfb_imp((C <-> D),B,Vs,[((C->D)->((D->C)->B))|Vs]).
 
 
+% adaptor for Dyckhoff's original full prover
+
+
+
+dyprove(G,[]):-!,dprove(G).  
+dyprove(G,Vs):-axs2conj(Vs,Cs),dprove((Cs->G)).
+
+axs2conj([X],R):-!,R=X.
+axs2conj([X|Xs],X & Cs):-axs2conj(Xs,Cs).
 

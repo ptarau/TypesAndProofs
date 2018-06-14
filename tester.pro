@@ -291,7 +291,14 @@ tamari2:-
   
 :-dynamic(fof/3).
 
-load_prob:-
+% adaptor to run ILPT benchmarks from http://www.iltp.de/  
+
+
+load_prob1:-load_prob(faprove).
+
+load_prob2:-load_prob(dyprove).
+
+load_prob(Prover):-
   atom_codes('.',[Dot]),
   directory_files(probs,Fs0),
   sort(Fs0,Fs),
@@ -302,21 +309,20 @@ load_prob:-
     C=\=Dot,
     atom_concat('probs/',F,InF),
     is_theorem(InF,Theo),
-    load_prob(InF,_GVs,Res),
+    load_prob(Prover,InF,_GVs,Res),
     (Res\==Theo->ppp(F=is(Res)+should_be(Theo))
     ;ppp(ok=F)
     )
   )).
   
-  
-  
-load_prob(InF,(G:-Vs),R):-
+load_prob(Prover,InF,(G:-Vs),R):-
    file2db(InF),
    findall(A,
      (prob:fof(_,Axiom,A),Axiom\==conjecture),
    Vs),
    prob:fof(_,conjecture,G),
-   ( timed_call(10,faprove(G,Vs),Time) ->
+   ( timed_call(5,faprove(G,Vs),Time) ->
+     timed_call(5,call(Prover,G,Vs),Time) ->
      (number(Time) -> R=true ; R=timed_out)
    ; R=false
    ).
@@ -351,9 +357,35 @@ file2db(F):-Db=prob,
     ; assertz(Db:T)
     )
   )).
+
   
+/*
 
-bug((
-  ( ( ( p1 & p2 ) v ( ( ~(~(p1)) -> f)  v ( p2 -> f)  ) ) -> f) )->f).
+SYJ202+1.008.pl=is(timed_out)+should_be(true)
+SYJ202+1.011.pl=is(timed_out)+should_be(false)
+SYJ202+1.016.pl=is(timed_out)+should_be(false)
+SYJ202+1.020.pl=is(timed_out)+should_be(false)
 
+SYJ205+1.013.pl=is(timed_out)+should_be(true)
+SYJ205+1.017.pl=is(timed_out)+should_be(true)
+SYJ205+1.019.pl=is(timed_out)+should_be(true)
 
+SYJ207+1.010.pl=is(timed_out)+should_be(false)
+SYJ207+1.014.pl=is(timed_out)+should_be(false)
+
+SYJ208+1.006.pl=is(timed_out)+should_be(false)
+SYJ208+1.008.pl=is(timed_out)+should_be(false)
+SYJ208+1.012.pl=is(timed_out)+should_be(false)
+SYJ208+1.016.pl=is(timed_out)+should_be(false)
+SYJ208+1.018.pl=is(timed_out)+should_be(false)
+
+SYJ209+1.012.pl=is(timed_out)+should_be(false)
+SYJ209+1.013.pl=is(timed_out)+should_be(false)
+SYJ209+1.016.pl=is(timed_out)+should_be(false)
+SYJ209+1.018.pl=is(timed_out)+should_be(false)
+SYJ209+1.019.pl=is(timed_out)+should_be(false)
+
+SYJ211+1.006.pl=is(timed_out)+should_be(false)
+SYJ211+1.008.pl=is(timed_out)+should_be(false)
+SYJ211+1.016.pl=is(timed_out)+should_be(false)
+*/ 

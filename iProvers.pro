@@ -31,18 +31,20 @@ ljt(A,Vs):-memberchk(A,Vs),!.     % axiom
 
 ljt((A->B),Vs):-!,ljt(B,[A|Vs]).         % => imp 
 
-ljt(G,Vs1):- % atomic(G),                % imp => 4
-  select( ((C->D)->B),Vs1,Vs2),
-  ljt((C->D), [(D->B)|Vs2]),
-  !,
-  ljt(G,[B|Vs2]).
-  
 ljt(G,Vs1):- %atomic(G),                % imp => 1, atom A
   select((A->B),Vs1,Vs2),
   atomic(A),
   memberchk(A,Vs2),
   !,
   ljt(G,[B|Vs2]).
+  
+ljt(G,Vs1):- % atomic(G),                % imp => 4
+  select( ((C->D)->B),Vs1,Vs2),
+  ljt((C->D), [(D->B)|Vs2]),
+  !,
+  ljt(G,[B|Vs2]).
+  
+  
   
 
 % simplest, with multisets, no contraction
