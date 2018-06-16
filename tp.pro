@@ -67,10 +67,10 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('third_party/dyckhoff_orig.pro'). % implicational variant of Roy Dyckhoff's prover  
 
+:-include('third_party/g4ip.pro').
 
 
-
-
+:-include('third_party/ileantap.pro').
 
 
 
