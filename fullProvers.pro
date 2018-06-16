@@ -26,7 +26,7 @@ ljfa(A,Vs):-memberchk(A,Vs),!.
 ljfa(_,Vs):-memberchk(false,Vs),!.
 ljfa((A->B),Vs):-!,ljfa(B,[A|Vs]). 
 ljfa(G,Vs1):-
-  member(T,Vs1),head_of(T,G),!,
+  %member(T,Vs1),head_of(T,G),!, % TODO, for all operators
   select(Red,Vs1,Vs2),
   reduce(Red,G,Vs2,Vs3),
   !,
@@ -50,6 +50,8 @@ ljfa_imp((C & D),B,Vs,[(C->(D->B))|Vs]):-!.
 ljfa_imp((C v D),B,Vs,[(C->B),(D->B)|Vs]).
 ljfa_imp((C <-> D),B,Vs,[((C->D)->((D->C)->B))|Vs]).
 
+
+nobug2:-faprove(((0->0)->false)->0).
 
 
 fbprove(T0):-expand_full_neg(T0,T),ljfb(T,[]),!.

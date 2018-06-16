@@ -26,6 +26,7 @@ false.
 ```
 
 See a lot of examples of use in file *tester.pro*
+Generic benchmarking code is in bm.pro.
 
 Given the Curry-Howard isomorphism, solving the type inhabitation problem is equivalent to finding propositional implicational intuitionistic tautology proofs.
 
@@ -57,6 +58,8 @@ These tools implement Prolog-based algorithms on the two sides of the *Curry-How
 - Dyckchoff's program, specialized to implications
 - provers derived from the LJT calculus, directly
 - provers using Horn clause translations of implicational formulas
+- classical Provers, via Glivenko's translation
+- full intuitionistic propositional provers
 
 The programs are tested with SWI Prolog 7.7.12.
 

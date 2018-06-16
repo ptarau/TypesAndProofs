@@ -202,6 +202,9 @@ gold_test_one(Gold,Silver,T, Res):-
 gold_classical_test(N,Silver,Culprit,Unexpected):-
   gold_test(N,allClassFormulas,(=),tautology,Silver, Culprit,Unexpected).
  
+gold_full_test(N,Culprit,Unexpected):-
+  gold_test(N,allFullFormulas,(=),dprove,faprove, Culprit,Unexpected).
+  
  
  
 gold_ran_imp_test(N,K, Silver, Culprit, Unexpected):-

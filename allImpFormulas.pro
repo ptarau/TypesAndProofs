@@ -83,7 +83,59 @@ allClassFormulas(N,T,NNT):-
   vpartitions(Vs),
   dneg(T,NNT),
   natvars(Vs).
+
+
+
+allFullFormulas(N,T):-
+  genOpTree(N,T,Vs),
+  natpartitions(Vs).
+
+countAllFull(M):-
+  findall(R,(
+      N to M,
+      gen_and_count(N,allFullFormulas,faprove,R)
+    ),
+    Rs
+  ),
+  maplist(ppp,Rs).  
+
+countAllFullDyckhoff(M):-
+  findall(R,(
+      N to M,
+      gen_and_count(N,allFullFormulas,dprove,R)
+    ),
+    Rs
+  ),
+  maplist(ppp,Rs).  
+
   
+/*
+
+?- countAllFull(9).
+[proven=0,total=1,ratio=0]
+[proven=0,total=1,ratio=0]
+[proven=2,total=10,ratio=0.2]
+[proven=0,total=26,ratio=0]
+[proven=19,total=283,ratio=0.067]
+[proven=21,total=1488,ratio=0.014]
+[proven=497,total=17626,ratio=0.028]
+[proven=1317,total=173636,ratio=0.007]
+[proven=20693,total=2510404,ratio=0.008]
+true.
+
+!!! discrepancy
+
+?- countAllFullDyckhoff(9).
+[proven=0,total=1,ratio=0]
+[proven=0,total=1,ratio=0]
+[proven=2,total=10,ratio=0.2]
+[proven=0,total=26,ratio=0]
+[proven=29,total=283,ratio=0.102]
+[proven=41,total=1488,ratio=0.027]
+[proven=887,total=17626,ratio=0.05]
+[proven=3168,total=173636,ratio=0.018]
+[proven=46798,total=2510404,ratio=0.018]
+*/
 
 seqCountImpFormulas(N,TotalCount):-
   seqCountImpFormulas(_,N,TotalCount).
@@ -209,6 +261,9 @@ countUnInhabitableTree(M):-ncounts(M,unInhabitableTree(_,_)).
 % [0,1,1,4,9,30,122,528,2517,12951]
 countUnInhabitableVars(M):-ncounts(M,unInhabitableVars(_,_)).
 
+
+  
+  
 /*
 ?- time(seqCountProvenFormulas(8,hprove,A,B)).
 % 2,243,311,670 inferences, 217.446 CPU in 217.577 seconds (100% CPU, 10316659 Lips)
