@@ -98,6 +98,7 @@ preprocessor(faprove,(=)).
 preprocessor(hprove,toHorn).
 preprocessor(h3prove,toHorn).
 preprocessor(hhprove,toHorn).
+preprocessor(hh1prove,toHorn).
 preprocessor(wprove,toFlatHorn).
 preprocessor(w3prove,toFlatHorn).
 preprocessor(oprove,toHorn).

@@ -303,20 +303,34 @@ load_prob2:-load_prob(dyprove).
 
 load_prob(Prover):-
   atom_codes('.',[Dot]),
-  directory_files(probs,Fs0),
-  sort(Fs0,Fs),
+  directory_files(probs,Dirs),
+  findall(F,
+    (
+      member(Dir0,Dirs),atom_codes(Dir0,[D|_]),D=\=Dot,
+      atom_concat('probs/',Dir0,Dir),
+      directory_files(Dir,Fs),
+      member(F0,Fs),
+      atom_codes(F0,[C|_]),C=\=Dot,
+      atomic_list_concat([Dir,'/',F0],F)
+    ),
+    Fs0
+  ),
+  sort(Fs0,Fs),length(Fs,Len),
+  
+  new_ctr(Wrong),
   do((    
-    member(F,Fs),
-   
-    atom_codes(F,[C|_]),
-    C=\=Dot,
-    atom_concat('probs/',F,InF),
+    member(InF,Fs),   
+    atom_codes(InF,[C|_]),C=\=Dot,
+    
     is_theorem(InF,Theo),
     load_prob(Prover,InF,_GVs,Res),
-    (Res\==Theo->ppp(F=is(Res)+should_be(Theo))
-    ;ppp(ok=F)
+    (Res\==Theo->ctr_inc(Wrong),ppp(F=is(Res)+should_be(Theo))
+    ;ppp(ok=InF)
     )
-  )).
+  )),
+  ctr_get(Wrong,K),
+  Right is Len-K,
+  ppp([total=Len,right=Right,timed_out=K]).
   
 load_prob(Prover,InF,(G:-Vs),R):-
    file2db(InF),
@@ -324,8 +338,8 @@ load_prob(Prover,InF,(G:-Vs),R):-
      (prob:fof(_,Axiom,A),Axiom\==conjecture),
    Vs),
    prob:fof(_,conjecture,G),
-   ( timed_call(5,faprove(G,Vs),Time) ->
-     timed_call(5,call(Prover,G,Vs),Time) ->
+   (
+     timed_call(600,call(Prover,G,Vs),Time) ->
      (number(Time) -> R=true ; R=timed_out)
    ; R=false
    ).

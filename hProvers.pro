@@ -24,6 +24,38 @@ ljh_imp((D:-Cs),B,Vs):- ljh((D:-Cs),[(B:-[D])|Vs]).
 trimmed((B:-[]),R):-!,R=B.
 trimmed(BBs,BBs).
 
+
+% more complex, tries to have only one pass - not worth it
+hh1prove(T0):-toHorn(T0,T),hh1(T).
+
+hh1(A):-hh1(A,[]),!.
+
+%hh1(A,Vs):-ppp((Vs-->A)),fail. % just to trace steps
+
+hh1(G,Vs):-atomic(G),fine_atom_in(Vs,G,Atom,Impl),
+  ( nonvar(Atom) -> !
+  ;  var(Impl)->!,fail
+  ;  fail
+  ).
+hh1((B:-As),Vs1):-!,append(As,Vs1,Vs2),hh1(B,Vs2).  
+hh1(G,Vs1):- % atomic(G), G not on Vs1
+  select((B:-As),Vs1,Vs2), % outer select loop
+  select(A,As,Bs),         % inner select loop
+  hh1_imp(A,B,Vs2), % A element of the body of B
+  !,
+  trimmed((B:-Bs),NewB), % trim empty bodies
+  hh1(G,[NewB|Vs2]).
+  
+hh1_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
+hh1_imp((D:-Cs),B,Vs):- hh1((D:-Cs),[(B:-[D])|Vs]).
+
+fine_atom_in([],_,_Atom,_Impl):-!.
+fine_atom_in([G|_],G,true,_):-!.
+fine_atom_in([(G:-_)|Xs],G,Atom,true):-!,fine_atom_in(Xs,G,Atom,true).
+fine_atom_in([_|Xs],G,Atom,Impl):-fine_atom_in(Xs,G,Atom,Impl).
+
+
+
 % transforms to an equational form, then depth at most 3 Horn
 
 wprove(A):-toFlatHorn(A,B),ljh(B).
