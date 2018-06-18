@@ -317,20 +317,24 @@ load_prob(Prover):-
   ),
   sort(Fs0,Fs),length(Fs,Len),
   
-  new_ctr(Wrong),
+  new_ctr(Wrong),new_ctr(TOut),
+  setup_call_cleanup(true,
   do((    
     member(InF,Fs),   
     atom_codes(InF,[C|_]),C=\=Dot,
     
     is_theorem(InF,Theo),
     load_prob(Prover,InF,_GVs,Res),
-    (Res\==Theo->ctr_inc(Wrong),ppp(InF=is(Res)+should_be(Theo))
-    ;ppp(ok=InF)
+    ( Res==Theo->ppp(ppp(ok=InF)),
+      Res=timeout(_)->ctr_inc(TOut),ppp(InF=is(Res)+should_be(Theo))
+    ; ctr_inc(Wrong),ppp(InF=is(Res)+should_be(Theo))
     )
   )),
-  ctr_get(Wrong,K),
-  Right is Len-K,
-  ppp([total=Len,right=Right,timed_out=K]).
+  true),
+  ctr_get(TOut,TK),
+  ctr_get(Wrong,WK),
+  Right is Len-TK-WK,
+  ppp([total=Len,right=Right,timed_out=TK,error=WK]).
   
 load_prob(Prover,InF,(G:-Vs),R):-
    file2db(InF),
@@ -339,7 +343,7 @@ load_prob(Prover,InF,(G:-Vs),R):-
    Vs),
    prob:fof(_,conjecture,G),
    (
-     timed_call(6,call(Prover,G,Vs),Time) ->
+     timed_call(3,call(Prover,G,Vs),Time) ->
      (number(Time) -> R=true ; R=Time)
    ; R=false
    ).
