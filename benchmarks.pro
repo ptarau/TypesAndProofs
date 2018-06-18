@@ -10,7 +10,7 @@ xbm(From,To):-
     bm(N,P),
   fail
 ; nl,between(From,To,N),P=dprove,
-  timed_call(600,bm(N,P),Time),
+  timed_call(10,bm(N,P),Time),
   (number(Time)->true;ppp(P=Time)),
   fail
 ; member(P,[kprove,gprove,tautology]),
@@ -27,7 +27,11 @@ timed_call(Secs,Goal,Time):-
       true
   ),
   get_time(T1),
-  (var(Exc) -> Time is T1-T0 ; Time = timeout_after(Secs)).
+  (
+    var(Exc) -> Time is T1-T0 
+  ; Exc==time_limit_exceeded->Time = timeout(Secs)
+  ; Time=Exc
+  ).
   
 
 % test against Fitting's prover as gold standard

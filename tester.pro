@@ -324,7 +324,7 @@ load_prob(Prover):-
     
     is_theorem(InF,Theo),
     load_prob(Prover,InF,_GVs,Res),
-    (Res\==Theo->ctr_inc(Wrong),ppp(F=is(Res)+should_be(Theo))
+    (Res\==Theo->ctr_inc(Wrong),ppp(InF=is(Res)+should_be(Theo))
     ;ppp(ok=InF)
     )
   )),
@@ -339,8 +339,8 @@ load_prob(Prover,InF,(G:-Vs),R):-
    Vs),
    prob:fof(_,conjecture,G),
    (
-     timed_call(600,call(Prover,G,Vs),Time) ->
-     (number(Time) -> R=true ; R=timed_out)
+     timed_call(6,call(Prover,G,Vs),Time) ->
+     (number(Time) -> R=true ; R=Time)
    ; R=false
    ).
    
