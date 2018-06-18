@@ -299,7 +299,10 @@ tamari2:-
 
 load_prob1:-load_prob(faprove).
 
+% probs/SYN/SYN915+1.pl=wrong(got=false,should_be=true)
 load_prob2:-load_prob(dyprove).
+
+load_prob3:-load_prob(badProve).
 
 load_prob(Prover):-
   atom_codes('.',[Dot]),
@@ -317,34 +320,40 @@ load_prob(Prover):-
   ),
   sort(Fs0,Fs),length(Fs,Len),
   
-  new_ctr(Wrong),new_ctr(TOut),
-  setup_call_cleanup(true,
+  new_ctr(Wrong),new_ctr(TOut),new_ctr(Err),
   do((    
     member(InF,Fs),   
     atom_codes(InF,[C|_]),C=\=Dot,
     
     is_theorem(InF,Theo),
     load_prob(Prover,InF,_GVs,Res),
-    ( Res==Theo->ppp(ppp(ok=InF)),
-      Res=timeout(_)->ctr_inc(TOut),ppp(InF=is(Res)+should_be(Theo))
-    ; ctr_inc(Wrong),ppp(InF=is(Res)+should_be(Theo))
+    ( member(Res,[true,false])->
+       ( Res==Theo->ppp(InF=ok(res=Res))
+       ; ctr_inc(Wrong),ppp(InF=wrong(got=Res,should_be=Theo))
+       )
+    ; Res=timeout(_)->ctr_inc(TOut),ppp(InF=is(Res)+should_be(Theo))
+    ; ctr_inc(Err),ppp(InF=is(Res)+should_be(Theo))
     )
   )),
-  true),
   ctr_get(TOut,TK),
   ctr_get(Wrong,WK),
-  Right is Len-TK-WK,
-  ppp([total=Len,right=Right,timed_out=TK,error=WK]).
+  ctr_get(Err,EK),
+  Right is Len-TK-WK-EK,
+  ppp([total=Len,right=Right,wrong=WK,timed_out=TK,error=EK]).
   
 load_prob(Prover,InF,(G:-Vs),R):-
    file2db(InF),
    findall(A,
      (prob:fof(_,Axiom,A),Axiom\==conjecture),
    Vs),
-   prob:fof(_,conjecture,G),
+   prob:fof(_,conjecture,G0),
+   ( G0=($true)->G=(a->a)
+   ; G0=($false)->G=false
+   ; G=G0
+   ),
    (
-     timed_call(3,call(Prover,G,Vs),Time) ->
-     (number(Time) -> R=true ; R=Time)
+     timed_call(1,call(Prover,G,Vs),Exc) ->
+     (number(Exc) -> R=true ; R=Exc)
    ; R=false
    ).
    
@@ -353,7 +362,6 @@ file2terms(F,Ts,[]):-
 
 f2c:-is_theorem('probs/SYN391+1.pl',X),ppp(X).
 
- 
 is_theorem(F,true):-
   atom_codes('% Status (intuit.) : Theorem',True),
   file2comment(F,Cs),
@@ -363,10 +371,12 @@ is_theorem(_,false).
 
 file2comment(F,Cs):-
   atom_codes('%',[Perc]),
-  open(F,'read',S,[]),
+  open(F,'read',S),
   repeat,
     read_line_to_codes(S,Cs,[]),
-    (Cs==[]->close(S),!,fail; Cs=[Perc|_]).
+    ( Cs==[]->!,close(S),fail
+    ; Cs=[Perc|_]
+    ).  
     
   
     
@@ -380,33 +390,3 @@ file2db(F):-Db=prob,
   )).
 
   
-/*
-
-SYJ202+1.008.pl=is(timed_out)+should_be(true)
-SYJ202+1.011.pl=is(timed_out)+should_be(false)
-SYJ202+1.016.pl=is(timed_out)+should_be(false)
-SYJ202+1.020.pl=is(timed_out)+should_be(false)
-
-SYJ205+1.013.pl=is(timed_out)+should_be(true)
-SYJ205+1.017.pl=is(timed_out)+should_be(true)
-SYJ205+1.019.pl=is(timed_out)+should_be(true)
-
-SYJ207+1.010.pl=is(timed_out)+should_be(false)
-SYJ207+1.014.pl=is(timed_out)+should_be(false)
-
-SYJ208+1.006.pl=is(timed_out)+should_be(false)
-SYJ208+1.008.pl=is(timed_out)+should_be(false)
-SYJ208+1.012.pl=is(timed_out)+should_be(false)
-SYJ208+1.016.pl=is(timed_out)+should_be(false)
-SYJ208+1.018.pl=is(timed_out)+should_be(false)
-
-SYJ209+1.012.pl=is(timed_out)+should_be(false)
-SYJ209+1.013.pl=is(timed_out)+should_be(false)
-SYJ209+1.016.pl=is(timed_out)+should_be(false)
-SYJ209+1.018.pl=is(timed_out)+should_be(false)
-SYJ209+1.019.pl=is(timed_out)+should_be(false)
-
-SYJ211+1.006.pl=is(timed_out)+should_be(false)
-SYJ211+1.008.pl=is(timed_out)+should_be(false)
-SYJ211+1.016.pl=is(timed_out)+should_be(false)
-*/ 

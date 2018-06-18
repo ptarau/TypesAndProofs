@@ -302,9 +302,13 @@ assume_all(A->B,Last,As,[A|Bs]):-
 % deliberately bad provers
 % for testing - randomly succeds or fails
 
-badProve(_) :- 0 =:= random(2).
+badProve(_) :- badProve(_,_).
 
-looper(_):-repeat,sleep(1),fail.
+badProve(_,_) :- 0 =:= random(2).
+
+looper(_,_):-repeat,sleep(1),fail.
+
+looper(_):-looper(_,_).
 
 % will have false positives
 

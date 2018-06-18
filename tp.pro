@@ -1,3 +1,4 @@
+:- set_prolog_stack(local,  limit(2000000000)).
 c:-['tp.pro']. % quick iteractive reloader
 
 :-op(1025,fy,do).
