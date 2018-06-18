@@ -1,8 +1,9 @@
 % various testing tools
 
 :-dynamic(proven/2).
+ 
+max_time(60).
 
-   
 ranptest(N,P):-rptest(random,1,N,1,P).
   
 rptest(N,P):-rptest(1001,20,N,100,P).
@@ -297,14 +298,15 @@ tamari2:-
 % adaptor to run ILPT benchmarks from http://www.iltp.de/  
 
 
-load_prob1:-load_prob(faprove).
+load_probs1:-load_probs(faprove).
 
 % probs/SYN/SYN915+1.pl=wrong(got=false,should_be=true)
-load_prob2:-load_prob(dyprove).
+load_probs2:-load_probs(dyprove).
 
-load_prob3:-load_prob(badProve).
+load_probs3:-load_probs(badProve).
 
-load_prob(Prover):-
+load_probs(Prover):-
+  max_time(M),ppp(problems_time_out_in_secs=M),nl,
   atom_codes('.',[Dot]),
   directory_files(probs,Dirs),
   findall(F,
@@ -342,6 +344,7 @@ load_prob(Prover):-
   ppp([total=Len,right=Right,wrong=WK,timed_out=TK,error=EK]).
   
 load_prob(Prover,InF,(G:-Vs),R):-
+   max_time(MaxTime),
    file2db(InF),
    findall(A,
      (prob:fof(_,Axiom,A),Axiom\==conjecture),
@@ -352,7 +355,7 @@ load_prob(Prover,InF,(G:-Vs),R):-
    ; G=G0
    ),
    (
-     timed_call(1,call(Prover,G,Vs),Exc) ->
+     timed_call(MaxTime,call(Prover,G,Vs),Exc) ->
      (number(Exc) -> R=true ; R=Exc)
    ; R=false
    ).
@@ -369,16 +372,25 @@ is_theorem(F,true):-
   !.
 is_theorem(_,false).  
 
+
 file2comment(F,Cs):-
   atom_codes('%',[Perc]),
-  open(F,'read',S),
-  repeat,
-    read_line_to_codes(S,Cs,[]),
-    ( Cs==[]->!,close(S),fail
-    ; Cs=[Perc|_]
-    ).  
-    
+  file2lines(F,Ls),
+  member(Cs,Ls),
+  Cs=[Perc|_].
   
+
+% reads in a file as a list of lines
+file2lines(F,Ls):-
+  open(F,read,S),
+  get_lines(S,Ls),
+  close(S).
+
+% line to list reader helper
+get_lines(S,[]):-at_end_of_stream(S),!.
+get_lines(S,[Codes|Ls]):-
+  read_line_to_codes(S,Codes),
+  get_lines(S,Ls).
     
 file2db(F):-Db=prob,
   Db:retractall(fof(_,_,_)),
