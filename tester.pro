@@ -12,10 +12,12 @@ load_probs1:-load_probs(faprove).
 % [total=274,right=172,wrong=0,timed_out(secs,60)=50,error=52]
 load_probs2:-load_probs(dprove).
 
-% tester fro g4prove
+% tester for g4prove
+% [total=274,right=164,wrong=52,timed_out(secs,6)=43,error=15]
 load_probs3:-load_probs(g4prove).
 
 % tester for ileantap
+% [total=274,right=30,wrong=31,timed_out(secs,6)=213,error=0] - maybe needs fixes?
 load_probs4:-load_probs(ilprove).
 
 % random, just for testing the tester
