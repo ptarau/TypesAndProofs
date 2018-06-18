@@ -23,7 +23,9 @@
 
 %%% Prove first-order formula F
 
-ilprove(F):-  ppp(F),ilprove(F,1).
+
+ilprove(F):-  
+ ilprove(F,1).
 
 ilprove(F,A) :- prove([(F,0),[],[],l],[],[],[],[],A,[W,Z]),
            t_string_unify(W,Z).

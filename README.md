@@ -68,3 +68,20 @@ Except for those using SWI-Prolog's multi-threading the code, the provers and th
 A Python version of one of our lightweight implicational logic provers is also included.
 
 This work-in-progress [paper](https://github.com/ptarau/TypesAndProofs/tree/master/docs/iprover.pdf) documents some key components of this code repository.
+
+For comparing with other provers, we have proted the propositional subset of the [ILTP library]( http://www.iltp.de/ ) to SWI-Prolog and uniformized notation of some third party provers.
+
+Try:
+
+```
+?-load_probs1. % our prover
+?-load_probs2.
+...
+?-load_probsN.
+```
+
+for their respective performance.
+
+So far, our faprove/1 full propositional IL prover is the only one passing all correctness tests as well as avoidance of stack overflow errors.
+All provers can be tested at various timout levels by changing max_time/1 in file *tester.pro*
+

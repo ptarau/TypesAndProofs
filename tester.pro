@@ -2,7 +2,26 @@
 
 :-dynamic(proven/2).
  
-max_time(60).
+max_time(6).
+
+% adaptor to run ILPT benchmarks from http://www.iltp.de/  
+
+% [total=274,right=156,wrong=0,timed_out(secs,60)=118,error=0]
+load_probs1:-load_probs(faprove).
+
+% [total=274,right=172,wrong=0,timed_out(secs,60)=50,error=52]
+load_probs2:-load_probs(dprove).
+
+% tester fro g4prove
+load_probs3:-load_probs(g4prove).
+
+% tester for ileantap
+load_probs4:-load_probs(ilprove).
+
+% random, just for testing the tester
+load_probs5:-load_probs(badProve).
+
+
 
 ranptest(N,P):-rptest(random,1,N,1,P).
   
@@ -295,15 +314,7 @@ tamari2:-
   
 :-dynamic(fof/3).
 
-% adaptor to run ILPT benchmarks from http://www.iltp.de/  
 
-
-load_probs1:-load_probs(faprove).
-
-% probs/SYN/SYN915+1.pl=wrong(got=false,should_be=true)
-load_probs2:-load_probs(dyprove).
-
-load_probs3:-load_probs(badProve).
 
 load_probs(Prover):-
   max_time(M),ppp(problems_time_out_in_secs=M),nl,
@@ -341,7 +352,10 @@ load_probs(Prover):-
   ctr_get(Wrong,WK),
   ctr_get(Err,EK),
   Right is Len-TK-WK-EK,
-  ppp([total=Len,right=Right,wrong=WK,timed_out=TK,error=EK]).
+  ppp([
+    prover=Prover,total=Len,right=Right,wrong=WK,
+    timed_out(secs,M)=TK,error=EK
+  ]).
   
 load_prob(Prover,InF,(G:-Vs),R):-
    max_time(MaxTime),
@@ -354,8 +368,9 @@ load_prob(Prover,InF,(G:-Vs),R):-
    ; G0=($false)->G=false
    ; G=G0
    ),
+   unexpand(Vs,G,FullG),
    (
-     timed_call(MaxTime,call(Prover,G,Vs),Exc) ->
+     timed_call(MaxTime,call(Prover,FullG),Exc) ->
      (number(Exc) -> R=true ; R=Exc)
    ; R=false
    ).

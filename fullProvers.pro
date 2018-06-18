@@ -1,14 +1,19 @@
-faprove(T0):-
-  expand_full_neg(T0,T),
-  %ppp(T),
-  ljfa(T,[]),!.
+faprove(T0,Vs):-
+  unexpand(Vs,T0,T),
+  expand_full_neg(T,FullT),
+  ljfa(FullT,[]),!.
 
-faprove(T0,Vs0):-
+faprove1(T0,Vs0):-
   maplist(expand_full_neg,[T0|Vs0],[T|Vs]),
   %ppp(T),
   ljfa(T,Vs),
   !.
 
+faprove(T0):-
+  expand_full_neg(T0,T),
+  %ppp(T),
+  ljfa(T,[]),!.  
+  
 %expand_full_neg(f,R):-!,R=false.
 expand_full_neg(A,R):-atomic(A),!,R=A.
 expand_full_neg(~(A),(B->false)):-!,
@@ -17,9 +22,12 @@ expand_full_neg(A,B):-
  A=..[F|Xs],
  maplist(expand_full_neg,Xs,Ys),
  B=..[F|Ys].
+
+% turns Vs,G into V1->V2->...->G 
+unexpand([],G,G).
+unexpand([V|Vs],G,(V->R)):-unexpand(Vs,G,R).
   
-  
-  
+
 %ljfa(A,Vs):-ppp((Vs-->A)),fail. % fo traing only
 
 ljfa(A,Vs):-memberchk(A,Vs),!.

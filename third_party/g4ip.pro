@@ -7,9 +7,11 @@
 %:- op(840, xfy, ->).   % implies, right assoc
 %:- op(830, xfy,  v ).   % or, right assoc
 %:- op(820, xfy, &).   % and, right assoc
-%:- op(800,  fy, ).    % atom, prefix
+
 
 % Top-level predicates.
+
+g4prove(G,Vs):-seqR(Vs, [], G).
 
 g4prove(A) :-
   seqR([], [], A).
