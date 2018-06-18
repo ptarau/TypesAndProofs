@@ -14,15 +14,25 @@ faprove(T0):-
   %ppp(T),
   ljfa(T,[]),!.  
   
-%expand_full_neg(f,R):-!,R=false.
-expand_full_neg(A,R):-atomic(A),!,R=A.
-expand_full_neg(~(A),(B->false)):-!,
-  expand_full_neg(A,B).
-expand_full_neg(A,B):-
- A=..[F|Xs],
- maplist(expand_full_neg,Xs,Ys),
- B=..[F|Ys].
+expand_full_neg(A,R):-expand_full_neg(A,R,_,[]).
 
+expand_full_neg(A,R,Ops):-expand_full_neg(A,R,Os,[]),sort(Os,Ops).
+
+%expand_full_neg(f,R)-->{!,R=false}.
+expand_full_neg(A,R)-->{atomic(A),!,R=A}.
+expand_full_neg(~(A),(B->false))-->!,[(~)],
+  expand_full_neg(A,B).
+expand_full_neg(A,B)-->
+ {A=..[F|Xs]},
+ [F],
+ expand_full_negs(Xs,Ys),
+ {B=..[F|Ys]}.
+
+ 
+expand_full_negs([],[])-->[].
+expand_full_negs([X|Xs],[Y|Ys])-->expand_full_neg(X,Y),
+  expand_full_negs(Xs,Ys).
+ 
 % turns Vs,G into V1->V2->...->G 
 unexpand([],G,G).
 unexpand([V|Vs],G,(V->R)):-unexpand(Vs,G,R).

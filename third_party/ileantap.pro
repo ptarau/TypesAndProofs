@@ -5,31 +5,35 @@
 %% Author:  Jens Otten
 %% Web:     www.leancop.de/ileantap/
 %%
-%% Usage:   ilprove(F).   % where F is a first-order formula
-%%                      %  e.g. F=(all X: ex Y:(~q,p(Y)->p(X)))
+%% Usage:   prove(F).   % where F is a first-order formula
+%%                      %  e.g. F=(all X: ex Y:(~q,p(Y)=>p(X)))
 %%
 %% Copyright: (c) 1997 by Jens Otten
 %% License:   GNU General Public License
 
-% ADAPTED TO SUPPORT THE SAME OPERATORS as other provers
-% very slow, times out at ptest(9,ilprove), ntest(4,ilprove)
-% possibly buggy - uses some form of loop check that might fail
-% on non-theorems
-% eg. ?- ilprove((a->a)->a).
 
-%:- op(1130, xfy, <->). :- op(1110, xfy, ->). :- op(500, fy, ~).
-:- op( 500,  fy, all). :- op( 500,  fy, ex). :- op(500,xfy, :).
+:- op(1130, xfy, <=>). :- op(1110, xfy, =>). 
+% :- op(500, fy, ~).
+:- op( 500,  fy, all). :- op( 500,  fy, ex). 
+% :- op(500,xfy, :).
 
+
+
+% maps operators to set compatible with other provers
+
+ilprove(F) :- map_operators(F,G),ilprove0(G,1),!.
 
 %%% Prove first-order formula F
 
-
-ilprove(F):-  
- ilprove(F,1).
-
-ilprove(F,A) :- prove([(F,0),[],[],l],[],[],[],[],A,[W,Z]),
+ilprove0(F,A) :-prove([(F,0),[],[],l],[],[],[],[],A,[W,Z]),
            t_string_unify(W,Z).
-ilprove(F,A) :- \+no_mul([(F,0)]), A1 is (A+1), ilprove(F,A1).
+ilprove0(F,A) :- \+no_mul([(F,0)]), A1 is (A+1), ilprove0(F,A1).
+           
+%prove(F):- A is cputime, pp(F,1), B is cputime, C is B-A, print(C).
+
+%pp(F,A) :- display(A), nl, prove([(F,0),[],[],l],[],[],[],[],A,[W,Z]),
+%           t_string_unify(W,Z).
+%pp(F,A) :- \+no_mul([(F,0)]), A1 is (A+1), pp(F,A1).
 
 
 %%% Check Multiplicities (added 17/09/04)
@@ -44,11 +48,11 @@ no_mul([_|T]):- no_mul(T).
 
 fml((A,B),  1, _,_,_,(A,1),[],(B,1),[],        _,_,  [],[], [],[],  [],[]).
 fml((A,B),  0, _,_,_,(A,0),(B,0),[],[],        _,_,  [],[], [],[],  [],[]).
-fml((A v B),  1, _,_,_,(A,1),(B,1),[],[],        _,_,  [],[], [],[],  [],[]).
-fml((A v B),  0, _,_,_,(A,0),[],(B,0),[],        _,_,  [],[], [],[],  [],[]).
-fml((A<->B),Pl,_,_,_,(((A->B),(B->A)),Pl),[],[],[],_,_,[],[],[],[],[],[]).
-fml((A->B),1,_,_,_, (C,0),(D,1),[],((A->B),1),_,PrV,[],PrV,[],_,A:B,C:D).
-fml((A->B),0,_,FV,S,(B,0),[],(A,1),[],        _,_,  [],[], [],S^FV,[],[]).
+fml((A;B),  1, _,_,_,(A,1),(B,1),[],[],        _,_,  [],[], [],[],  [],[]).
+fml((A;B),  0, _,_,_,(A,0),[],(B,0),[],        _,_,  [],[], [],[],  [],[]).
+fml((A<=>B),Pl,_,_,_,(((A=>B),(B=>A)),Pl),[],[],[],_,_,[],[],[],[],[],[]).
+fml((A=>B),1,_,_,_, (C,0),(D,1),[],((A=>B),1),_,PrV,[],PrV,[],_,A:B,C:D).
+fml((A=>B),0,_,FV,S,(B,0),[],(A,1),[],        _,_,  [],[], [],S^FV,[],[]).
 fml((~A),  1,_,_,_, (C,0),[],[],((~A),1),     _,PrV,[],PrV,[],_,    A,C).
 fml((~A),  0,_,FV,S,(A,1),[],[],[],           _,_,  [],[], [],S^FV,[],[]).
 fml(all X:A,1,_,_,_,(C,1),[],[],(all X:A,1),FrV,PrV,FrV,PrV,Y,_,X:A,Y:C).

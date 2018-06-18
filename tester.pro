@@ -418,4 +418,29 @@ file2db(F):-Db=prob,
     )
   )).
 
-  
+% adaptors for othe operator sets
+
+
+
+%map_operator(f,R)-->{!,R=false}.
+
+map_operators(A,B):-map_operator([
+  (&)-(,),
+  (v)-(;),
+  (<->)-(<=>),
+   (->)-(=>)
+],A,B).
+
+map_operator(_,A,R):-atomic(A),!,R=A.
+map_operator(Ps,A,B):-
+ A=..[F|Xs],
+ member(F-G,Ps),
+ !,
+ maplist(map_operator(Ps),Xs,Ys),
+ B=..[G|Ys].
+map_operator(Ps,A,B):-
+ A=..[F|Xs],
+ maplist(map_operator(Ps),Xs,Ys),
+ B=..[F|Ys]. 
+ 
+ 
