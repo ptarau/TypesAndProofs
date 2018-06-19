@@ -75,6 +75,8 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('third_party/ileantap.pro').
 
+:-include('third_party/ileancop.pro').
+
 :-include('third_party/fitting.pro'). % implicational variant of M. Fitting's prover
 
 :-include('fix_iltp.pro').

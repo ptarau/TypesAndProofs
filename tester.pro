@@ -2,7 +2,7 @@
 
 :-dynamic(proven/2).
  
-max_time(6).
+max_time(16).
 
 % adaptor to run ILPT benchmarks from http://www.iltp.de/  
 
@@ -17,11 +17,16 @@ load_probs2:-load_probs(dprove).
 load_probs3:-load_probs(g4prove).
 
 % tester for ileantap
-% [total=274,right=30,wrong=31,timed_out(secs,6)=213,error=0] - maybe needs fixes?
+%[prover=ilprove,total=274,right=34,wrong=0,timed_out(secs,6)=219,error=21]
+%[prover=ilprove,total=274,right=34,wrong=0,timed_out(secs,16)=219,error=21]
+
 load_probs4:-load_probs(ilprove).
 
+
+load_probs5:-load_probs(coprove).
+
 % random, just for testing the tester
-load_probs5:-load_probs(badProve).
+load_probs6:-load_probs(badProve).
 
 
 
