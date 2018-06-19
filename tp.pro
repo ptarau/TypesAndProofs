@@ -1,5 +1,5 @@
-%:- set_prolog_stack(local,  limit(2000000000)).
-%:- set_prolog_stack(global,  limit(2000000000)).
+:- set_prolog_stack(local,  limit(2000000000)).
+:- set_prolog_stack(global,  limit(2000000000)).
 
 c:-['tp.pro']. % quick iteractive reloader
 
@@ -56,6 +56,8 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('testProvers.pro').
 
+:-include('circSynt.pro').
+
 :-include('tools.pro').
 
 :-include('benchmarks.pro').
@@ -77,7 +79,8 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('third_party/ileancop.pro').
 
-:-include('third_party/fitting.pro'). % implicational variant of M. Fitting's prover
+%:-include('third_party/fitting.pro'). % implicational variant of M. Fitting's prover
+:-include('third_party/fitting_orig.pro'). %  M. Fitting's prover (full IPL)
 
 :-include('fix_iltp.pro').
 

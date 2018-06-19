@@ -36,15 +36,3 @@ thm(Lambda, [L | Gamma]) :-
 
 tautology(X0) :- false2neg(X0,X),thm([], [X]).
 
-
-
-false2neg(false,R):-!,R = ~ (0->0).
-false2neg(X,R):-atomic(X),!,R=X.
-false2neg((X->false),R):-!,false2neg(X,A),R= ~A.
-false2neg((X->Y),(A->B)):-false2neg(X,A),false2neg(Y,B).
-
-ftest1:-
-  tautology(0 -> 1 ->0),
-  tautology( ~ ~ 0 -> 0),
-  tautology((0->1->2)->(0->1)->0->2).
-  

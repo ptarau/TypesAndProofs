@@ -1,3 +1,16 @@
+faprove(T0):-
+  expand_full_neg(T0,T),
+  %ppp(T),
+  ljfa(T,[]),!.  
+
+  
+ffprove(T0):-
+  tautology(T0), % calls Fitting's prover to filter out some non-tautolgies
+  expand_full_neg(T0,T),
+  %ppp(T),
+  ljfa(T,[]),!.  
+  
+  
 faprove(T0,Vs):-
   unexpand(Vs,T0,T),
   expand_full_neg(T,FullT),
@@ -8,12 +21,7 @@ faprove1(T0,Vs0):-
   %ppp(T),
   ljfa(T,Vs),
   !.
-
-faprove(T0):-
-  expand_full_neg(T0,T),
-  %ppp(T),
-  ljfa(T,[]),!.  
-  
+ 
 expand_full_neg(A,R):-expand_full_neg(A,R,_,[]).
 
 expand_full_neg(A,R,Ops):-expand_full_neg(A,R,Os,[]),sort(Os,Ops).

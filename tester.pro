@@ -6,27 +6,30 @@ max_time(16).
 
 % adaptor to run ILPT benchmarks from http://www.iltp.de/  
 
-% [total=274,right=156,wrong=0,timed_out(secs,60)=118,error=0]
-load_probs1:-load_probs(faprove).
+% [prover=faprove,total=274,right=154:[proven=98],refuted=56,wrong=0,timed_out(secs,16)=120,error=0]
+load_probs1:-time(load_probs(faprove)).
 
-% [total=274,right=172,wrong=0,timed_out(secs,60)=50,error=52]
-load_probs2:-load_probs(dprove).
+% [prover=ffprove,total=274,right=150:[proven=95],refuted=55,wrong=0,timed_out(secs,16)=124,error=0]
+load_probs2:-time(load_probs(ffprove)).
+
+% [prover=dprove,total=274,right=171:[proven=108],refuted=63,wrong=0,timed_out(secs,16)=52,error=51]
+load_probs3:-time(load_probs(dprove)).
 
 % tester for g4prove
 % [total=274,right=164,wrong=52,timed_out(secs,6)=43,error=15]
-load_probs3:-load_probs(g4prove).
+load_probs4:-time(load_probs(g4prove)).
 
 % tester for ileantap
 %[prover=ilprove,total=274,right=34,wrong=0,timed_out(secs,6)=219,error=21]
 %[prover=ilprove,total=274,right=34,wrong=0,timed_out(secs,16)=219,error=21]
 
-load_probs4:-load_probs(ilprove).
+load_probs5:-time(load_probs(ilprove)).
 
 
-load_probs5:-load_probs(coprove).
+load_probs6:-rime(load_probs(coprove)).
 
 % random, just for testing the tester
-load_probs6:-load_probs(badProve).
+load_probs7:-time(load_probs(badProve)).
 
 
 
@@ -340,7 +343,7 @@ load_probs(Prover):-
   ),
   sort(Fs0,Fs),length(Fs,Len),
   
-  new_ctr(Wrong),new_ctr(TOut),new_ctr(Err),
+  new_ctr(Refuted),new_ctr(Wrong),new_ctr(TOut),new_ctr(Err),
   do((    
     member(InF,Fs),   
     atom_codes(InF,[C|_]),C=\=Dot,
@@ -348,19 +351,21 @@ load_probs(Prover):-
     is_theorem(InF,Theo),
     load_prob(Prover,InF,_GVs,Res),
     ( member(Res,[true,false])->
-       ( Res==Theo->ppp(InF=ok(res=Res))
+       ( Res==Theo->ppp(InF=ok(res=Res)),(Res=false->ctr_inc(Refuted);true)
        ; ctr_inc(Wrong),ppp(InF=wrong(got=Res,should_be=Theo))
        )
     ; Res=timeout(_)->ctr_inc(TOut),ppp(InF=is(Res)+should_be(Theo))
     ; ctr_inc(Err),ppp(InF=is(Res)+should_be(Theo))
     )
   )),
+  ctr_get(Refuted,RK),
   ctr_get(TOut,TK),
   ctr_get(Wrong,WK),
   ctr_get(Err,EK),
   Right is Len-TK-WK-EK,
+  Proven is Right-RK,
   ppp([
-    prover=Prover,total=Len,right=Right,wrong=WK,
+    prover=Prover,total=Len,right=Right:[proven=Proven],refuted=RK,wrong=WK,
     timed_out(secs,M)=TK,error=EK
   ]).
   
