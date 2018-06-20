@@ -111,7 +111,7 @@ countHorn3(M,Rs):-
     ),Rs).  
   
 
-genOpTree(N,Tree,Leaves):-genOpTree(N,[(->),(&),(v),(<->)],Tree,Leaves).
+genOpTree(N,Tree,Leaves):-genOpTree(N,[(->),(<->),(&),(v)],Tree,Leaves).
 
 genOpTree(N,Ops,Tree,Leaves):-genTree(Ops,Tree,N,0,Leaves,[]).
 

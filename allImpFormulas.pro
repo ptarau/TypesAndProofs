@@ -160,7 +160,7 @@ parCountImpFormulas(N,Total):-
   
 /* 
 
-A289679: Catalan*Bell
+A289679: Catalan(n)*Bell(n+1)
 
 ?- findall(S,(between(0,7,N),sols(allImpFormulas(N,_),S)),Xs).
 Xs = [1, 2, 10, 75, 728, 8526, 115764, 1776060].
