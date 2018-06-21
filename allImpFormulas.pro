@@ -84,7 +84,10 @@ allClassFormulas(N,T,NNT):-
   dneg(T,NNT),
   natvars(Vs).
 
-
+allEqFormulas(N,T):-
+  genOpTree(N, [(->),(<->)], T, Vs),
+  natpartitions(Vs).
+  
 
 allFullFormulas(N,T):-
   genOpTree(N,T,Vs),

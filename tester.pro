@@ -2,7 +2,7 @@
 
 :-dynamic(proven/2).
  
-max_time(16).
+max_time(3).
 
 % adaptor to run ILPT benchmarks from http://www.iltp.de/  
 
@@ -28,8 +28,11 @@ load_probs5:-time(load_probs(ilprove)).
 
 load_probs6:-rime(load_probs(coprove)).
 
+% restricted to ->, <->
+load_probs7:-time(load_probs(fbprove)).
+
 % random, just for testing the tester
-load_probs7:-time(load_probs(badProve)).
+load_probs8:-time(load_probs(badProve)).
 
 
 
@@ -211,6 +214,11 @@ gotest2(N):-do((
   ppp([Culprit,Unexpected])
   )).
 
+gotest3(N):-do((
+  gold_eq_test(N,Culprit,Unexpected),
+  ppp([Culprit,Unexpected])
+  )).  
+  
 gold_test(N,Silver,Culprit,Unexpected):-
   gold_test(N,allImpFormulas,(=),dprove,Silver, Culprit,Unexpected).
 
@@ -229,6 +237,11 @@ gold_test_one(Gold,Silver,T, Res):-
   ).
   
   
+gold_eq_test(N,Culprit,Unexpected):-
+  gold_test(N,allEqFormulas,(=),dprove,fbprove, Culprit,Unexpected).
+  
+
+
 gold_classical_test(N,Silver,Culprit,Unexpected):-
   gold_test(N,allClassFormulas,(=),tautology,Silver, Culprit,Unexpected).
  

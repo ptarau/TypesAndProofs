@@ -111,12 +111,12 @@ countHorn3(M,Rs):-
     ),Rs).  
   
 
-genOpTree(N,Tree,Leaves):-genOpTree(N,[(->),(<->),(&),(v)],Tree,Leaves).
+genOpTree(N,Tree,Leaves):-genOpTree(N,[(~),(->),(<->),(&),(v)],Tree,Leaves).
 
 genOpTree(N,Ops,Tree,Leaves):-genTree(Ops,Tree,N,0,Leaves,[]).
 
 genTree(_,V,N,N)-->[V].
-genTree(_,~A,SN1,N2)-->{SN1>0,N1 is SN1-1},
+genTree(Ops,~A,SN1,N2)-->{memberchk((~),Ops),SN1>0,N1 is SN1-1},
   genTree(A,N1,N2).
 genTree(Ops,OpAB,SN1,N3)-->
   {SN1>1,N1 is SN1-2,member(Op,Ops),make_op(Op,A,B,OpAB)},

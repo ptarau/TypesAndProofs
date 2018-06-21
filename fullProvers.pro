@@ -36,7 +36,7 @@ expand_full_neg(A,B)-->
  expand_full_negs(Xs,Ys),
  {B=..[F|Ys]}.
 
- 
+
 expand_full_negs([],[])-->[].
 expand_full_negs([X|Xs],[Y|Ys])-->expand_full_neg(X,Y),
   expand_full_negs(Xs,Ys).
@@ -80,7 +80,19 @@ ljfa_imp((C <-> D),B,Vs,[((C->D)->((D->C)->B))|Vs]).
 nobug2:-faprove(((0->0)->false)->0).
 
 
-fbprove(T0):-expand_full_neg(T0,T),ljfb(T,[]),!.
+
+check_ops_in(_Ops,A):-atomic(A),!.
+check_ops_in(Ops,A):-
+ A=..[F|Xs],member(F/N,Ops),length(Xs,N),
+ !,
+ maplist(check_ops_in(Ops),Xs).
+ 
+
+fbprove(T):-
+  ( check_ops_in([(->)/2,(<->)/2],T)->true
+  ; nl,ppp('BAD OPS, file not relevant for testing')
+  ),
+  ljfb(T,[]),!.
   
 ljfb(A,Vs):-memberchk(A,Vs),!.
 ljfb((A->B),Vs):-!,ljfb(B,[A|Vs]). 

@@ -14,7 +14,7 @@ syn(Prover,Ops,Spec, Formula):-
   atomic_vars_of(Spec,Vs,Us),
   length(Vs,Max0),length(Us,Min0),
   Min  is Min0-1,
-  Max is max(6,2*Max0),
+  Max is max(8,2*Max0),
   between(Min,Max,N),
   %genTree(N,Formula,Ws),
   genOpTree(N,Ops,Formula,Ws),
@@ -47,3 +47,5 @@ csyn(Spec,Formula):-jsyn([(<->),(->)],Spec,Formula).
 true_fact:-faprove((a&b <-> ((a->b)<->a))).
 
 no_synbug:-isyn(a & b, R),ppp(R).
+
+syn_test:-T=(a -> b&c),csyn(a -> b&c, R),ppp(T=R).
