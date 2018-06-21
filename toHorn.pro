@@ -5,8 +5,16 @@ toHorn((A->B),(H:-Bs)):-!,toHorns((A->B),Bs,H).
 toHorn(H,H).
 
 toHorns((A->B),[HA|Bs],H):-!,toHorn(A,HA),toHorns(B,Bs,H).
-toHorns(H,[],H).    
+toHorns(H,[],H).  
 
+
+toEqHorn((A->B),(H:-Bs)):-!,toEqHorns((A->B),Bs,H).
+toEqHorn((A<->B),(HA<->HB)):-!,toEqHorn(A,HA),toEqHorn(B,HB).
+toEqHorn(H,H).
+
+toEqHorns((A->B),[HA|Bs],H):-!,toEqHorn(A,HA),toEqHorns(B,Bs,H).
+toEqHorns((A<->B),[],(HA<->HB)):-!,toEqHorn(A,HA),toEqHorn(B,HB).
+toEqHorns(H,[],H).    
 
 
 toFullHorn((A->B),(H:-Bs)):-!,toFullHorns((A->B),Bs,H).

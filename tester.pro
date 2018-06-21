@@ -2,7 +2,7 @@
 
 :-dynamic(proven/2).
  
-max_time(3).
+max_time(10).
 
 % adaptor to run ILPT benchmarks from http://www.iltp.de/  
 
@@ -11,6 +11,8 @@ load_probs1:-time(load_probs(faprove)).
 
 % [prover=ffprove,total=274,right=150:[proven=95],refuted=55,wrong=0,timed_out(secs,16)=124,error=0]
 load_probs2:-time(load_probs(ffprove)).
+
+
 
 % [prover=dprove,total=274,right=171:[proven=108],refuted=63,wrong=0,timed_out(secs,16)=52,error=51]
 load_probs3:-time(load_probs(dprove)).
@@ -29,12 +31,36 @@ load_probs5:-time(load_probs(ilprove)).
 load_probs6:-rime(load_probs(coprove)).
 
 % restricted to ->, <->
+% [prover=fbprove,total=274,skipped=226,right=34:[proven=30],refuted=4,wrong=0,timed_out(secs,3)=14,error=0]
 load_probs7:-time(load_probs(fb_filter,fbprove)).
 
+
+% restricted to ->, <->
+% [prover=haprove,total=274,skipped=226,right=33:[proven=30],refuted=3,wrong=0,timed_out(secs,6)=15,error=0]
+
+load_probs8:-time(load_probs(fb_filter,haprove)).
+
+
 % random, just for testing the tester
-load_probs8:-time(load_probs(badProve)).
+load_probs9:-time(load_probs(badProve)).
 
 
+gotest1(N):-do((
+  gold_test(N,bprove,Culprit,Unexpected),
+  ppp([Culprit,Unexpected])
+)).
+  
+gotest2(N):-do((
+  gold_classical_test(N,gprove,Culprit,Unexpected),
+  ppp([Culprit,Unexpected])
+  )).
+
+gotest3(N):-do((
+  gold_eq_test(N,Culprit,Unexpected),
+  ppp([Culprit,Unexpected])
+  )).  
+  
+  
 
 ranptest(N,P):-rptest(random,1,N,1,P).
   
@@ -123,7 +149,15 @@ t15:-
  nl,
  hdepth(F,DF),
  ppp(hdepth=DF).
- 
+
+
+t16:-toEqHorn((a->(b<->c)->((d->a)<->(e->f->g))),R),ppp(R).
+
+t17:-T=(((a<->b)->c)<->((b<->a)->c)),ppp(T),nl,toEqHorn(T,H),ppp(H).
+
+t18:-T=(((a<->b)->c)<->((b<->a)->c)),ppp(T),nl,
+  haprove(T).
+
 % K combinator
 k_(0->1->0).
 % S combinator
@@ -204,20 +238,6 @@ cotest_one(Transformer,Gold,Silver,T, R):-
   ).
   
 
-gotest1(N):-do((
-  gold_test(N,bprove,Culprit,Unexpected),
-  ppp([Culprit,Unexpected])
-)).
-  
-gotest2(N):-do((
-  gold_classical_test(N,gprove,Culprit,Unexpected),
-  ppp([Culprit,Unexpected])
-  )).
-
-gotest3(N):-do((
-  gold_eq_test(N,Culprit,Unexpected),
-  ppp([Culprit,Unexpected])
-  )).  
   
 gold_test(N,Silver,Culprit,Unexpected):-
   gold_test(N,allImpFormulas,(=),dprove,Silver, Culprit,Unexpected).

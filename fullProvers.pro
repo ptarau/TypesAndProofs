@@ -52,7 +52,6 @@ ljfa(A,Vs):-memberchk(A,Vs),!.
 ljfa(_,Vs):-memberchk(false,Vs),!.
 ljfa((A->B),Vs):-!,ljfa(B,[A|Vs]). 
 ljfa(G,Vs1):-
-  %member(T,Vs1),head_of(T,G),!, % TODO, for all operators
   select(Red,Vs1,Vs2),
   reduce(Red,G,Vs2,Vs3),
   !,
@@ -61,12 +60,11 @@ ljfa(A <-> B,Vs):-!,ljfa((A->B),Vs),ljfa((B->A),Vs).
 ljfa(A & B,Vs):-!,ljfa(A,Vs),ljfa(B,Vs).
 ljfa(A v B, Vs):-(ljfa(A,Vs);ljfa(B,Vs)).
 
-  
 
 %reduce(AB,B,Vs,Vs):-ppp(reduce:(vs:Vs-->ab:AB+b:B)),fail.  
 reduce((A->B),_,Vs1,Vs2):-!,ljfa_imp(A,B,Vs1,Vs2).
 reduce((A & B),_,Vs,[A,B|Vs]):-!.
-reduce(A<->B,_,Vs,[(A->B),(B->A)|Vs]). 
+reduce((A<->B),_,Vs,[(A->B),(B->A)|Vs]). 
 reduce((A v B),G,Vs,[B|Vs]):-ljfa(G,[A|Vs]).
 
 
@@ -91,19 +89,21 @@ check_ops_in(Ops,A):-
 fb_filter((G:-Vs)):-
   maplist(check_ops_in([(->)/2,(<->)/2]),[G|Vs]). 
  
-fbprove(T):-
-  ljfb(T,[]),!.
+fbprove(T):-ljfb(T,[]),!.
   
 ljfb(A,Vs):-memberchk(A,Vs),!.
 ljfb((A->B),Vs):-!,ljfb(B,[A|Vs]). 
 ljfb(A <-> B,Vs):-!,ljfb((A->B),Vs),ljfb((B->A),Vs).
-ljfb(G,Vs1):-
+ljfb(G,Vs1):-  
+  member(T,Vs1),eq_head_of(T,G),!,
   select(Red,Vs1,Vs2),
   ljfb_reduce(Red,Vs2,Vs3),
   !,
   ljfb(G,Vs3).
 
-  
+eq_head_of((_->B), G) :- !,eq_head_of(B, G).
+eq_head_of((_A<->_B), _G) :- !.
+eq_head_of(G, G).  
   
 ljfb_reduce((A->B),Vs1,Vs2):-!,ljfb_imp(A,B,Vs1,Vs2).
 ljfb_reduce(A<->B,Vs,[(A->B),(B->A)|Vs]). 

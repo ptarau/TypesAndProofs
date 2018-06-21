@@ -30,7 +30,7 @@ tsyn(Spec,Formula):-tsyn([(<->),(v)],Spec,Formula).
 % same for an intuitionistc one, when possible
 % often this will fail, as intuitionistic operators
 % cannot always be expressed in terms of others
-isyn(Ops,Spec,Formula):-syn(dprove, Ops, Spec, Formula),!.
+isyn(Ops,Spec,Formula):-syn(faprove, Ops, Spec, Formula),!.
 
 
 
