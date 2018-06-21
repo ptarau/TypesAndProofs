@@ -29,7 +29,7 @@ load_probs5:-time(load_probs(ilprove)).
 load_probs6:-rime(load_probs(coprove)).
 
 % restricted to ->, <->
-load_probs7:-time(load_probs(fbprove)).
+load_probs7:-time(load_probs(fb_filter,fbprove)).
 
 % random, just for testing the tester
 load_probs8:-time(load_probs(badProve)).
@@ -338,8 +338,9 @@ tamari2:-
 :-dynamic(fof/3).
 
 
+load_probs(Prover):-load_probs(compound,Prover).
 
-load_probs(Prover):-
+load_probs(Filter,Prover):-
   max_time(M),ppp(problems_time_out_in_secs=M),nl,
   atom_codes('.',[Dot]),
   directory_files(probs,Dirs),
@@ -354,20 +355,22 @@ load_probs(Prover):-
     ),
     Fs0
   ),
-  sort(Fs0,Fs),length(Fs,Len),
-  
+  sort(Fs0,Fs),length(Fs,Len), 
   new_ctr(Refuted),new_ctr(Wrong),new_ctr(TOut),new_ctr(Err),
+  new_ctr(Skip),
   do((    
     member(InF,Fs),   
     atom_codes(InF,[C|_]),C=\=Dot,
     
     is_theorem(InF,Theo),
-    load_prob(Prover,InF,_GVs,Res),
+    load_prob(InF,GVs),
+    (call(Filter,GVs)->call_prover(Prover,GVs,Res);Res=not_apply),
     ( member(Res,[true,false])->
        ( Res==Theo->ppp(InF=ok(res=Res)),(Res=false->ctr_inc(Refuted);true)
        ; ctr_inc(Wrong),ppp(InF=wrong(got=Res,should_be=Theo))
        )
     ; Res=timeout(_)->ctr_inc(TOut),ppp(InF=is(Res)+should_be(Theo))
+    ; Res=not_apply->ctr_inc(Skip)
     ; ctr_inc(Err),ppp(InF=is(Res)+should_be(Theo))
     )
   )),
@@ -375,15 +378,15 @@ load_probs(Prover):-
   ctr_get(TOut,TK),
   ctr_get(Wrong,WK),
   ctr_get(Err,EK),
-  Right is Len-TK-WK-EK,
+  ctr_get(Skip,SK),
+  Right is Len-SK-TK-WK-EK,
   Proven is Right-RK,
   ppp([
-    prover=Prover,total=Len,right=Right:[proven=Proven],refuted=RK,wrong=WK,
+    prover=Prover,total=Len,skipped=SK,right=Right:[proven=Proven],refuted=RK,wrong=WK,
     timed_out(secs,M)=TK,error=EK
   ]).
   
-load_prob(Prover,InF,(G:-Vs),R):-
-   max_time(MaxTime),
+load_prob(InF,(G:-Vs)):-
    file2db(InF),
    findall(A,
      (prob:fof(_,Axiom,A),Axiom\==conjecture),
@@ -392,7 +395,10 @@ load_prob(Prover,InF,(G:-Vs),R):-
    ( G0=($true)->G=(a->a)
    ; G0=($false)->G=false
    ; G=G0
-   ),
+   ).
+
+call_prover(Prover,(G:-Vs),R):-   
+   max_time(MaxTime),
    unexpand(Vs,G,FullG),
    (
      timed_call(MaxTime,call(Prover,FullG),Exc) ->

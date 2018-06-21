@@ -88,10 +88,10 @@ check_ops_in(Ops,A):-
  maplist(check_ops_in(Ops),Xs).
  
 
+fb_filter((G:-Vs)):-
+  maplist(check_ops_in([(->)/2,(<->)/2]),[G|Vs]). 
+ 
 fbprove(T):-
-  ( check_ops_in([(->)/2,(<->)/2],T)->true
-  ; nl,ppp('BAD OPS, file not relevant for testing')
-  ),
   ljfb(T,[]),!.
   
 ljfb(A,Vs):-memberchk(A,Vs),!.
