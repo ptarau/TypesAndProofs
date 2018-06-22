@@ -56,10 +56,14 @@ gotest2(N):-do((
   )).
 
 gotest3(N):-do((
-  gold_eq_test(N,Culprit,Unexpected),
+  gold_eq_test(N,fbprove,Culprit,Unexpected),
   ppp([Culprit,Unexpected])
   )).  
-  
+
+gotest4(N):-do((
+  gold_eq_test(N,haprove,Culprit,Unexpected),
+  ppp([Culprit,Unexpected])
+  )).    
   
 
 ranptest(N,P):-rptest(random,1,N,1,P).
@@ -257,8 +261,8 @@ gold_test_one(Gold,Silver,T, Res):-
   ).
   
   
-gold_eq_test(N,Culprit,Unexpected):-
-  gold_test(N,allEqFormulas,(=),dprove,fbprove, Culprit,Unexpected).
+gold_eq_test(N,Prover,Culprit,Unexpected):-
+  gold_test(N,allEqFormulas,(=),dprove,Prover, Culprit,Unexpected).
   
 
 
