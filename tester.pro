@@ -2,12 +2,17 @@
 
 :-dynamic(proven/2).
  
-max_time(10).
+max_time(3).
 
 % adaptor to run ILPT benchmarks from http://www.iltp.de/  
 
 % [prover=faprove,total=274,right=154:[proven=98],refuted=56,wrong=0,timed_out(secs,16)=120,error=0]
 load_probs1:-time(load_probs(faprove)).
+
+
+
+load_probs1c:-time(load_probs(fcprove)).
+
 
 % [prover=ffprove,total=274,right=150:[proven=95],refuted=55,wrong=0,timed_out(secs,16)=124,error=0]
 load_probs2:-time(load_probs(ffprove)).
@@ -55,6 +60,8 @@ gotest2(N):-do((
   ppp([Culprit,Unexpected])
   )).
 
+% impl + equiv testers
+  
 gotest3(N):-do((
   gold_eq_test(N,fbprove,Culprit,Unexpected),
   ppp([Culprit,Unexpected])
@@ -64,8 +71,25 @@ gotest4(N):-do((
   gold_eq_test(N,haprove,Culprit,Unexpected),
   ppp([Culprit,Unexpected])
   )).    
+
+gotest5(N):-do((
+  gold_eq_test(N,hqprove,Culprit,Unexpected),
+  ppp([Culprit,Unexpected])
+  )).      
+
+
+fulltest1(N):-do((
+  gold_full_test(N,faprove,Culprit,Unexpected),
+  ppp([Culprit,Unexpected])
+  )).   
+  
+fulltest2(N):-do((
+  gold_full_test(N,fcprove,Culprit,Unexpected),
+  ppp([Culprit,Unexpected])
+  )).   
   
 
+  
 ranptest(N,P):-rptest(random,1,N,1,P).
   
 rptest(N,P):-rptest(1001,20,N,100,P).
@@ -270,8 +294,11 @@ gold_classical_test(N,Silver,Culprit,Unexpected):-
   gold_test(N,allClassFormulas,(=),tautology,Silver, Culprit,Unexpected).
  
 gold_full_test(N,Culprit,Unexpected):-
-  gold_test(N,allFullFormulas,(=),dprove,faprove, Culprit,Unexpected).
+  gold_full_test(N,faprove,Culprit,Unexpected).
   
+
+gold_full_test(N,Prover,Culprit,Unexpected):-
+ gold_test(N,allFullFormulas,(=),dprove,Prover, Culprit,Unexpected).
  
  
 gold_ran_imp_test(N,K, Silver, Culprit, Unexpected):-
@@ -405,10 +432,13 @@ load_probs(Filter,Prover):-
   ctr_get(Skip,SK),
   Right is Len-SK-TK-WK-EK,
   Proven is Right-RK,
+  Tried is Right + TK,
   ppp([
-    prover=Prover,total=Len,skipped=SK,right=Right:[proven=Proven],refuted=RK,wrong=WK,
-    timed_out(secs,M)=TK,error=EK
-  ]).
+    prover=Prover,total=Len,
+    skipped=SK,tried=Tried:[right=Right:[proven=Proven,refuted=RK],wrong=WK,
+    timed_out(secs,M)=TK,error=EK]
+  ]),
+  statistics.
   
 load_prob(InF,(G:-Vs)):-
    file2db(InF),

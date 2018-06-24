@@ -65,4 +65,24 @@ ftest1:-
   tautology( ~ ~ 0 -> 0),
   tautology((0->1->2)->(0->1)->0->2).
   
+flattenImpl(A,B,Bs):-
+  maxvar(A,M),
+  flattenImpl(A,B,0,Vs,[]),
+  name_vars(Vs,M,Bs,[]).
+  
+name_vars([],_)-->[].
+name_vars([(I1=T)|Vs],I)-->{I1 is I+1},[(I1->T),(T->I1)],name_vars(Vs,I1).  
+
+
+flattenImpl(A,A,_)-->{atomic(A)},!.
+flattenImpl(A->B,A->B,_)-->{atomic(A),atomic(B)},!.
+flattenImpl((A->(B->C)),(A->(B->C)),0)-->{atomic(A),atomic(B),atomic(C)},!.
+flattenImpl(((A->B)->C),((A->B)->C),0)-->{atomic(A),atomic(B),atomic(C)},!.
+
+flattenImpl((A->B),(A->H),D)-->{atomic(A),DB is D+1},!,[H=BB],flattenImpl(B,BB,DB).
+
+flattenImpl(A->B,H->B,D)-->{atomic(B),DA is D+1},!,[H=AA],
+  flattenImpl(A,AA,DA).
+flattenImpl(A->B,H->G,D)-->[H=AA],[G=BB],{DD is D+1},
+  flattenImpl(A,AA,DD),flattenImpl(B,BB,DD).
 

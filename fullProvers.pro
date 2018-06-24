@@ -21,30 +21,6 @@ faprove1(T0,Vs0):-
   %ppp(T),
   ljfa(T,Vs),
   !.
- 
-expand_full_neg(A,R):-expand_full_neg(A,R,_,[]).
-
-expand_full_neg(A,R,Ops):-expand_full_neg(A,R,Os,[]),sort(Os,Ops).
-
-%expand_full_neg(f,R)-->{!,R=false}.
-expand_full_neg(A,R)-->{atomic(A),!,R=A}.
-expand_full_neg(~(A),(B->false))-->!,[(~)],
-  expand_full_neg(A,B).
-expand_full_neg(A,B)-->
- {A=..[F|Xs]},
- [F],
- expand_full_negs(Xs,Ys),
- {B=..[F|Ys]}.
-
-
-expand_full_negs([],[])-->[].
-expand_full_negs([X|Xs],[Y|Ys])-->expand_full_neg(X,Y),
-  expand_full_negs(Xs,Ys).
- 
-% turns Vs,G into V1->V2->...->G 
-unexpand([],G,G).
-unexpand([V|Vs],G,(V->R)):-unexpand(Vs,G,R).
-  
 
 %ljfa(A,Vs):-ppp((Vs-->A)),fail. % fo traing only
 
@@ -70,14 +46,73 @@ reduce((A v B),G,Vs,[B|Vs]):-ljfa(G,[A|Vs]).
 
 ljfa_imp(A,B,Vs,[B|Vs]):-atomic(A),!,memberchk(A,Vs).    
 ljfa_imp((C-> D),B,Vs,[B|Vs]):-!,ljfa((C->D),[(D->B)|Vs]).
-ljfa_imp((C & D),B,Vs,[(C->(D->B))|Vs]):-!.
+ljfa_imp((C & D),B,Vs,[(C->(D->B))|Vs]).
 ljfa_imp((C v D),B,Vs,[(C->B),(D->B)|Vs]).
 ljfa_imp((C <-> D),B,Vs,[((C->D)->((D->C)->B))|Vs]).
 
 
+fcprove(T):-fcprove(T,[]).
+
+fcprove(T0,Vs):-
+  unexpand(Vs,T0,T),
+  expand_full_neg(T,FullT),
+  ljfc(FullT,[]),
+  !.
+  
+ljfc(A,Vs):-memberchk(A,Vs),!.
+ljfc(_,Vs):-memberchk(false,Vs),!.
+ljfc((A->B),Vs):-!,ljfc(B,[A|Vs]). 
+ljfc(A <-> B,Vs):-!,ljfc((A->B),Vs),ljfc((B->A),Vs).
+ljfc(A & B,Vs):-!,ljfc(A,Vs),ljfc(B,Vs).
+ljfc(A v B, Vs):-(ljfc(A,Vs);ljfc(B,Vs)),!.
+ljfc(G,Vs1):- % atomic or disjunction !
+  select(Red,Vs1,Vs2),
+  ljfc_reduce(Red,G,Vs2,Vs3),
+  !,
+  ljfc(G,Vs3).
+  
+
+ljfc_reduce((A    ->B),_G,Vs,[B|Vs]):-atomic(A),!,memberchk(A,Vs).
+ljfc_reduce((C->D)->B,_G,Vs,[B|Vs]):-ljfc((C->D),[(D->B)|Vs]).
+
+ljfc_reduce((C & D)->B,_G,Vs,[(C->(D->B))|Vs]).
+ljfc_reduce((C v D)->B,_G,Vs,[(C->B),(D->B)|Vs]).
+ljfc_reduce((C<->D)->B,_G,Vs,[((C->D)->((D->C)->B))|Vs]).
+
+ljfc_reduce((A & B),_G,Vs,[A,B|Vs]).
+ljfc_reduce((A<->B),_G,Vs,[(A->B),(B->A)|Vs]). 
+ljfc_reduce((A v B),G,Vs,[B|Vs]):-ljfc(G,[A|Vs]).
+
+
+
+
+expand_full_neg(A,R):-expand_full_neg(A,R,_,[]).
+
+expand_full_neg(A,R,Ops):-expand_full_neg(A,R,Os,[]),sort(Os,Ops).
+
+%expand_full_neg(f,R)-->{!,R=false}.
+expand_full_neg(A,R)-->{atomic(A),!,R=A}.
+expand_full_neg(~(A),(B->false))-->!,[(~)],
+  expand_full_neg(A,B).
+expand_full_neg(A,B)-->
+ {A=..[F|Xs]},
+ [F],
+ expand_full_negs(Xs,Ys),
+ {B=..[F|Ys]}.
+
+
+expand_full_negs([],[])-->[].
+expand_full_negs([X|Xs],[Y|Ys])-->expand_full_neg(X,Y),
+  expand_full_negs(Xs,Ys).
+ 
+  
+  
+% turns Vs,G into V1->V2->...->G 
+unexpand([],G,G).
+unexpand([V|Vs],G,(V->R)):-unexpand(Vs,G,R).
+
+
 nobug2:-faprove(((0->0)->false)->0).
-
-
 
 check_ops_in(_Ops,A):-atomic(A),!.
 check_ops_in(Ops,A):-
@@ -101,8 +136,12 @@ ljfb(G,Vs1):-
   !,
   ljfb(G,Vs3).
 
+
+expand_equiv(X<->Y,Vs,[(X->Y),(Y->X)|Vs]):-!.
+expand_equiv(_,Vs,Vs).
+
 eq_head_of((_->B), G) :- !,eq_head_of(B, G).
-eq_head_of((_A<->_B), _G) :- !.
+eq_head_of((A<->B), G) :- (eq_head_of(A,G);eq_head_of(B,G)),!.
 eq_head_of(G, G).  
   
 ljfb_reduce((A->B),Vs1,Vs2):-!,ljfb_imp(A,B,Vs1,Vs2).

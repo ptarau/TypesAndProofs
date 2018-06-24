@@ -24,19 +24,42 @@ ljh_imp((D:-Cs),B,Vs):- ljh((D:-Cs),[(B:-[D])|Vs]).
 trimmed((B:-[]),R):-!,R=B.
 trimmed(BBs,BBs).
 
-% TODO: FINISH - not yet working
 
-habug:- T=((0->0<->0->0)->0),
-  ppp(T),
-  haprove(T),
-  ppp(succeds_but_should_fail),
-  dprove(T).
+hqprove(T0):-toEqHorn(T0,T),ljhq(T).
+
+ljhq(A):-ljhq(A,[]),!.
+
+%ljhq(A,Vs):-ppp((Vs-->A)),fail. % just to trace steps
+ljhq(A,Vs):-memberchk(A,Vs),!. 
+ljhq((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljhq(B,Vs2).
+ljhq((A<->B),Vs):-!,ljhq(A,[B|Vs]),ljhq(B,[A|Vs]).
+ljhq(G,Vs1):- % atomic(G), G not on Vs1
+  %memberchk((G:-_),Vs1), % if not, we just fail
+  sel_eq((B:-As),Vs1,Vs2), % outer select loop
+  sel_eq(A,As,Bs),         % inner select loop
+  ljhq_imp(A,B,Vs2), % A element of the body of B
+  !,
+  trimmed((B:-Bs),NewB), % trim empty bodies
+  ljhq(G,[NewB|Vs2]).
+  
+ljhq_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
+ljhq_imp((D:-Cs),B,Vs):- ljhq((D:-Cs),[(B:-[D])|Vs]).
+
+sel_eq(Y,Vs1,Vs3):-select(X,Vs1,Vs2),exp_eq(X,Y,Vs2,Vs3).
+
+exp_eq((A<->B),X,Vs,[Y|Vs]):-!,pick_eq((A:-[B]),(B:-[A]),X,Y).
+exp_eq(X,X,Vs,Vs).
+
+pick_eq(A,B,A,B).
+pick_eq(A,B,B,A).
+
+% Horn + equivalences
   
 haprove(T0):-toEqHorn(T0,T),ljha(T).
 
 ljha(A):-ljha(A,[]),!.
 
-ljha(A,Vs):-ppp((Vs-->A)),fail. % just to trace steps
+%ljha(A,Vs):-ppp((Vs-->A)),fail. % just to trace steps
 ljha(A,Vs):-atomic(A),memberchk(A,Vs),!. 
 ljha((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljha(B,Vs2).
 ljha((A<->B),Vs):-!,ljha(A,[B|Vs]),ljha(B,[A|Vs]).
@@ -46,18 +69,23 @@ ljha(G,Vs1):-
   !,
   ljha(G,Vs3).
 
-ljha_reduce(Red,Vs,Vs):-ppp(reduce:(Vs-->Red)),fail.  
-ljha_reduce((B:-As),Vs1,Vs2):-!,
-  select(A,As,Bs),
-  trimmed((B:-Bs),NewB),  
-  ljha_imp(A,B,NewB,Vs1,Vs2),
-  !.
+%ljha_reduce(Red,Vs,Vs):-ppp(reduce:(Vs-->Red)),fail.  
+ljha_reduce((B:-As),Vs,[NewB|Vs]):-!,
+  select(A0,As,Bs0),
+  expand_eq(A0,Bs0,A,Bs), 
+  ljha_imp(A,B,Vs),
+  !,
+  trimmed((B:-Bs),NewB).
 ljha_reduce(A<->B,Vs,[(A:-[B]),(B:-[A])|Vs]).
 
-ljha_imp(A,B,NewB,Vs,Vs):-ppp(imp:(Vs-->['A'=A,'B'=B,'NewB'=NewB])),fail.
-ljha_imp(A,_B,NewB,Vs,[NewB|Vs]):-atomic(A),!,memberchk(A,Vs).
-ljha_imp((D:-Cs),B,NewB,Vs,[NewB|Vs]):-!,ljha((D:-Cs),[(B:-[D])|Vs]).
-ljha_imp((C <-> D),B,_NewB,Vs,[(B:-[(C:-[D]),(D:-[C])])|Vs]).
+
+
+expand_eq(X<->Y,Bs,(X:-[Y]),[(Y:-[X])|Bs]):-!.
+expand_eq(A,Bs,A,Bs).
+
+%ljha_imp(A,B,Vs):-ppp(imp:(Vs-->['A'=A,'B'=B])),fail.
+ljha_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
+ljha_imp((D:-Cs),B,Vs):-!,ljha((D:-Cs),[(B:-[D])|Vs]).
 
 % more complex, tries to have only one pass - not worth it
 hh1prove(T0):-toHorn(T0,T),hh1(T).

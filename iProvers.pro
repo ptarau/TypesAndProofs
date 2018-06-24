@@ -66,6 +66,28 @@ ljb_imp((C->D),B,Vs):-!,ljb((C->D),[(D->B)|Vs]).
 ljb_imp(A,_,Vs):-atomic(A),memberchk(A,Vs).   
 
 
+flatprove(T):-
+%  ppp(T),
+  flattenImpl(T,G,Vs),
+%  ppp((G:-Vs)),nl,
+  ljflat(G,Vs),!.
+
+ljflat(A,Vs):-ppp(ljf=(A:-Vs)),fail.
+ljflat(A,Vs):-memberchk(A,Vs),!.
+ljflat((A->B),Vs):-!,ljflat(B,[A|Vs]). 
+ljflat(G,Vs0):-
+  select(X,Vs0,Vs1),head_of(X,G),!,
+  select((A->B),[X|Vs1],Vs2),
+  ppp(imp=(G:-(A->B))),
+  ljflat_imp(A,B,Vs2),
+  ppp(out=A+B),
+  !,
+  ljflat(G,[B|Vs2]).
+
+%ljflat_imp(CD,B,Vs):-ppp(imp=(B:CD:-Vs)),fail.
+ljflat_imp((C->D),B,Vs):-!,ljflat((C->D),[(D->B)|Vs]).
+ljflat_imp(A,_,Vs):-atomic(A),memberchk(A,Vs).   
+
 
 % variant of bprove that produces
 % lambda terms as proofs
