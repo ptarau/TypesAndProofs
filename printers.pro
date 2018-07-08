@@ -51,7 +51,7 @@ showFlatHorn(N):-
     flattenHorn(T0,T),
     toHorn(A,T),
     ppp(A),
-    %ppt(A),
+    ppt(A),
     left_depth(A,D),assertion(D=<3),
     nl,
     (D>=3->ppp(D);true),
@@ -61,4 +61,13 @@ showFlatHorn(N):-
 left_depth(A,R):-(atomic(A);var(A)),!,R=0.
 left_depth(A->_,R):-left_depth(A,D),R is D+1.
 
-
+showSortedHorns(N):-
+  do((
+     
+     allSortedHorn(N,T),
+     ppp(T),
+     horn2term(T,Pro),
+     pph(T),    
+     ppp(Pro),
+     nl
+    )).

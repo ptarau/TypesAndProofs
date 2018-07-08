@@ -226,12 +226,25 @@ toFlatImp(A,B):-
   toHorn(B,F).
   
   
-  
-horn2term(N,A):-integer(N),!,atom_number(A,N).
+horn2term(N,A):-atomic(N),!,to_atom(N,A).
 horn2term((H:-Bs),T):-
    maplist(horn2term,Bs,As),
-   atom_number(F,H),
+   to_atom(H,F),
    T=..[F|As].
 
+term2horn(T,H):-atomic(T),!,H=T.
+term2horn(T,(F:-Bs)):-
+  T=..[F|Xs],
+  maplist(term2horn,Xs,Bs).
    
+to_atom(A,R):-atom(A),!,R=A.
+to_atom(N,R):-integer(N),atom_number(R,N).
+
+imp2pro-->toHorn,horn2term.
+
+fromHorn(A,B):-toHorn(B,A).
+
+pro2imp-->term2horn,fromHorn.
+
+  
    
