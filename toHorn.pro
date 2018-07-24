@@ -7,6 +7,11 @@ toHorn(H,H).
 toHorns((A->B),[HA|Bs],H):-!,toHorn(A,HA),toHorns(B,Bs,H).
 toHorns(H,[],H).  
 
+toVarHorn(X,R):-maxvar(X,M),M1 is M+1,functor(D,d,M1),toHorn(X,HBs),toVarHorn1(D,HBs,R).
+
+toVarHorn1(D,(H:-Bs),(VH:-VBs)):-!,maplist(toVarHorn1(D),[H|Bs],[VH|VBs]).
+toVarHorn1(D,I,V):-I1 is I+1,arg(I1,D,V).
+
 
 toEqHorn((A->B),(H:-Bs)):-!,toEqHorns((A->B),Bs,H).
 toEqHorn((A<->B),(HA<->HB)):-!,toEqHorn(A,HA),toEqHorn(B,HB).
