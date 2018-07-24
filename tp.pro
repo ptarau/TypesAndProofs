@@ -1,6 +1,8 @@
 %:- set_prolog_stack(local,  limit(2000000000)).
 %:- set_prolog_stack(global,  limit(2000000000)).
 
+user:prolog_file_type(pro, prolog).
+
 c:-['tp.pro']. % quick iteractive reloader
 
 :-op(1025,fy,do).
@@ -57,6 +59,8 @@ c:-['tp.pro']. % quick iteractive reloader
 :-include('testProvers.pro').
 
 :-include('circSynt.pro').
+
+:-include('harrop.pro').
 
 :-include('tools.pro').
 

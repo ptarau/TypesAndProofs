@@ -186,6 +186,12 @@ t17:-T=(((a<->b)->c)<->((b<->a)->c)),ppp(T),nl,toEqHorn(T,H),ppp(H).
 t18:-T=(((a<->b)->c)<->((b<->a)->c)),ppp(T),nl,
   haprove(T).
 
+t19:-lj3(T),ppp(T=valid),sprove(T,L),ppp(L),fail.
+
+
+lj3(((a->b)->a)->(b->g) -> ((a->b)->g)).
+lj3i(((0->1)->0)->(1->2) -> ((0->1)->2)).
+
 % K combinator
 k_(0->1->0).
 % S combinator

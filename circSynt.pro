@@ -22,7 +22,7 @@ syn(Prover,Ops,Spec, Formula):-
   %ppp(Formula),
   call(Prover,Spec<->Formula).
 
-% synthesizes an classical implicational formula equivalet to Spec  
+% synthesizes an classical implicational formula equivalent to Spec  
 tsyn(Ops,Spec,Formula):-syn(tautology, Ops, Spec, Formula),!.
 
 tsyn(Spec,Formula):-tsyn([(<->),(v)],Spec,Formula).

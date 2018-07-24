@@ -25,6 +25,36 @@ trimmed((B:-[]),R):-!,R=B.
 trimmed(BBs,BBs).
 
 
+
+h1prove(T0):-toHorn(T0,T),ljh1(T).
+
+ljh1(A):-ljh1(A,[]),!.
+
+%ljh1(A,Vs):-ppp((Vs-->A)),fail. % just to trace steps
+%ljh1(A,Vs):-memberchk(A,Vs),!. 
+ljh1((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljh1(B,Vs2).
+ljh1(G,Vs1):- % atomic(G), G not on Vs1
+  ( memberchk(G,Vs1)->true
+  ; memberchk((G:-_),Vs1),  
+    select((B:-As),Vs1,Vs2), % outer select loop
+    select(A,As,Bs),         % inner select loop
+    ljh1_imp(A,B,Vs2), % A element of the body of B
+    !,
+    trimmed((B:-Bs),NewB), % trim empty bodies
+    ljh1(G,[NewB|Vs2])
+  ).
+  
+ljh1_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
+ljh1_imp((D:-Cs),B,Vs):- ljh1((D:-Cs),[(B:-[D])|Vs]).
+
+hhd((H:-_),(H:-_)).
+hhd(H,H).
+
+
+
+
+
+
 hqprove(T0):-toEqHorn(T0,T),ljhq(T).
 
 ljhq(A):-ljhq(A,[]),!.

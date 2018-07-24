@@ -70,7 +70,19 @@ countAllImp(M):-
   ),
   maplist(ppp,Rs).  
   
+%allHarropFormulas(N,T):-hdef(N,T,_).
+allHarropFormulas(N,T):-hgoal(N,T,_).
   
+countAllHarrop(M):-
+  findall(R,(
+      N to M,
+      gen_and_count(N,allHarropFormulas,tautology,R)
+    ),
+    Rs
+  ),
+  maplist(ppp,Rs). 
+
+
 % all classical implicational formulas  
 allClassFormulas(N,T):-
   genTree(N,T,Vs),
