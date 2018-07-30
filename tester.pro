@@ -533,3 +533,6 @@ map_operator(Ps,A,B):-
  B=..[F|Ys]. 
  
  
+ 
+   
+   

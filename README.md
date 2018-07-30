@@ -46,7 +46,7 @@ These tools implement Prolog-based algorithms on the two sides of the *Curry-How
 - random set-partition generation with urn-algorithms 
 - random term generation with Boltzmann samplers
 - Gentzen's LJ calculus
-- Vorobe'v-Hudelmaier-Dyckhoff's LJT calculus
+- Vorobiev-Hudelmaier-Dyckhoff's LJT calculus
 - Glivenko's double negation translation
 - Fitting's classical tautology checker
 - de Bruijn notation for lambda terms
@@ -82,6 +82,6 @@ Try:
 
 for their respective performance.
 
-So far, our faprove/1 full propositional IL prover is the only one passing all correctness tests as well as avoidance of stack overflow errors.
+So far, our faprove/1 and ff_prove/1 full propositional IL provers are the only ones passing all correctness tests as well as avoidance of stack overflow errors.
 All provers can be tested at various timout levels by changing max_time/1 in file *tester.pro*
 

@@ -1,6 +1,6 @@
 % random partition generator
 
-%:-use_module(library(tabling)).
+:-use_module(library(tabling)).
 :-table(stir/3).
 
 ranSetPart(N,Rs):-bell(N,B),ranPart(N,B,Rs).

@@ -18,6 +18,10 @@ varvars(A,V,D):-I is A+1,arg(I,D,V).
 maxvar(X,M):-var(X),!,M=0.
 maxvar(false,M):-!,M=0.
 maxvar((A->B),R):-!,maxvar(A,I),maxvar(B,J),R is max(I,J).
+maxvar((A v B),R):-!,maxvar(A,I),maxvar(B,J),R is max(I,J).
+maxvar((A & B),R):-!,maxvar(A,I),maxvar(B,J),R is max(I,J).
+maxvar((A <-> B),R):-!,maxvar(A,I),maxvar(B,J),R is max(I,J).
+maxvar((~A),R):-!,maxvar(A,R).
 maxvar((A,B),R):-!,maxvar(A,I),maxvar(B,J),R is max(I,J).
 maxvar(I,R):-must_be(integer,I),R=I.
 

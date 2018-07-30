@@ -76,6 +76,7 @@ abduce_for2(P,T0,Hyps):-
   call(P,(T:-Hyps)).
   
   
+  
   % subsets of K elements of a set with N elements
 ksubset(0,_,[]).
 ksubset(K,[X|Xs],[X|Rs]):-K>0,K1 is K-1,ksubset(K1,Xs,Rs).
@@ -101,5 +102,25 @@ trivNo((H:-Bs),(H:-Ds)):-
    delete(H,Bs,Cs),
    delete((H:-_),Cs,Ds).
    
+% what atomics being true make a formula true 
+
+abduceFull(P,T0,T,Hyps):-abduceFullCand(T0,T,Hyps),call(P,T),!.
+
+abduceFullCand(T0,T,Hyps)  :-
+  maxvar(T0,M),
+  numlist(0,M,Ns),
+  between(0,M,K),
+  ksubset(K,Ns,Hyps),
+  toHorn(T,(T0:-Hyps)).
+
  
+abduce_test(N,P):-
+   allSortedFullFormulas(N,T0),
+   \+call(P,T0),
+   abduceFull(P,T0,T,Hyps),Hyps=[_|_],
+   ppp((T0-->T)),
+   fail.
+   
+  
+  
  

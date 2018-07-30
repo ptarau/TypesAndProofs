@@ -4,7 +4,8 @@ natpartitions(Vs):-
    length(Ns,SL),
    succ(L,SL),
    numlist(0,L,Ns).
-
+   
+   
 % computes set partitions seen as distinct logic variables
 % second arg has the unique variables
 

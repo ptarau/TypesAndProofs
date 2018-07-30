@@ -123,6 +123,28 @@ countAllFullDyckhoff(M):-
   ),
   maplist(ppp,Rs).  
 
+ 
+allSortedFullFormulas(N,T):-
+  genSortedTree(N,T,Vs),
+  natpartitions(Vs).
+
+countAllSortedFull(M):-
+  findall(R,(
+      N to M,
+      gen_and_count(N,allSortedFullFormulas,faprove,R)
+    ),
+    Rs
+  ),
+  maplist(ppp,Rs).  
+  
+countAllSortedFullDyckhoff(M):-
+  findall(R,(
+      N to M,
+      gen_and_count(N,allSortedFullFormulas,dprove,R)
+    ),
+    Rs
+  ),
+  maplist(ppp,Rs).  
   
 /*
 

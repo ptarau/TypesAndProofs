@@ -150,3 +150,92 @@ hbm(N,P,Counts,Time=T2-T1):-
   ctr_get(All,Tot),
   Counts=Pr/Tot.
   
+
+fbm(N,P,Counts,Time=T2-T1):-
+  assertion(member(P,[dprove,faprove,ffprove])),
+  new_ctr(All),
+  time(
+  do((
+   allFullFormulas(N,T),
+   ctr_inc(All)
+  )),
+  T1
+  ),
+   ppp(t1=T1),
+  new_ctr(Proven),
+  time(
+  do((
+   allFullFormulas(N,T),
+   call(P,T),
+   ctr_inc(Proven)
+  )),
+  T2
+  ),
+  Time is T2-T1,
+  ctr_get(Proven,Pr),
+  ctr_get(All,Tot),
+  Counts=Pr/Tot.
+  
+  
+fsbm(N,P,Counts,Time=T2-T1):-
+  assertion(member(P,[dprove,faprove,ffprove])),
+  new_ctr(All),
+  time(
+  do((
+   allSortedFullFormulas(N,T),
+   ctr_inc(All)
+  )),
+  T1
+  ),
+   ppp(t1=T1),
+  new_ctr(Proven),
+  time(
+  do((
+   allSortedFullFormulas(N,T),
+   call(P,T),
+   ctr_inc(Proven)
+  )),
+  T2
+  ),
+  Time is T2-T1,
+  ctr_get(Proven,Pr),
+  ctr_get(All,Tot),
+  Counts=Pr/Tot.
+
+  
+/*
+- fbm(7,ffprove,Counts,Time=T2-T1).
+t1=0.2620220184326172
+Counts = 3343/205674,
+               Time = 1.3210039138793945,
+T2 = 1.5830259323120117,
+T1 = 0.2620220184326172.
+
+?- fbm(7,faprove,Counts,Time=T2-T1).
+t1=0.26184606552124023
+Counts = 3343/205674,
+               Time = 1.4115409851074219,
+T2 = 1.673387050628662,
+T1 = 0.26184606552124023.
+
+?- fbm(7,dprove,Counts,Time=T2-T1).
+t1=0.2626791000366211
+Counts = 3343/205674,
+              Time = 1.0432429313659668,
+T2 = 1.305922031402588,
+T1 = 0.2626791000366211.
+
+?- fsbm(11,faprove,C,T).
+t1=35.28143906593323
+C = 1961346/27248400,
+T =  (979.1363348960876=1014.4177739620209-35.28143906593323).
+
+?- fsbm(11,dprove,C,T).
+t1=35.10769701004028
+C = 1961346/27248400,
+T =  (226.97890901565552=262.0866060256958-35.10769701004028).
+
+*/ 
+  
+  
+  
