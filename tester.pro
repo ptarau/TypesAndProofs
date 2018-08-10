@@ -255,6 +255,9 @@ cotest3(N):-cotest(N,(=),intu,zprove).
 
 cotest4(N):-cotest(N,(dneg),cprove,tautology).
 
+
+
+
 cotest(N,Transformer,Gold,Silver):-
   allImpFormulas(N,T),
   cotest_one(Transformer,Gold,Silver,T, R),

@@ -47,18 +47,15 @@ cprove(T0):-
 
 ljc(_,Vs):-memberchk(false,Vs),!.
 ljc(A,Vs):-memberchk(A,Vs),!.
-ljc((A->B),Vs1):-!,add_new(A,Vs1,Vs2),ljc(B,Vs2). 
+ljc((A->B),Vs):-!,ljc(B,[A|Vs]). 
 ljc(G,Vs1):- % atomic(G),
   select((A->B),Vs1,Vs2),
   ljc_imp(A,B,Vs2),
   !,
-  add_new(B,Vs2,Vs3),
-  ljc(G,Vs3).
+  ljc(G,[B|Vs2]).
 
 
-ljc_imp((C->D),B,Vs1):-!, 
-   add_new((D->B),Vs1,Vs2),
-   ljc((C->D),Vs2).
+ljc_imp((C->D),B,Vs):-!,ljc((C->D),[(D->B)|Vs]).
 ljc_imp(A,_,Vs):-memberchk(A,Vs).   
 
 

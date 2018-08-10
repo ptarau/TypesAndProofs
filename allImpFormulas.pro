@@ -69,7 +69,29 @@ countAllImp(M):-
     Rs
   ),
   maplist(ppp,Rs).  
+
+
   
+allNegImpFormulas(N,T):-
+  genOpTree(N,[~,(->)],T,Vs),
+  natpartitions(Vs).
+ 
+countAllNegImp(M,P):-
+  findall(R,(
+      N to M,
+      gen_and_count(N,allNegImpFormulas,P,R)
+    ),
+    Rs
+  ),
+  maplist(ppp,Rs).  
+
+  
+  
+
+
+
+
+
 %allHarropFormulas(N,T):-hdef(N,T,_).
 allHarropFormulas(N,T):-hgoal(N,T,_).
   

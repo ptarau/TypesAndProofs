@@ -119,7 +119,9 @@ genTree(_,V,N,N)-->[V].
 genTree(Ops,~A,SN1,N2)-->{memberchk((~),Ops),SN1>0,N1 is SN1-1},
   genTree(Ops,A,N1,N2).
 genTree(Ops,OpAB,SN1,N3)-->
-  {SN1>1,N1 is SN1-2,member(Op,Ops),make_op(Op,A,B,OpAB)},
+  {SN1>1,N1 is SN1-2,
+  member(Op,Ops),Op\=(~),make_op(Op,A,B,OpAB)
+  },
   genTree(Ops,A,N1,N2),
   genTree(Ops,B,N2,N3).
   
@@ -127,16 +129,20 @@ make_op(Op,A,B,OpAB):-functor(OpAB,Op,2),arg(1,OpAB,A),arg(2,OpAB,B).
 
 
 genSortedTree(N,Tree,Leaves):-
-   genSortedTree(N,[(~),(->)],[(<->),(&),(v)],Tree,Leaves).
+   genSortedTree(N,[(~),(->)],[(<->),(&),(v)],
+   Tree,Leaves).
 
 genSortedTree(N,Ops,Cops,Tree,Leaves):-
   genSortedTree(Ops,Cops,Tree,N,0,Leaves,[]).
 
 genSortedTree(_,_,V,N,N)-->[V].
-genSortedTree(Ops,Cops,~A,SN1,N2)-->{memberchk((~),Ops),SN1>0,N1 is SN1-1},
+genSortedTree(Ops,Cops,~A,SN1,N2)-->
+  {memberchk((~),Ops),SN1>0,N1 is SN1-1},
   genSortedTree(Ops,Cops,A,N1,N2).
 genSortedTree(Ops,Cops,OpAB,SN1,N3)-->
-  {SN1>1,N1 is SN1-2,member(Op,Ops),Op\=(~),make_op(Op,A,B,OpAB)},
+  {SN1>1,N1 is SN1-2,
+    member(Op,Ops),Op\=(~),make_op(Op,A,B,OpAB)
+  },
   genSortedTree(Ops,Cops,A,N1,N2),
   genSortedTree(Ops,Cops,B,N2,N3).
 genSortedTree(Ops,Cops,OpAB,SN1,N3)-->

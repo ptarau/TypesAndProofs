@@ -24,6 +24,28 @@ ljh_imp((D:-Cs),B,Vs):- ljh((D:-Cs),[(B:-[D])|Vs]).
 trimmed((B:-[]),R):-!,R=B.
 trimmed(BBs,BBs).
 
+% with ~A as A->false
+hnprove(T0):-toNHorn(T0,T),ljnh(T).
+
+toNHorn --> expand_neg,toHorn.
+
+ljnh(A):-ljnh(A,[]),!.
+
+%ljnh(A,Vs):-ppp((Vs-->A)),fail. % just to trace steps
+ljnh(A,Vs):-memberchk(A,Vs),!. 
+ljnh(_,Vs):-memberchk(false,Vs),!.
+ljnh((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljnh(B,Vs2).
+ljnh(G,Vs1):- % atomic(G), G not on Vs1
+  select((B:-As),Vs1,Vs2), % outer select loop
+  select(A,As,Bs),         % inner select loop
+  ljnh_imp(A,B,Vs2), % A element of the body of B
+  !,
+  trimmed((B:-Bs),NewB), % trim empty bodies
+  ljnh(G,[NewB|Vs2]).
+  
+
+ljnh_imp((D:-Cs),B,Vs):-!,ljnh((D:-Cs),[(B:-[D])|Vs]).
+ljnh_imp(A,_B,Vs):-memberchk(A,Vs).
 
 
 hvprove(T0):-toVarHorn(T0,T),ljhv(T).
@@ -31,7 +53,8 @@ hvprove(T0):-toVarHorn(T0,T),ljhv(T).
 ljhv(A):-ljhv(A,[]),!.
 
 ljhv(A,Vs):-member_var(A,Vs),!. 
-ljhv(G,Vs1):-nonvar(G),!,G=(B:-As),append(As,Vs1,Vs2),ljhv(B,Vs2).
+ljhv(G,Vs1):-nonvar(G),!,G=(B:-As),
+  append(As,Vs1,Vs2),ljhv(B,Vs2).
 ljhv(G,Vs1):- % var(G), G not on Vs1
   member((GG:-_),Vs1),GG==G,  % if not, we just fail
   !,
