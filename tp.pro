@@ -11,8 +11,8 @@ c:-['tp.pro']. % quick iteractive reloader
 :-op(30,xfx,to).
 
 :- op(425,  fy,  ~ ).
-:- op(450, yfx,  & ).    % left associative
-:- op(450, yfx,  v ).    % left associative
+:- op(450, xfy,  & ).    % right associative
+:- op(475, xfy,  v ).    % right associative
 :- op(500, xfx,  <-> ).  % non associative
 %:- op(500, xfy,  ->).    % right associative  
 %%% WARNING, this overwrites Prolog's ->
@@ -40,9 +40,13 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('fullProvers.pro'). % provers hadling all connectives
 
+:-include('parProvers.pro'). % other provers
+
 :-include('hProvers.pro'). % other provers with embedded Horn clauses
 
-:-include('cProvers.pro'). % provers  for classical logic
+:-include('cProvers.pro'). % provers  for classical propostional logic
+
+:-include('oProvers.pro'). % other provers
 
 :-include('toHorn.pro'). % translators to/from embeded Horn Clauses
 
@@ -80,6 +84,7 @@ c:-['tp.pro']. % quick iteractive reloader
 
 
 :-include('third_party/ileantap.pro').
+:-include('third_party/ileansep.pro').
 
 :-include('third_party/ileancop.pro').
 

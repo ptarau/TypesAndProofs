@@ -14,6 +14,7 @@ ctr_add(Ctr,N):-arg(1,Ctr,V1),V2 is V1+N,nb_setarg(1,Ctr,V2).
 %% ctr_dec(Ctr,X): decrements Ctr
 ctr_dec(Ctr):-X is -1,ctr_add(Ctr,X).
 
+pred_count(C,K):-predicate_property(C, number_of_clauses(K)).
 
 % sorts and trims, but in reverse standard order 
 revsort(Xs,Rs):-sort(0,(@>),Xs,Rs).

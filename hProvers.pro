@@ -7,6 +7,7 @@ hprove(T0):-toHorn(T0,T),ljh(T).
 ljh(A):-ljh(A,[]),!.
 
 %ljh(A,Vs):-ppp((Vs-->A)),fail. % just to trace steps
+
 ljh(A,Vs):-memberchk(A,Vs),!. 
 ljh((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljh(B,Vs2).
 ljh(G,Vs1):- % atomic(G), G not on Vs1
@@ -18,11 +19,13 @@ ljh(G,Vs1):- % atomic(G), G not on Vs1
   trimmed((B:-Bs),NewB), % trim empty bodies
   ljh(G,[NewB|Vs2]).
   
-ljh_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
-ljh_imp((D:-Cs),B,Vs):- ljh((D:-Cs),[(B:-[D])|Vs]).
+
+ljh_imp((D:-Cs),B,Vs):- !,ljh((D:-Cs),[(B:-[D])|Vs]).
+ljh_imp(A,_B,Vs):-memberchk(A,Vs).
 
 trimmed((B:-[]),R):-!,R=B.
 trimmed(BBs,BBs).
+
 
 % with ~A as A->false
 hnprove(T0):-toNHorn(T0,T),ljnh(T).

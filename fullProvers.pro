@@ -1,19 +1,22 @@
-faprove(T0):-
-  expand_full_neg(T0,T),
-  %ppp(T),
-  ljfa(T,[]),!.  
+
 
   
-ffprove(T0):-
+fftprove(T0):-
   tautology(T0), % calls Fitting's prover to filter out some non-tautolgies
   expand_full_neg(T0,T),
   %ppp(T),
   ljfa(T,[]),!.  
   
+ffprove(T0):-
+  force(T0), % calls trival class/intu taut checker with all vars same
+  expand_full_neg(T0,T),
+  %ppp(T),
+  ljfa(T,[]),!.  
   
 faprove(T0,Vs):-
   unexpand(Vs,T0,T),
   expand_full_neg(T,FullT),
+  %ppp(FullT),
   ljfa(FullT,[]),!.
 
 faprove1(T0,Vs0):-
@@ -22,34 +25,42 @@ faprove1(T0,Vs0):-
   ljfa(T,Vs),
   !.
 
-%ljfa(A,Vs):-ppp((Vs-->A)),fail. % fo traing only
+  
+faprove(T0):-
+  expand_full_neg(T0,T),
+  %ppp(here=T),
+  ljfa(T,[]),
+  !.    
+    
+ljfa(T):-  ljfa(T,[]),!.
+
+%ljfa(A,Vs):-ppp(ljfa:(Vs-->A)),fail. % fo traing only
 
 ljfa(A,Vs):-memberchk(A,Vs),!.
 ljfa(_,Vs):-memberchk(false,Vs),!.
-ljfa((A->B),Vs):-!,ljfa(B,[A|Vs]). 
-ljfa(G,Vs1):-
+ljfa(A <-> B,Vs):-!,ljfa((A->B),Vs),ljfa((B->A),Vs).
+ljfa((A->B),Vs):-!,ljfa(B,[A|Vs]).
+ljfa(A & B,Vs):-!,ljfa(A,Vs),ljfa(B,Vs).
+ljfa(G,Vs1):- % atomic or disj
   select(Red,Vs1,Vs2),
-  reduce(Red,G,Vs2,Vs3),
+  ljfa_reduce(Red,G,Vs2,Vs3),
   !,
   ljfa(G,Vs3).
-ljfa(A <-> B,Vs):-!,ljfa((A->B),Vs),ljfa((B->A),Vs).
-ljfa(A & B,Vs):-!,ljfa(A,Vs),ljfa(B,Vs).
-ljfa(A v B, Vs):-(ljfa(A,Vs);ljfa(B,Vs)).
+ljfa(A v B, Vs):-(ljfa(A,Vs);ljfa(B,Vs)),!.
 
 
-%reduce(AB,B,Vs,Vs):-ppp(reduce:(vs:Vs-->ab:AB+b:B)),fail.  
-reduce((A->B),_,Vs1,Vs2):-!,ljfa_imp(A,B,Vs1,Vs2).
-reduce((A & B),_,Vs,[A,B|Vs]):-!.
-reduce((A<->B),_,Vs,[(A->B),(B->A)|Vs]). 
-reduce((A v B),G,Vs,[B|Vs]):-ljfa(G,[A|Vs]).
+%ljfa_reduce(AB,B,Vs,Vs):-ppp(ljfa_reduce:(vs:Vs-->ab:AB+b:B)),fail. 
 
-
-ljfa_imp(A,B,Vs,[B|Vs]):-atomic(A),!,memberchk(A,Vs).    
+ljfa_reduce((A->B),_,Vs1,Vs2):-!,ljfa_imp(A,B,Vs1,Vs2).
+ljfa_reduce((A & B),_,Vs,[A,B|Vs]):-!.
+ljfa_reduce((A<->B),_,Vs,[(A->B),(B->A)|Vs]):-!.
+ljfa_reduce((A v B),G,Vs,[B|Vs]):-ljfa(G,[A|Vs]).
+  
 ljfa_imp((C-> D),B,Vs,[B|Vs]):-!,ljfa((C->D),[(D->B)|Vs]).
-ljfa_imp((C & D),B,Vs,[(C->(D->B))|Vs]).
-ljfa_imp((C v D),B,Vs,[(C->B),(D->B)|Vs]).
-ljfa_imp((C <-> D),B,Vs,[((C->D)->((D->C)->B))|Vs]).
-
+ljfa_imp((C & D),B,Vs,[(C->(D->B))|Vs]):-!.
+ljfa_imp((C v D),B,Vs,[(C->B),(D->B)|Vs]):-!.
+ljfa_imp((C <-> D),B,Vs,[((C->D)->((D->C)->B))|Vs]):-!.
+ljfa_imp(A,B,Vs,[B|Vs]):-memberchk(A,Vs).  
 
 fcprove(T):-fcprove(T,[]).
 
@@ -88,9 +99,11 @@ ljfc_reduce((A v B),G,Vs,[B|Vs]):-ljfc(G,[A|Vs]).
 
 expand_full_neg(A,R):-expand_full_neg(A,R,_,[]).
 
-expand_full_neg(A,R,Ops):-expand_full_neg(A,R,Os,[]),sort(Os,Ops).
+expand_full_neg(A,R,Ops):-
+  expand_full_neg(A,R,Os,[]),sort(Os,Ops).
 
-%expand_full_neg(f,R)-->{!,R=false}.
+  % f seema to mean just an atom, not false in the tests
+%expand_full_neg(f,R)-->{!,R=false}. % DO NOT UNCOMMENT!
 expand_full_neg(A,R)-->{atomic(A),!,R=A}.
 expand_full_neg(~(A),(B->false))-->!,[(~)],
   expand_full_neg(A,B).
@@ -161,4 +174,3 @@ dyprove(G,Vs):-axs2conj(Vs,Cs),dprove((Cs->G)).
 
 axs2conj([X],R):-!,R=X.
 axs2conj([X|Xs],X & Cs):-axs2conj(Xs,Cs).
-

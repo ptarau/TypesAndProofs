@@ -16,12 +16,12 @@ swipl -s tp.pro
 and then something like
 
 ```
-?- pprove(a->b->a).
+?- bprove(a->b->a).
 true.
 ```
 
 ```
-?- pprove((a->b)->a).
+?- bprove((a->b)->a).
 false.
 ```
 
@@ -65,11 +65,9 @@ The programs are tested with SWI Prolog 7.7.12.
 
 Except for those using SWI-Prolog's multi-threading the code, the provers and the testers are likely to run on most Prologs.
 
-A Python version of one of our lightweight implicational logic provers is also included.
-
 This work-in-progress [paper](https://github.com/ptarau/TypesAndProofs/tree/master/docs/iprover.pdf) documents some key components of this code repository.
 
-For comparing with other provers, we have proted the propositional subset of the [ILTP library]( http://www.iltp.de/ ) to SWI-Prolog and uniformized notation of some third party provers.
+For comparing with other provers, we have ported the propositional subset of the [ILTP library]( http://www.iltp.de/ ) to SWI-Prolog and uniformized notation of some third party provers.
 
 Try:
 

@@ -47,13 +47,13 @@ nondet_first_with(ThreadCnt,Sol,Exec,ExecGen):-
   message_queue_destroy(Sols). 
  
 nondet_worker_with(Sols,Master):-
-  repeat,
     thread_get_message(Master,Goal),
     Goal=X-G,
     G,
     !,
-    thread_send_message(Sols,X),
-  fail.
+    thread_send_message(Sols,X).
+nondet_worker_with(Sols,Master):-
+    nondet_worker_with(Sols,Master).
  
   
 thread_stop:-abort.

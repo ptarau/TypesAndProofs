@@ -2,52 +2,80 @@
 
 :-dynamic(proven/2).
  
-max_time(3).
+max_time(200).
+
 
 % adaptor to run ILPT benchmarks from http://www.iltp.de/  
 
-% [prover=faprove,total=274,right=154:[proven=98],refuted=56,wrong=0,timed_out(secs,16)=120,error=0]
-load_probs1:-time(load_probs(faprove)).
+% [prover=faprove,total=274,skipped=0,tried=274:[right=148:[proven=95,refuted=53],wrong=0,timed_out(secs,1)=126,error=0]]
+
+%[prover=faprove,total=274,skipped=0,tried=274:[right=152:[proven=97,refuted=55],wrong=0,timed_out(secs,3)=122,error=0]]
+
+% new [prover=faprove,total=274,skipped=0,tried=274:[right=156:[proven=97,refuted=59],wrong=0,timed_out(secs,6)=118,error=0]]
+
+% new prover=faprove,total=274,skipped=0,tried=274:[right=161:[proven=99,refuted=62],wrong=0,timed_out(secs,60)=113,error=0]]
+
+% [prover=faprove,total=274,skipped=0,tried=274:[right=165:[proven=100,refuted=65],wrong=0,timed_out(secs,200)=109,error=0]]
+
+%[prover=faprove,total=274,skipped=0,tried=274:[right=165:[proven=100,refuted=65],wrong=0,timed_out(secs,600)=109,error=0]]
+test_probs1:-time(test_probs(faprove)).
+
+% [prover=fpprove,total=274,skipped=0,tried=274:[right=150:[proven=96,refuted=54],wrong=0,timed_out(secs,6)=124,error=0]]
+% test_probs know this is parallel and acts accordingly
+%[prover=fpprove,total=274,skipped=0,tried=273:[right=158:[proven=99,refuted=59],wrong=0,timed_out(secs,300)=115,error=1]]
+% [prover=fpprove,total=274,skipped=0,tried=274:[right=150:[proven=96,refuted=54],wrong=0,timed_out(secs,10)=124,error=0]]
+% with andPar only
+test_probs1p:-test_probs(fpprove).
+
+%[prover=par_faprove,total=274,skipped=0,tried=274:[right=155:[proven=98,refuted=57],wrong=0,timed_out(secs,6)=119,error=0]]
+% scrambled
+test_probs2p:-time(test_probs(par_faprove)).
 
 
 
-load_probs1c:-time(load_probs(fcprove)).
+test_probs1c:-time(test_probs(fcprove)).
 
+%[prover=ffprove,total=274,skipped=0,tried=274:[right=152:[proven=97,refuted=55],wrong=0,timed_out(secs,3)=122,error=0]]
+test_probs2:-time(test_probs(ffprove)).
 
-% [prover=ffprove,total=274,right=150:[proven=95],refuted=55,wrong=0,timed_out(secs,16)=124,error=0]
-load_probs2:-time(load_probs(ffprove)).
-
-
+% [prover=fftprove,total=274,right=150:[proven=95],refuted=55,wrong=0,timed_out(secs,16)=124,error=0]
+test_probs2a:-time(test_probs(fftprove)).
 
 % [prover=dprove,total=274,right=171:[proven=108],refuted=63,wrong=0,timed_out(secs,16)=52,error=51]
-load_probs3:-time(load_probs(dprove)).
+% 32GB stacks
+% [prover=dprove,total=274,skipped=0,tried=274:[right=175:[proven=109,refuted=66],wrong=0,timed_out(secs,60)=99,error=0]]
+% 64GB staks [prover=dprove,total=274,skipped=0,tried=271:[right=181:[proven=111,refuted=70],wrong=0,timed_out(secs,1500)=90,error=3]]
+test_probs3:-time(test_probs(dprove)).
+test_probs3p:-time(test_probs(par_dprove)).
 
 % tester for g4prove
 % [total=274,right=164,wrong=52,timed_out(secs,6)=43,error=15]
-load_probs4:-time(load_probs(g4prove)).
+test_probs4:-time(test_probs(g4prove)).
 
 % tester for ileantap
 %[prover=ilprove,total=274,right=34,wrong=0,timed_out(secs,6)=219,error=21]
 %[prover=ilprove,total=274,right=34,wrong=0,timed_out(secs,16)=219,error=21]
+%32GB [prover=ilprove,total=274,skipped=0,tried=271:[right=35:[proven=31,refuted=4],wrong=0,timed_out(secs,60)=236,error=3]]
+test_probs5:-time(test_probs(ilprove)).
 
-load_probs5:-time(load_probs(ilprove)).
+%[prover=sep_prove,total=274,skipped=0,tried=274:[right=50:[proven=46,refuted=4],wrong=0,timed_out(secs,60)=224,error=0]]
+test_probs6:-time(test_probs(sep_prove)).
 
-
-load_probs6:-rime(load_probs(coprove)).
+test_probs7:-rime(test_probs(coprove)).
 
 % restricted to ->, <->
 % [prover=fbprove,total=274,skipped=226,right=34:[proven=30],refuted=4,wrong=0,timed_out(secs,3)=14,error=0]
-load_probs7:-time(load_probs(fb_filter,fbprove)).
+test_probs8:-time(test_probs(fb_filter,fbprove)).
 
 
 % restricted to ->, <->
 % [prover=haprove,total=274,skipped=226,right=33:[proven=30],refuted=3,wrong=0,timed_out(secs,6)=15,error=0]
 
-load_probs8:-time(load_probs(fb_filter,haprove)).
+test_probs9:-time(test_probs(fb_filter,haprove)).
 
 
 % random, just for testing the tester
-load_probs9:-time(load_probs(badProve)).
+test_probs10:-time(test_probs(badProve)).
 
 
 gotest1(N):-do((
@@ -201,10 +229,24 @@ p_(((0 -> 1) -> 0) -> 0).
 % derived from modus ponens
 mp_(0->(0->1)->1).
 
+% S,K,X-combinators and their types
+% Rosser's X-combinator: \f.fKSK
+
+xC(l(A, a(a(a(A, l(B, l(_C, B))), l(D, l(E, l(F, a(a(D, F), a(E, F)))))), l(G, l(_H, G))))).
+
+xK(K):-xC(X1),xC(X2),xC(X3),X12=a(X1,X2),K=a(X12,X3).
+xS(S):-xC(X1),xC(X2),xC(X3),X23=a(X2,X3),S=a(X1,X23).
+
+xT(T):-xC(X),type_of(X,T),natvars(T).
+kT(T):-xK(X),type_of(X,T),natvars(T).
+sT(T):-xS(X),type_of(X,T),natvars(T).
+
+xcombtest:-
+  xT(T),sprove(T,X),type_of(X,TT),natvars(TT),ppp(T),ppp(TT),fail.
+
 axtest:-
   maplist(call,[k_,s_,mp_],Ts),
   maplist(bprove,Ts).
-
 
 ptest:-p_(T),ppp(T),nl,abduce_imp(bprove,T,R),ppp(R),fail.
 
@@ -395,147 +437,106 @@ tamari2:-
   T=TT, % not unifiable types
   ppp(eq=T).
   
+
+satform0((p->b) -> ((x->b)->c) ->(p->c)).
+
+
+satform((p->q->a->b) -> ((a->b)->c) ->(p->q->c)).
+
+satform1((p->q->c)->(p->q->a->b) -> ((a->b)->c)).
+
+  
+  
 :-dynamic(fof/3).
 
 
-load_probs(Prover):-load_probs(compound,Prover).
 
-load_probs(Filter,Prover):-
-  max_time(M),ppp(problems_time_out_in_secs=M),nl,
-  atom_codes('.',[Dot]),
-  directory_files(probs,Dirs),
-  findall(F,
-    (
-      member(Dir0,Dirs),atom_codes(Dir0,[D|_]),D=\=Dot,
-      atom_concat('probs/',Dir0,Dir),
-      directory_files(Dir,Fs),
-      member(F0,Fs),
-      atom_codes(F0,[C|_]),C=\=Dot,
-      atomic_list_concat([Dir,'/',F0],F)
-    ),
-    Fs0
-  ),
-  sort(Fs0,Fs),length(Fs,Len), 
-  new_ctr(Refuted),new_ctr(Wrong),new_ctr(TOut),new_ctr(Err),
-  new_ctr(Skip),
-  do((    
-    member(InF,Fs),   
-    atom_codes(InF,[C|_]),C=\=Dot,
-    
-    is_theorem(InF,Theo),
-    load_prob(InF,GVs),
-    (call(Filter,GVs)->call_prover(Prover,GVs,Res);Res=not_apply),
-    ( member(Res,[true,false])->
-       ( Res==Theo->ppp(InF=ok(res=Res)),(Res=false->ctr_inc(Refuted);true)
-       ; ctr_inc(Wrong),ppp(InF=wrong(got=Res,should_be=Theo))
-       )
-    ; Res=timeout(_)->ctr_inc(TOut),ppp(InF=is(Res)+should_be(Theo))
-    ; Res=not_apply->ctr_inc(Skip)
-    ; ctr_inc(Err),ppp(InF=is(Res)+should_be(Theo))
-    )
-  )),
-  ctr_get(Refuted,RK),
-  ctr_get(TOut,TK),
-  ctr_get(Wrong,WK),
-  ctr_get(Err,EK),
-  ctr_get(Skip,SK),
-  Right is Len-SK-TK-WK-EK,
-  Proven is Right-RK,
-  Tried is Right + TK,
-  ppp([
-    prover=Prover,total=Len,
-    skipped=SK,tried=Tried:[right=Right:[proven=Proven,refuted=RK],wrong=WK,
-    timed_out(secs,M)=TK,error=EK]
-  ]),
-  statistics.
+ % a graph coloring problem
+ 
+e(r,g).
+e(r,b).
+e(b,g).
+e(b,r).
+e(g,r).
+e(g,b).
+
+ggraph([C1,C2,C3,C4,C5,C6]):-
+   e(C1,C2),e(C2,C3),e(C1,C3),e(C3,C4),e(C4,C5),
+   e(C5,C6),e(C4,C6),e(C2,C5),e(C1,C6).
   
-load_prob(InF,(G:-Vs)):-
-   file2db(InF),
-   findall(A,
-     (prob:fof(_,Axiom,A),Axiom\==conjecture),
-   Vs),
-   prob:fof(_,conjecture,G0),
-   ( G0=($true)->G=(a->a)
-   ; G0=($false)->G=false
-   ; G=G0
-   ).
-
-call_prover(Prover,(G:-Vs),R):-   
-   max_time(MaxTime),
-   unexpand(Vs,G,FullG),
-   (
-     timed_call(MaxTime,call(Prover,FullG),Exc) ->
-     (number(Exc) -> R=true ; R=Exc)
-   ; R=false
-   ).
+  
+hcolor_([e(C1,C2),e(C2,C3),e(C1,C3),e(C3,C4),e(C4,C5),
+   e(C5,C6),e(C4,C6),e(C2,C5),e(C1,C6)]
+   ).   
    
-file2terms(F,Ts,[]):-
-  read_file_to_terms(F,Ts,[]).
-
-f2c:-is_theorem('probs/SYN391+1.pl',X),ppp(X).
-
-is_theorem(F,true):-
-  atom_codes('% Status (intuit.) : Theorem',True),
-  file2comment(F,Cs),
-  append(True,_,Cs),
-  !.
-is_theorem(_,false).  
-
-
-file2comment(F,Cs):-
-  atom_codes('%',[Perc]),
-  file2lines(F,Ls),
-  member(Cs,Ls),
-  Cs=[Perc|_].
+   
+   
+  color1_(
+ ((c(r) v c(g) v c(b)) & 
+ ((c(X)->c(Y)->(c(X)<->c(Y))->false)->e(X,Y))&
+ c(C1)&c(C2)&e(C1,C2) &
+  c(C3)&e(C2,C3)&e(C1,C3)&
+  c(C4)&e(C3,C4)&
+  c(C5)&e(C2,C5)&e(C4,C5)&
+  c(C6)&e(C5,C6)&e(C4,C6)&e(C1,C6))->g(C1,C2,C3,C4,C5,C6)
+  ).
+ 
+ color2_((
+  e(r,g) v
+  e(r,b) v
+  e(b,g) v
+  e(b,r) v
+  e(g,r) v
+  e(g,b)
+  ->
+  e(C1,C2) &
+  e(C2,C3) &
+  e(C1,C3) &
+  e(C3,C4) &
+  e(C2,C5) &
+  e(C4,C5) &
+  e(C5,C6) &
+  e(C4,C6) &
+  e(C1,C6)
+  )->g(C1,C2,C3,C4,C5,C6)
+  ).
+ 
+ 
+color_(
+  e(C1,C2) &
+  e(C2,C3) &
+  e(C1,C3) &
+  e(C3,C4) &
+  e(C2,C5) &
+  e(C4,C5) &
+  e(C5,C6) &
+  e(C4,C6) &
+  e(C1,C6) 
+  <-> (
+   e(r,g) v
+  e(r,b) v
+  e(b,g) v
+  e(b,r) v
+  e(g,r) v
+  e(g,b))
+  ).
   
 
-% reads in a file as a list of lines
-file2lines(F,Ls):-
-  open(F,read,S),
-  get_lines(S,Ls),
-  close(S).
+cgo:-(
+  color_(C),
+  ljfa(C,[])*->
+  ppp(C);fail
+).
 
-% line to list reader helper
-get_lines(S,[]):-at_end_of_stream(S),!.
-get_lines(S,[Codes|Ls]):-
-  read_line_to_codes(S,Codes),
-  get_lines(S,Ls).
-    
-file2db(F):-Db=prob,
-  Db:retractall(fof(_,_,_)),
-  file2terms(F,Ts,_),
-  do(( member(T,Ts),
-    ( T=':-'(Cmd)->call(Db:Cmd)
-    ; assertz(Db:T)
-    )
+ 
+cgo1:-do((
+  %C=(c(0) v c(1) -> c(X)),
+  C=(c(0)->c(_) -> c(1)),
+  ljfa(C,[]),
+  ppp('SUCCES'),
+  ppp(C)
   )).
 
-% adaptors for othe operator sets
 
-
-
-%map_operator(f,R)-->{!,R=false}.
-
-map_operators(A,B):-map_operator([
-  (&)-(,),
-  (v)-(;),
-  (<->)-(<=>),
-   (->)-(=>)
-],A,B).
-
-map_operator(_,A,R):-atomic(A),!,R=A.
-map_operator(Ps,A,B):-
- A=..[F|Xs],
- member(F-G,Ps),
- !,
- maplist(map_operator(Ps),Xs,Ys),
- B=..[G|Ys].
-map_operator(Ps,A,B):-
- A=..[F|Xs],
- maplist(map_operator(Ps),Xs,Ys),
- B=..[F|Ys]. 
- 
- 
- 
-   
+sx_(((v0(V0)->v1(V1)->v2(V2))->(v0(V0)->v1(V1))->v0(V0)->v2(V2))).   
    

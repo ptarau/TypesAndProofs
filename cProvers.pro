@@ -26,10 +26,11 @@ ljk(G,Vs1):-
 ljk_imp((C->D),B,Vs):-!,ljk((C->D),[(D->B)|Vs]).
 ljk_imp(A,_,Vs):-memberchk(A,Vs).   
 
-expand_neg(A,R):-atomic(A),!,R=A.
-expand_neg(~A,R):-!,expand_neg(A,B),R=(B->false).
-expand_neg((A->B),(X->Y)):-expand_neg(A,X),expand_neg(B,Y).
 
+expand_neg(~A,R):-!,expand_neg(A,B),R=(B->false).
+expand_neg((A->B),(X->Y)):-!,expand_neg(A,X),expand_neg(B,Y).
+%expand_neg(f,false):-!.
+expand_neg(A,R):-R=A.
 
 % classicall logic propositional prover
 % using Glivenko's double negation translation
@@ -113,4 +114,20 @@ impl(1,1,1).
 
 bit(0).
 bit(1).
+
+% if taut succeeds -> all vars the same succeeds
+% if all vars the same fails, tautology cannot succeed
+fforce(A):-
+  flag(fval,_,0),force(A),
+  flag(fval,_,1),force(A).
+  
+force(A & B):-!,force(A),force(B).
+force(~A):-!,\+force(A).
+force(A->B):-!, (\+force(A);force(B)),!.
+force(A v B):-!,force(~(~A & ~B)).
+force(A <-> B):-!,force(A->B),force(B->A).
+force(_):-flag(fval,X,X),X=1.
+
+
+
 

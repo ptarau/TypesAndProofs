@@ -88,7 +88,7 @@ rprove(_,false).
 
 
 % creates as many randomized variants
-% as number of (useful) availbel threads
+% as number of (useful) availble threads
 
 ranHornPermuted(K,T,Horn):-
   thread_count(K),
@@ -102,7 +102,7 @@ ranPermuted(K,T,RT):-
 % parallel execution on a set of equivalent
 % randomized variants of the initial goal
 
-parProve(T):-parProve(pprove,T).
+parProve(T):-parProve(bprove,T).
 
 parProve(P,T):-
  thread_count(K),

@@ -119,6 +119,8 @@ preprocessor(tautology,false2neg).
 preprocessor(badProve,(=)).
 preprocessor(looper,(=)).
 preprocessor(rprove,(toRandomHorn)).
+preprocessor(parProve,(=)).
+preprocessor(parProveHorn,toHorn).
 
 
 nice_num(X,R):-R is (truncate(X*1000))/1000.

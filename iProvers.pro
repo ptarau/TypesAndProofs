@@ -40,7 +40,8 @@ ljt(G,Vs1):- %atomic(G),                % imp => 1, atom A
   
 ljt(G,Vs1):- % atomic(G),                % imp => 4
   select( ((C->D)->B),Vs1,Vs2),
-  ljt((C->D), [(D->B)|Vs2]),
+  ljt((C->D), [(D->B)|Vs2]),    
+  %ljt(D, [C,(D->B)|Vs2]),    
   !,
   ljt(G,[B|Vs2]).
   
@@ -63,7 +64,8 @@ ljb(G,Vs1):-
   ljb(G,[B|Vs2]).
 
 ljb_imp((C->D),B,Vs):-!,ljb((C->D),[(D->B)|Vs]).
-ljb_imp(A,_,Vs):-atomic(A),memberchk(A,Vs).   
+%ljb_imp((C->D),B,Vs):-!,ljb(D,[C,(D->B)|Vs]).
+ljb_imp(A,_,Vs):-memberchk(A,Vs).   
 
 
 flatprove(T):-
