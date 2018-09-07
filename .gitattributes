@@ -4,3 +4,7 @@
 ./*.pro linguist-detectable=true
 */*.pro linguist-language=Prolog
 */*.pro linguist-detectable=true
+*.p linguist-language=Prolog
+*.pl linguist-language=Prolog
+*/*/*.p linguist-language=Prolog
+*/*/*.pl linguist-language=Prolog
