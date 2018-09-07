@@ -79,11 +79,16 @@ sprove1(T,X):-
 ntest(N,P):-ntest(N,allImpFormulas,P).
 
 ntest(N,G,P):-
+  new_ctr(All),new_ctr(Yes),
   do((
-  call(G,N,T),
-  call(P,T),
-  must_be_taut(T)
-  )).  
+    call(G,N,T),ctr_inc(All),
+    call(P,T),ctr_inc(Yes),
+    must_be_taut(T)
+  )),
+  ctr_get(All,A),
+  ctr_get(Yes,Y),
+  U is A-Y,
+  ppp([total,A,provable,Y,unprovable,U]).
   
 
 must_be_taut(T):-

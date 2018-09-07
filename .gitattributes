@@ -1,1 +1,6 @@
 *.pro linguist-language=Prolog
+*.pro linguist-detectable=true
+./*.pro linguist-language=Prolog
+./*.pro linguist-detectable=true
+*/*.pro linguist-language=Prolog
+*/*.pro linguist-detectable=true
