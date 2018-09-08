@@ -119,8 +119,8 @@ genTree(_,V,N,N)-->[V].
 genTree(Ops,~A,SN1,N2)-->{memberchk((~),Ops),SN1>0,N1 is SN1-1},
   genTree(Ops,A,N1,N2).
 genTree(Ops,OpAB,SN1,N3)-->
-  {SN1>1,N1 is SN1-2,
-  member(Op,Ops),Op\=(~),make_op(Op,A,B,OpAB)
+  { SN1>1,N1 is SN1-2,
+    member(Op,Ops),Op\=(~),make_op(Op,A,B,OpAB)
   },
   genTree(Ops,A,N1,N2),
   genTree(Ops,B,N2,N3).
