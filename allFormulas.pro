@@ -121,7 +121,7 @@ allFullFormulas(N,T):-
   natpartitions(Vs).
 
 countAllFull(M):-
-  findall(R,(
+  findall(N-R,(
       N to M,
       gen_and_count(N,allFullFormulas,faprove,R)
     ),
@@ -164,19 +164,7 @@ countAllSortedFullDyckhoff(M):-
 /*
 
 ?- countAllFull(9).
-[proven=0,total=1,ratio=0]
-[proven=0,total=1,ratio=0]
-[proven=2,total=10,ratio=0.2]
-[proven=0,total=26,ratio=0]
-[proven=19,total=283,ratio=0.067]
-[proven=21,total=1488,ratio=0.014]
-[proven=497,total=17626,ratio=0.028]
-[proven=1317,total=173636,ratio=0.007]
-[proven=20693,total=2510404,ratio=0.008]
-true.
-
-!!! discrepancy
-
+ same as
 ?- countAllFullDyckhoff(9).
 [proven=0,total=1,ratio=0]
 [proven=0,total=1,ratio=0]

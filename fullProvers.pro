@@ -32,34 +32,32 @@ faprove(T0):-
   ljfa(T,[]),
   !.    
     
-ljfa(T):-  ljfa(T,[]),!.
+ljfa(T):-  ljfa(T,[]).
 
 %ljfa(A,Vs):-ppp(ljfa:(Vs-->A)),fail. % fo traing only
 
 ljfa(A,Vs):-memberchk(A,Vs),!.
 ljfa(_,Vs):-memberchk(false,Vs),!.
-ljfa(A <-> B,Vs):-!,ljfa((A->B),Vs),ljfa((B->A),Vs).
+ljfa(A<->B,Vs):-!,ljfa(B,[A|Vs]),ljfa(A,[B|Vs]).
 ljfa((A->B),Vs):-!,ljfa(B,[A|Vs]).
 ljfa(A & B,Vs):-!,ljfa(A,Vs),ljfa(B,Vs).
-ljfa(G,Vs1):- % atomic or disj
+ljfa(G,Vs1):- % atomic or disj or false
   select(Red,Vs1,Vs2),
   ljfa_reduce(Red,G,Vs2,Vs3),
   !,
   ljfa(G,Vs3).
 ljfa(A v B, Vs):-(ljfa(A,Vs);ljfa(B,Vs)),!.
 
-
 %ljfa_reduce(AB,B,Vs,Vs):-ppp(ljfa_reduce:(vs:Vs-->ab:AB+b:B)),fail. 
-
 ljfa_reduce((A->B),_,Vs1,Vs2):-!,ljfa_imp(A,B,Vs1,Vs2).
 ljfa_reduce((A & B),_,Vs,[A,B|Vs]):-!.
 ljfa_reduce((A<->B),_,Vs,[(A->B),(B->A)|Vs]):-!.
 ljfa_reduce((A v B),G,Vs,[B|Vs]):-ljfa(G,[A|Vs]).
   
-ljfa_imp((C-> D),B,Vs,[B|Vs]):-!,ljfa((C->D),[(D->B)|Vs]).
+ljfa_imp((C->D),B,Vs,[B|Vs]):-!,ljfa((C->D),[(D->B)|Vs]).
 ljfa_imp((C & D),B,Vs,[(C->(D->B))|Vs]):-!.
 ljfa_imp((C v D),B,Vs,[(C->B),(D->B)|Vs]):-!.
-ljfa_imp((C <-> D),B,Vs,[((C->D)->((D->C)->B))|Vs]):-!.
+ljfa_imp((C<->D),B,Vs,[((C->D)->((D->C)->B))|Vs]):-!.
 ljfa_imp(A,B,Vs,[B|Vs]):-memberchk(A,Vs).  
 
 fcprove(T):-fcprove(T,[]).

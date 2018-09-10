@@ -2,7 +2,7 @@
 
 :-dynamic(proven/2).
  
-max_time(200).
+max_time(6).
 
 
 % adaptor to run ILPT benchmarks from http://www.iltp.de/  

@@ -152,7 +152,11 @@ hbm(N,P,Counts,Time=T2-T1):-
   ctr_get(All,Tot),
   Counts=Pr/Tot.
   
-
+fbm(N,P):-
+  fbm(N,P,Counts,Time),
+  ppp(counts=Counts),
+  ppp(time=Time).
+  
 fbm(N,P,Counts,Time=T2-T1):-
   assertion(member(P,[dprove,faprove,ffprove])),
   new_ctr(All),
