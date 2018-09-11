@@ -41,20 +41,52 @@ countSortedHorn3(M):-
 
 countSortedHorn_alt(M):-ncounts(M,allSortedHorn(_,_)).
   
+:-dynamic(yes/1).
+
 gen_and_count(N,G,P,[proven=Proven,total=Total,ratio=Ratio]):-
+  retractall(proven(_)),
   init(total_count),
   init(proven_count),
   do((
     call(G,N,T),
     inc(total_count),
     call(P,T),
-    inc(proven_count)
+    inc(proven_count),
+    form2tuple(T,TT),
+    assertz(yes(TT))
   )),
   total(total_count,Total),
   total(proven_count,Proven),
   R is Proven/Total,
+  save_proven,
   nice_num(R,Ratio).
+  
 
+save_proven:-
+  findall(X,yes(X),Xs),
+  tell('yes.py'),
+  write('yes = '),write_canonical(Xs),nl,
+  told.
+
+  /*
+write_yes([Op,X,Y]):-atom_codes('\'',[Q]),
+  write('('),write(Q),write(Op),write(Q),
+  write(X),write(','),write(Y),w
+*/  
+  
+form2tuple(T,Tuple):-compound(T),!,functor(T,Op,N),
+  atom_string(Op,OpStr),
+  ( N=1->arg(1,T,X),
+    form2tuple(X,A),
+    Tuple=[OpStr,A]
+  ; N=2->arg(1,T,X),arg(2,T,Y),
+    form2tuple(X,A),
+    form2tuple(Y,B),
+    Tuple=[OpStr,A,B]
+  ).
+form2tuple(I,R):-integer(I),!,R=I.
+form2tuple(A,S):-atom_string(A,S).
+  
   
 % all implicational logic formulas of size N
 allImpFormulas(N,T):-

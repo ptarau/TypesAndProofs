@@ -36,6 +36,25 @@ clean_cp(InF,OutF):-
   true
   .
 
+probs2py:-
+  prob:consult('test_data/iltp.pro'),
+  tell('test_data/iltp.txt'),
+  do((
+      prob:iltp(N, TF0, FName,  Form),
+      form2tuple(Form,PyForm),
+      ( TF0=false->TF='False'
+      ; TF0=true->TF='True'
+      ; ppp(unextected=TF0),TF=TF0
+      ),
+      %R=[N,TF,FName,PyForm],
+      write('['),
+      write(N),write(','),
+      write(TF),write(','),
+      writeq(FName),write(','),
+      writeq(PyForm),write(']'),
+      nl   
+  )),
+  told.
 
 save_probs:-
   tell('test_data/iltp.pro'),

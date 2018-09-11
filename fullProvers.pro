@@ -60,6 +60,52 @@ ljfa_imp((C v D),B,Vs,[(C->B),(D->B)|Vs]):-!.
 ljfa_imp((C<->D),B,Vs,[((C->D)->((D->C)->B))|Vs]):-!.
 ljfa_imp(A,B,Vs,[B|Vs]):-memberchk(A,Vs).  
 
+
+
+
+fdprove(T0):-
+  expand_full_neg(T0,T),
+  %ppp(here=T),
+  ljfd(T,[]),
+  !.    
+    
+ljfd(T):-  ljfd(T,[]).
+
+%ljfd(A,Vs):-ppp(ljfd:(Vs-->A)),fail. % fo traing only
+
+ljfd(A,Vs):-memberchk(A,Vs),!.
+ljfd(_,Vs):-memberchk(false,Vs),!.
+ljfd(A<->B,Vs):-!,ljfd(B,[A|Vs]),ljfd(A,[B|Vs]).
+ljfd((A->B),Vs):-!,ljfd(B,[A|Vs]).
+ljfd(A & B,Vs):-!,ljfd(A,Vs),ljfd(B,Vs).
+ljfd(G,Vs):-ljfd_sel(G,Vs).
+  
+ljfd_sel(G,Vs1):- %atomic(G),% atomic or disj or false
+  select(Red,Vs1,Vs2),
+  ljfd_reduce(Red,G,Vs2,Vs3),
+  !,
+  ljfd(G,Vs3).
+ljfd_sel(A v B, Vs):-(ljfd(A,Vs);ljfd(B,Vs)),!.
+  
+%ljfd_reduce(AB,B,Vs,Vs):-ppp(ljfd_reduce:(vs:Vs-->ab:AB+b:B)),fail. 
+ljfd_reduce((A->B),_,Vs1,Vs2):-!,ljfd_imp(A,B,Vs1,Vs2).
+ljfd_reduce((A & B),_,Vs,[A,B|Vs]):-!.
+ljfd_reduce((A<->B),_,Vs,[(A->B),(B->A)|Vs]):-!.
+ljfd_reduce((A v B),G,Vs,[B|Vs]):-ljfd(G,[A|Vs]).
+  
+ljfd_imp((C->D),B,Vs,[B|Vs]):-!,ljfd((C->D),[(D->B)|Vs]).
+ljfd_imp((C & D),B,Vs,[(C->(D->B))|Vs]):-!.
+ljfd_imp((C v D),B,Vs,[(C->B),(D->B)|Vs]):-!.
+ljfd_imp((C<->D),B,Vs,[((C->D)->((D->C)->B))|Vs]):-!.
+ljfd_imp(A,B,Vs,[B|Vs]):-memberchk(A,Vs).  
+
+
+
+
+
+
+
+
 fcprove(T):-fcprove(T,[]).
 
 fcprove(T0,Vs):-
@@ -81,17 +127,15 @@ ljfc(G,Vs1):- % atomic or disjunction !
   ljfc(G,Vs3).
   
 
-ljfc_reduce((A    ->B),_G,Vs,[B|Vs]):-atomic(A),!,memberchk(A,Vs).
-ljfc_reduce((C->D)->B,_G,Vs,[B|Vs]):-ljfc((C->D),[(D->B)|Vs]).
 
-ljfc_reduce((C & D)->B,_G,Vs,[(C->(D->B))|Vs]).
-ljfc_reduce((C v D)->B,_G,Vs,[(C->B),(D->B)|Vs]).
-ljfc_reduce((C<->D)->B,_G,Vs,[((C->D)->((D->C)->B))|Vs]).
-
-ljfc_reduce((A & B),_G,Vs,[A,B|Vs]).
-ljfc_reduce((A<->B),_G,Vs,[(A->B),(B->A)|Vs]). 
-ljfc_reduce((A v B),G,Vs,[B|Vs]):-ljfc(G,[A|Vs]).
-
+ljfc_reduce((C->D)->B,_G,Vs,[B|Vs]):-!,ljfc((C->D),[(D->B)|Vs]).
+ljfc_reduce((C & D)->B,_G,Vs,[(C->(D->B))|Vs]):-!.
+ljfc_reduce((C v D)->B,_G,Vs,[(C->B),(D->B)|Vs]):-!.
+ljfc_reduce((C<->D)->B,_G,Vs,[((C->D)->((D->C)->B))|Vs]):-!.
+ljfc_reduce((A & B),_G,Vs,[A,B|Vs]):-!.
+ljfc_reduce((A<->B),_G,Vs,[(A->B),(B->A)|Vs]):-!.
+ljfc_reduce((A v B),G,Vs,[B|Vs]):-!,ljfc(G,[A|Vs]).
+ljfc_reduce((A->B),_G,Vs,[B|Vs]):-memberchk(A,Vs).
 
 
 

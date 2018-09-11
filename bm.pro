@@ -96,6 +96,8 @@ preprocessor(qprove,(=)).
 preprocessor(sprove,(=)).
 preprocessor(faprove,(=)).
 preprocessor(ffprove,(=)).
+preprocessor(fcprove,(=)).
+preprocessor(fdprove,(=)).
 preprocessor(hprove,toHorn).
 preprocessor(h1prove,toHorn).
 preprocessor(h3prove,toHorn).
@@ -158,7 +160,7 @@ fbm(N,P):-
   ppp(time=Time).
   
 fbm(N,P,Counts,Time=T2-T1):-
-  assertion(member(P,[dprove,faprove,ffprove])),
+  assertion(member(P,[dprove,faprove,ffprove,fcprove,fdprove])),
   new_ctr(All),
   time(
   do((
@@ -184,7 +186,7 @@ fbm(N,P,Counts,Time=T2-T1):-
   
   
 fsbm(N,P,Counts,Time=T2-T1):-
-  assertion(member(P,[dprove,faprove,ffprove])),
+  assertion(member(P,[dprove,faprove,ffprove,fcprove,fdprove])),
   new_ctr(All),
   time(
   do((
