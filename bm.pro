@@ -152,7 +152,8 @@ hbm(N,P,Counts,Time=T2-T1):-
   Time is T2-T1,
   ctr_get(Proven,Pr),
   ctr_get(All,Tot),
-  Counts=Pr/Tot.
+  R is Pr/Tot,
+  Counts=(Pr/Tot=R).
   
 fbm(N,P):-
   fbm(N,P,Counts,Time),
@@ -181,9 +182,13 @@ fbm(N,P,Counts,Time=T2-T1):-
   ),
   Time is T2-T1,
   ctr_get(Proven,Pr),
-  ctr_get(All,Tot),
-  Counts=Pr/Tot.
-  
+  ctr_get(All,Tot),Ratio is Pr/Tot,
+  Counts=(Pr/Tot=Ratio).
+
+fsbm(N,P):-
+  fsbm(N,P,Counts,Time),
+  ppp(counts=Counts),
+  ppp(time=Time).  
   
 fsbm(N,P,Counts,Time=T2-T1):-
   assertion(member(P,[dprove,faprove,ffprove,fcprove,fdprove])),
@@ -207,8 +212,8 @@ fsbm(N,P,Counts,Time=T2-T1):-
   ),
   Time is T2-T1,
   ctr_get(Proven,Pr),
-  ctr_get(All,Tot),
-  Counts=Pr/Tot.
+  ctr_get(All,Tot),R is Pr/Tot,
+  Counts=(Pr/Tot=R).
 
   
 /*
