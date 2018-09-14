@@ -184,6 +184,21 @@ countAllSortedFull(M):-
   ),
   maplist(ppp,Rs).  
   
+  
+allTrimmedFormulas(N,T):-
+  genTrimmedTree(N,T,Vs),
+  natpartitions(Vs).
+
+countAllTrimmedFull(M):-
+  findall(R,(
+      N to M,
+      gen_and_count(N,allTrimmedFormulas,faprove,R)
+    ),
+    Rs
+  ),
+  maplist(ppp,Rs).  
+  
+  
 countAllSortedFullDyckhoff(M):-
   findall(R,(
       N to M,

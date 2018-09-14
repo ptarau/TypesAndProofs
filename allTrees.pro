@@ -119,7 +119,7 @@ genTree(_,V,N,N)-->[V].
 genTree(Ops,~A,SN1,N2)-->{memberchk((~),Ops),SN1>0,N1 is SN1-1},
   genTree(Ops,A,N1,N2).
 genTree(Ops,OpAB,SN1,N3)-->
-  { SN1>1,N1 is SN1-2,
+  { SN1>0,N1 is SN1-1,
     member(Op,Ops),Op\=(~),make_op(Op,A,B,OpAB)
   },
   genTree(Ops,A,N1,N2),
@@ -140,29 +140,67 @@ genSortedTree(Ops,Cops,~A,SN1,N2)-->
   {memberchk((~),Ops),SN1>0,N1 is SN1-1},
   genSortedTree(Ops,Cops,A,N1,N2).
 genSortedTree(Ops,Cops,OpAB,SN1,N3)-->
-  {SN1>1,N1 is SN1-2,
+  {SN1>0,N1 is SN1-1,
     member(Op,Ops),Op\=(~),make_op(Op,A,B,OpAB)
   },
   genSortedTree(Ops,Cops,A,N1,N2),
   genSortedTree(Ops,Cops,B,N2,N3).
 genSortedTree(Ops,Cops,OpAB,SN1,N3)-->
-  {SN1>1,N1 is SN1-2,member(Op,Cops),make_op(Op,A,B,OpAB)},
+  {SN1>0,N1 is SN1-1,member(Op,Cops),make_op(Op,A,B,OpAB)},
   genSortedTree(Ops,Cops,A,N1,N2),
   genSortedTree(Ops,Cops,B,N2,N3),
   {A@<B}.
+  
+
+ genTrimmedTree(N,Tree,Leaves):-
+   genTrimmedTree(N,[(->)],[(<->),(&),(v)],Tree,Leaves).
+ 
+add_neg_ops(OpAB,OpAB,N,N).
+add_neg_ops(OpAB,~OpAB,SN,N):-succ(N,SN).
+add_neg_ops(OpAB, ~ ~OpAB,SSN,N):-SSN>1,N is SSN-2.
+
+genTrimmedTree(N,Ops,Cops,Tree,Leaves):-
+  genTrimmedTree(Ops,Cops,Tree,N,0,Leaves,[]). 
+
+%genTrimmedTree(_,_,T,N,_)-->{ppp(N:T),fail}.
+genTrimmedTree(_,_,V,N1,N2)-->[V0],
+  {add_neg_ops(V0,V,N1,N2)}.
+genTrimmedTree(Ops,Cops,OpAB,SN1,N4)-->
+  { SN1>0,N1 is SN1-1,
+    member(Op,Ops),make_op(Op,A,B,OpAB0),
+    add_neg_ops(OpAB0,OpAB,N1,N2)
+  },
+  genTrimmedTree(Ops,Cops,A,N2,N3),
+  genTrimmedTree(Ops,Cops,B,N3,N4).
+genTrimmedTree(Ops,Cops,OpAB,SN1,N4)-->
+  { SN1>0,N1 is SN1-1,
+    member(Op,Cops),
+    make_op(Op,A,B,OpAB0),
+    add_neg_ops(OpAB0,OpAB,N1,N2)
+  },
+  genTrimmedTree(Ops,Cops,A,N2,N3),
+  genTrimmedTree(Ops,Cops,B,N3,N4),
+  {A@<B}.  
   
 
 % [1,5,10,49,134,614,1996,8773,31590,135898,521188,2221802]
 % Motzkin trees, with binary nodes 4-colored and unary nodes
 countFull(M,Rs):-
   findall(R,(
-    between(1,M,N),
+    between(0,M,N),
     sols(genOpTree(N,_,_),R)
     ),Rs).  
   
 countFullSorted(M,Rs):-
   findall(R,(
-    between(1,M,N),
+    between(0,M,N),
     sols(genSortedTree(N,_,_),R)
     ),Rs).     
     
+countFullTrimmed(M,Rs):-
+  findall(R,(
+    between(0,M,N),
+    sols(genTrimmedTree(N,_,_),R)
+    ),Rs).    
+    
+   

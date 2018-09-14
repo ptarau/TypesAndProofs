@@ -2,7 +2,7 @@
 
 :-dynamic(proven/2).
  
-max_time(6).
+max_time(16).
 
 
 % adaptor to run ILPT benchmarks from http://www.iltp.de/  
@@ -26,6 +26,9 @@ test_probs1:-time(test_probs(faprove)).
 % [prover=fpprove,total=274,skipped=0,tried=274:[right=150:[proven=96,refuted=54],wrong=0,timed_out(secs,10)=124,error=0]]
 % with andPar only
 test_probs1p:-test_probs(fpprove).
+
+
+test_probs1fl:-test_probs(flprove).
 
 %[prover=par_faprove,total=274,skipped=0,tried=274:[right=155:[proven=98,refuted=57],wrong=0,timed_out(secs,6)=119,error=0]]
 % scrambled
@@ -538,5 +541,9 @@ cgo1:-do((
   )).
 
 
-sx_(((v0(V0)->v1(V1)->v2(V2))->(v0(V0)->v1(V1))->v0(V0)->v2(V2))).   
+sx_(((v0(V0)->v1(V1)->v2(V2))->(v0(V0)->v1(V1))->v0(V0)->v2(V2))). 
+
+
+eq1:-T=((a->b)<->a)<->(a&b),faprove(T).
+
    

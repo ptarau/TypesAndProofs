@@ -12,6 +12,10 @@ ffprove(T0):-
   expand_full_neg(T0,T),
   %ppp(T),
   ljfa(T,[]),!.  
+
+flprove(T):-
+  flattenFull(T,FT,Vs),
+  faprove(FT,Vs).
   
 faprove(T0,Vs):-
   unexpand(Vs,T0,T),

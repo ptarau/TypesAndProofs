@@ -90,3 +90,39 @@ flattenImpl(A->B,H->B,D)-->{atomic(B),DA is D+1},!,[H=AA],
 flattenImpl(A->B,H->G,D)-->[H=AA],[G=BB],{DD is D+1},
   flattenImpl(A,AA,DD),flattenImpl(B,BB,DD).
 
+flattenFull(T0,R,Bs):-
+  expand_full_neg(T0,T),
+  flattenFull(T,R0,[],Es0),
+  ( atomic(R0)->R=R0,Es=Es0
+  ; R=X,Es=[X=R0|Es0]
+  ),
+  expand_vars(Es,100,Bs,[]).
+
+  
+%flattenFull(A&B,R,Es1,Es2):-(atomic(A))
+flattenFull(OpAB,R,Es1,Es4):-compound(OpAB),!,
+  OpAB=..[Op,A,B],
+  ( atomic(A),atomic(B)->X=A,Y=B,Es1=Es4
+  ; atomic(A)->X=A,flattenFull(B,FB,Es1,Es2),Es4=[Y=FB|Es2]
+  ; atomic(B)->Y=B,flattenFull(A,FA,Es1,Es2),Es4=[X=FA|Es2]
+  ; flattenFull(A,FA,Es1,Es2),
+    flattenFull(B,FB,Es2,Es3),
+    Es4=[X=FA,Y=FB | Es3]
+  ),
+  R=..[Op,X,Y].
+flattenFull(A,A,Es,Es).
+
+expand_vars([],_)-->[].
+expand_vars([(I1=T)|Vs],I)-->
+  {I1 is I+1},
+  expand_eq((I1->T)),
+  expand_eq((T->I1)),
+  expand_vars(Vs,I1).  
+
+%expand_eq(E)-->{ppp(E),fail}.
+expand_eq((A&B->C))-->!,[(A->B->C)].
+expand_eq((A->B&C))-->!,[(A->B),(A->C)].
+expand_eq((C v D -> B)) -->!,[(C->B),(D->B)].
+expand_eq(E)-->[E].
+
+  
