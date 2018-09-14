@@ -15,7 +15,8 @@ ffprove(T0):-
 
 flprove(T):-
   flattenFull(T,FT,Vs),
-  faprove(FT,Vs).
+  faprove(FT,Vs),
+  !.
   
 faprove(T0,Vs):-
   unexpand(Vs,T0,T),
@@ -143,6 +144,31 @@ ljfc_reduce((A->B),_G,Vs,[B|Vs]):-memberchk(A,Vs).
 
 
 
+
+
+frprove(T):-
+  flattenFull(T,FT,Vs),
+  show_expanded(T,Vs),
+  ljff(FT,Vs),
+  !.
+ 
+ljff(A,Vs):-show_expanded(A,Vs),fail.
+ljff(A,Vs):-memberchk(A,Vs),!.
+ljff(_,Vs):-memberchk(false,Vs),!.
+ljff((A->B),Vs):-!,ljff(B,[A|Vs]). 
+ljff(A v B, Vs):-(ljff(A,Vs);ljff(B,Vs)),!.
+ljff(G,Vs0):- % atomic or disjunction !
+  sort(Vs0,Vs1),
+  select(Red,Vs1,Vs2),
+  ljff_reduce(Red,G,Vs2,Vs3),
+  !,
+  ljff(G,Vs3).
+  
+ljff_reduce((C->D)->B,_G,Vs,[B|Vs]):-!,ljff((C->D),[(D->B)|Vs]).
+ljff_reduce((A v B),G,Vs,[B|Vs]):-!,ljff(G,[A|Vs]).
+ljff_reduce((A->B),_G,Vs,[B|Vs]):-memberchk(A,Vs).
+
+
 expand_full_neg(A,R):-expand_full_neg(A,R,_,[]).
 
 expand_full_neg(A,R,Ops):-
@@ -154,10 +180,10 @@ expand_full_neg(A,R)-->{atomic(A),!,R=A}.
 expand_full_neg(~(A),(B->false))-->!,[(~)],
   expand_full_neg(A,B).
 expand_full_neg(A,B)-->
- {A=..[F|Xs]},
- [F],
- expand_full_negs(Xs,Ys),
- {B=..[F|Ys]}.
+  {A=..[F|Xs]},
+  [F],
+  expand_full_negs(Xs,Ys),
+  {B=..[F|Ys]}.
 
 
 expand_full_negs([],[])-->[].

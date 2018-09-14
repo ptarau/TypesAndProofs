@@ -159,9 +159,13 @@ fbm(N,P):-
   fbm(N,P,Counts,Time),
   ppp(counts=Counts),
   ppp(time=Time).
-  
+ 
+good_full_prover(P):-
+   assertion(memberchk(P,
+     [dprove,faprove,flprove,frprove,ffprove,fcprove,fdprove])).
+
 fbm(N,P,Counts,Time=T2-T1):-
-  assertion(member(P,[dprove,faprove,ffprove,fcprove,fdprove])),
+  good_full_prover(P),
   new_ctr(All),
   time(
   do((
@@ -175,6 +179,7 @@ fbm(N,P,Counts,Time=T2-T1):-
   time(
   do((
    allFullFormulas(N,T),
+   ppp(t=T),
    call(P,T),
    ctr_inc(Proven)
   )),
@@ -191,7 +196,7 @@ fsbm(N,P):-
   ppp(time=Time).  
   
 fsbm(N,P,Counts,Time=T2-T1):-
-  assertion(member(P,[dprove,faprove,ffprove,fcprove,fdprove])),
+  good_full_prover(P),
   new_ctr(All),
   time(
   do((

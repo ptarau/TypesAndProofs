@@ -96,10 +96,23 @@ flattenFull(T0,R,Bs):-
   ( atomic(R0)->R=R0,Es=Es0
   ; R=X,Es=[X=R0|Es0]
   ),
-  expand_vars(Es,100,Bs,[]).
+  expand_vars(Es,100,Bs,[]),
+  show_expanded(R,Bs),
+  true.
 
+show_expanded(T,Es):-
+  nl,
+  write(T),write(':-'),nl,
+  do((
+    member(E,Es),
+    tab(2),
+    writeln(E)
+  )).
+  
   
 %flattenFull(A&B,R,Es1,Es2):-(atomic(A))
+flattenFull(A<->B,R,Es1,Es2):-!,
+  flattenFull((A->B)&(B->A),R,Es1,Es2).
 flattenFull(OpAB,R,Es1,Es4):-compound(OpAB),!,
   OpAB=..[Op,A,B],
   ( atomic(A),atomic(B)->X=A,Y=B,Es1=Es4

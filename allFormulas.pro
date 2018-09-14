@@ -58,7 +58,7 @@ gen_and_count(N,G,P,[proven=Proven,total=Total,ratio=Ratio]):-
   total(total_count,Total),
   total(proven_count,Proven),
   R is Proven/Total,
-  save_proven,
+  %save_proven,
   nice_num(R,Ratio).
   
 

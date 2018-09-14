@@ -27,8 +27,11 @@ test_probs1:-time(test_probs(faprove)).
 % with andPar only
 test_probs1p:-test_probs(fpprove).
 
-
+% expanded to long list of shallow expressions in antecedent
 test_probs1fl:-test_probs(flprove).
+
+% same, but with simplified prover, knowing whay to reduce
+test_probs1fr:-test_probs(flprove).
 
 %[prover=par_faprove,total=274,skipped=0,tried=274:[right=155:[proven=98,refuted=57],wrong=0,timed_out(secs,6)=119,error=0]]
 % scrambled
