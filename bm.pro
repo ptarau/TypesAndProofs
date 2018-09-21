@@ -174,12 +174,12 @@ fbm(N,P,Counts,Time=T2-T1):-
   )),
   T1
   ),
-   ppp(t1=T1),
+   %ppp(t1=T1),
   new_ctr(Proven),
   time(
   do((
    allFullFormulas(N,T),
-   ppp(t=T),
+   %ppp(t=T),
    call(P,T),
    ctr_inc(Proven)
   )),

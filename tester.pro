@@ -2,7 +2,7 @@
 
 :-dynamic(proven/2).
  
-max_time(16).
+max_time(6).
 
 
 % adaptor to run ILPT benchmarks from http://www.iltp.de/  
@@ -549,4 +549,22 @@ sx_(((v0(V0)->v1(V1)->v2(V2))->(v0(V0)->v1(V1))->v0(V0)->v2(V2))).
 
 eq1:-T=((a->b)<->a)<->(a&b),faprove(T).
 
-   
+eq2:-A=0<->(0<->(1<->0)),frprove(A).
+
+eq3:-faprove(((p->q)->r)->(q->r)).
+
+eq4:-
+  T1=(c<->(a->b)),
+  X=(~a v b v ~c),Y=(a v c),Z=(~b v c),
+  T2=(X & Y & Z),
+  E=(T1<->T2),
+  ppp(E),
+  tautology(E),
+  ppp(taut),
+  \+faprove(E),
+  ppp(not_intu).
+  
+
+fbug:-T=(((0 <-> (((0 <-> 0) <-> 0) -> false)) -> false) -> false) ,
+  ppp(T),
+  faprove(T).
