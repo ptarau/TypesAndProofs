@@ -36,7 +36,7 @@ clean_cp(InF,OutF):-
   true
   .
 
-probs2py:-
+probs2py1:-
   prob:consult('test_data/iltp.pro'),
   tell('test_data/iltp.txt'),
   do((
@@ -56,6 +56,39 @@ probs2py:-
   )),
   told.
 
+probs2py:-
+  prob:consult('test_data/iltp.pro'),
+  tell('test_data/iltp.txt'),
+  do((
+      prob:iltp(N, TF0, FName,  Form),
+      form2stack(Form,PyForm),
+      ( TF0=false->TF='False'
+      ; TF0=true->TF='True'
+      ; ppp(unextected=TF0),TF=TF0
+      ),
+      write('['),
+      write(N),write(','),
+      write(TF),write(','),
+      writeq(FName),write(','),
+      writeq(PyForm),write(']'),
+      nl
+  )),
+  told.
+ 
+form2stack(T,Xs):-form2stack(T,Xs,[]).
+
+form2stack(T)-->{compound(T)},!,
+  {T=..[F|Xs],atom_string(F,SF)},
+  forms2stack(Xs),
+  [SF].
+form2stack(T)-->{atom_string(T,ST)},
+  [ST].
+
+forms2stack([])-->[].
+forms2stack([X|Xs])-->
+  form2stack(X),
+  forms2stack(Xs).
+  
 save_probs:-
   tell('test_data/iltp.pro'),
   maplist(portray_clause,[

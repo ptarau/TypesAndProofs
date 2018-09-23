@@ -4,20 +4,23 @@
  
 max_time(6).
 
+% adaptor to run ILPT benchmarks from http://www.iltp.de
+/*
+?- fbm(4,faprove).
+counts=(22026/222449=0.0990159542187198)
+time=(0.8859989643096924=1.1487998962402344-0.262800931930542)
+true.
 
-% adaptor to run ILPT benchmarks from http://www.iltp.de/  
+?- fbm(4,faprove).
+counts=(22026/222449=0.0990159542187198)
+time=(0.8774759769439697=1.1507987976074219-0.27332282066345215)
+true.
 
-% [prover=faprove,total=274,skipped=0,tried=274:[right=148:[proven=95,refuted=53],wrong=0,timed_out(secs,1)=126,error=0]]
-
-%[prover=faprove,total=274,skipped=0,tried=274:[right=152:[proven=97,refuted=55],wrong=0,timed_out(secs,3)=122,error=0]]
-
-% new [prover=faprove,total=274,skipped=0,tried=274:[right=156:[proven=97,refuted=59],wrong=0,timed_out(secs,6)=118,error=0]]
-
-% new prover=faprove,total=274,skipped=0,tried=274:[right=161:[proven=99,refuted=62],wrong=0,timed_out(secs,60)=113,error=0]]
-
-% [prover=faprove,total=274,skipped=0,tried=274:[right=165:[proven=100,refuted=65],wrong=0,timed_out(secs,200)=109,error=0]]
-
-%[prover=faprove,total=274,skipped=0,tried=274:[right=165:[proven=100,refuted=65],wrong=0,timed_out(secs,600)=109,error=0]]
+?- fbm(6,faprove).
+counts=(42998147/579007337=0.07426183444027756)
+time=(4630.17018699646=5346.297565937042-716.1273789405823)
+true.
+*/
 test_probs1:-time(test_probs(faprove)).
 
 % [prover=fpprove,total=274,skipped=0,tried=274:[right=150:[proven=96,refuted=54],wrong=0,timed_out(secs,6)=124,error=0]]
