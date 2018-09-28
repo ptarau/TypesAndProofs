@@ -5,18 +5,18 @@ xbm0:-xbm(10,12).
 xbm:-tell('bm.txt'),xbm(13,15),told.
 
 xbm(From,To):-
-  member(P,[lprove,bprove,sprove,pprove,hprove,xprove]),
+  member(P,[lprove,bprove,eprove,sprove,hprove,dprove]),
   nl,between(From,To,N),
     bm(N,P),
   fail
-; nl,between(From,To,N),P=dprove,
-  timed_call(10,bm(N,P),Time),
-  (number(Time)->true;ppp(P=Time)),
-  fail
-; member(P,[kprove,gprove,tautology]),
-  nl,between(From,To,N),
-    cbm(N,P),
-  fail	
+%; nl,P=dprove,between(From,To,N),
+%  timed_call(10,bm(N,P),Time),
+%  (number(Time)->true;ppp(P=Time)),
+%  fail
+%; member(P,[kprove,gprove,tautology]),
+%  nl,between(From,To,N),
+%    cbm(N,P),
+%  fail	
 ; nl,writeln(done).
   
 timed_call(Secs,Goal,Time):-

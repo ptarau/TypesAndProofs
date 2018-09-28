@@ -27,27 +27,22 @@ dprove(A):-provable(A),!.
 % derived directly from Dyckhoff's LJT calculus
 lprove(T):-ljt(T,[]),!.
 
-ljt(A,Vs):-memberchk(A,Vs),!.     % axiom
+ljt(A,Vs):-memberchk(A,Vs),!.
 
-ljt((A->B),Vs):-!,ljt(B,[A|Vs]).         % => imp 
+ljt((A->B),Vs):-!,ljt(B,[A|Vs]).
 
-ljt(G,Vs1):- %atomic(G),                % imp => 1, atom A
+ljt(G,Vs1):- %atomic(G),                
   select((A->B),Vs1,Vs2),
-  atomic(A),
   memberchk(A,Vs2),
   !,
   ljt(G,[B|Vs2]).
-  
-ljt(G,Vs1):- % atomic(G),                % imp => 4
+
+ljt(G,Vs1):- % atomic(G),
   select( ((C->D)->B),Vs1,Vs2),
   ljt((C->D), [(D->B)|Vs2]),    
-  %ljt(D, [C,(D->B)|Vs2]),    
   !,
   ljt(G,[B|Vs2]).
-  
-  
-  
-
+ 
 % simplest, with multisets, no contraction
 % with a single select/3 operation
 
@@ -64,31 +59,7 @@ ljb(G,Vs1):-
   ljb(G,[B|Vs2]).
 
 ljb_imp((C->D),B,Vs):-!,ljb((C->D),[(D->B)|Vs]).
-%ljb_imp((C->D),B,Vs):-!,ljb(D,[C,(D->B)|Vs]).
 ljb_imp(A,_,Vs):-memberchk(A,Vs).   
-
-
-flatprove(T):-
-%  ppp(T),
-  flattenImpl(T,G,Vs),
-%  ppp((G:-Vs)),nl,
-  ljflat(G,Vs),!.
-
-ljflat(A,Vs):-ppp(ljf=(A:-Vs)),fail.
-ljflat(A,Vs):-memberchk(A,Vs),!.
-ljflat((A->B),Vs):-!,ljflat(B,[A|Vs]). 
-ljflat(G,Vs0):-
-  select(X,Vs0,Vs1),head_of(X,G),!,
-  select((A->B),[X|Vs1],Vs2),
-  ppp(imp=(G:-(A->B))),
-  ljflat_imp(A,B,Vs2),
-  ppp(out=A+B),
-  !,
-  ljflat(G,[B|Vs2]).
-
-%ljflat_imp(CD,B,Vs):-ppp(imp=(B:CD:-Vs)),fail.
-ljflat_imp((C->D),B,Vs):-!,ljflat((C->D),[(D->B)|Vs]).
-ljflat_imp(A,_,Vs):-atomic(A),memberchk(A,Vs).   
 
 
 % variant of bprove that produces
@@ -322,6 +293,29 @@ assume_all(A->B,Last,As,Bs):-
    assume_all(B,Last,As,Bs).
 assume_all(A->B,Last,As,[A|Bs]):-
    assume_all(B,Last,As,Bs).
+
+   flatprove(T):-
+%  ppp(T),
+  flattenImpl(T,G,Vs),
+%  ppp((G:-Vs)),nl,
+  ljflat(G,Vs),!.
+
+ljflat(A,Vs):-ppp(ljf=(A:-Vs)),fail.
+ljflat(A,Vs):-memberchk(A,Vs),!.
+ljflat((A->B),Vs):-!,ljflat(B,[A|Vs]). 
+ljflat(G,Vs0):-
+  select(X,Vs0,Vs1),head_of(X,G),!,
+  select((A->B),[X|Vs1],Vs2),
+  ppp(imp=(G:-(A->B))),
+  ljflat_imp(A,B,Vs2),
+  ppp(out=A+B),
+  !,
+  ljflat(G,[B|Vs2]).
+
+%ljflat_imp(CD,B,Vs):-ppp(imp=(B:CD:-Vs)),fail.
+ljflat_imp((C->D),B,Vs):-!,ljflat((C->D),[(D->B)|Vs]).
+ljflat_imp(A,_,Vs):-atomic(A),memberchk(A,Vs).   
+
 
 % deliberately bad provers
 % for testing - randomly succeds or fails

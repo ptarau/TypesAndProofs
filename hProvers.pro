@@ -16,16 +16,32 @@ ljh(G,Vs1):- % atomic(G), G not on Vs1
   select(A,As,Bs),         % inner select loop
   ljh_imp(A,B,Vs2), % A element of the body of B
   !,
-  trimmed((B:-Bs),NewB), % trim empty bodies
-  ljh(G,[NewB|Vs2]).
+  trimmed((B:-Bs),NewB), % trim off empty bodies
+  ljh(G,[NewB|Vs2]). 
   
-
 ljh_imp((D:-Cs),B,Vs):- !,ljh((D:-Cs),[(B:-[D])|Vs]).
 ljh_imp(A,_B,Vs):-memberchk(A,Vs).
 
-trimmed((B:-[]),R):-!,R=B.
+trimmed((B:-[]),R):-!,R=B. 
 trimmed(BBs,BBs).
 
+hgprove(T0):-toHorn(T0,T),ljg(T).
+
+ljg(A):-ljg(A,[]),!.
+
+ljg(A,Vs):-memberchk(A,Vs),!. 
+ljg((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljg(B,Vs2).
+ljg(G,Vs0):- % G is atomic
+  select((G:-Gs),Vs0,Vs1),!, % bring a G:-.. first
+  select((B:-As),[(G:-Gs)|Vs1],Vs2),
+  select(A,As,Bs), 
+  ljg_imp(A,B,Vs2), % A element of the body of B
+  !,
+  trimmed((B:-Bs),NewB),
+  ljg(G,[NewB|Vs2]).
+  
+ljg_imp((D:-Cs),B,Vs):-!,ljg((D:-Cs),[(B:-[D])|Vs]).
+ljg_imp(A,_B,Vs):-memberchk(A,Vs).
 
 % with ~A as A->false
 hnprove(T0):-toNHorn(T0,T),ljnh(T).
@@ -245,20 +261,20 @@ hhprove(A):-toHorn(A,H),hlj(H),!.
 
 hlj1(H):-hlj(H),!.
 
-hlj(A:-Vs):-memberchk(A,Vs),!. 
-hlj((B:-As):-Vs1):-!,append(As,Vs1,Vs2),hlj(B:-Vs2).
-hlj(G:-Vs1):- % atomic(G), G not on Vs1
+hlj((A:-Vs)):-memberchk(A,Vs),!. 
+hlj(((B:-As):-Vs1)):-!,append(As,Vs1,Vs2),hlj(B:-Vs2).
+hlj((G:-Vs1)):- % atomic(G), G not on Vs1
   memberchk((G:-_),Vs1), % if not, we just fail
   select((B:-As),Vs1,Vs2), % outer select loop
   select(A,As,Bs),         % inner select loop
   hlj_imp(A,B,Vs2), % A element of the body of B
   !,
   trimmed((B:-Bs),NewB), % trim empty bodies
-  hlj(G:-[NewB|Vs2]).
+  hlj((G:-[NewB|Vs2])).
   
-hlj_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
-hlj_imp((D:-Cs),B,Vs):- hlj((D:-Cs):-[(B:-[D])|Vs]).
 
+hlj_imp((D:-Cs),B,Vs):-!, hlj((D:-Cs):-[(B:-[D])|Vs]).
+hlj_imp(A,_B,Vs):- memberchk(A,Vs).
 
 
 oprove(T0):-toHorn(T0,T),ljo(T).
@@ -385,7 +401,7 @@ vtrimmed([],B,G,Vs):-ljv(G,[B|Vs]).
 vtrimmed([BB|Bs],B,G,Vs):-ljv(G,[[B,BB|Bs]|Vs]).
 
 % works on Horn clauses - includes
-% preporcessing from implicational form
+% preprocessing from implicational form
 % from which the translation is reversible except for order
 
 
@@ -438,21 +454,4 @@ ljz_imp((D:-Cs),B,Vs1):-
   add_new((B:-[D]),Vs1,Vs2), % assume that A's head implies B
   ljz((D:-Cs),Vs2).          % prove A under that assumption
 
-hgprove(T0):-toHorn(T0,T),ljg(T).
-
-ljg(A):-ljg(A,[]),!.
-
-ljg(A,Vs):-memberchk(A,Vs),!. 
-ljg((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljg(B,Vs2).
-ljg(G,Vs0):- % G is atomic
-  select((G:-Gs),Vs0,Vs1),!, % bring a G:-.. first
-  select((B:-As),[(G:-Gs)|Vs1],Vs2),
-  select(A,As,Bs), 
-  ljg_imp(A,B,Vs2), % A element of the body of B
-  !,
-  trimmed((B:-Bs),NewB),
-  ljg(G,[NewB|Vs2]).
   
-ljg_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
-ljg_imp((D:-Cs),B,Vs):- ljg((D:-Cs),[(B:-[D])|Vs]).
-

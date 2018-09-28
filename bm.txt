@@ -1,42 +1,47 @@
+?- xbm(13,16).
 
-[prog=lprove,size=13,pos=1.355,neg=0.273,total=1.629]
-[prog=lprove,size=14,pos=6.602,neg=6.095,total=12.698]
-[prog=lprove,size=15,pos=55.979,neg=6.206,total=62.186]
+[prog=lprove,size=13,pos=0.979,neg=0.261,total=1.24]
+[prog=lprove,size=14,pos=4.551,neg=5.564,total=10.116]
+[prog=lprove,size=15,pos=30.014,neg=5.568,total=35.583]
+[prog=lprove,size=16,pos=3053.202,neg=168.074,total=3221.277]
 
-[prog=bprove,size=13,pos=0.921,neg=0.204,total=1.125]
-[prog=bprove,size=14,pos=4.315,neg=4.263,total=8.579]
-[prog=bprove,size=15,pos=31.719,neg=4.312,total=36.032]
+[prog=bprove,size=13,pos=0.943,neg=0.203,total=1.147]
+[prog=bprove,size=14,pos=4.461,neg=4.294,total=8.755]
+[prog=bprove,size=15,pos=32.206,neg=4.306,total=36.513]
+[prog=bprove,size=16,pos=3484.203,neg=129.91,total=3614.114]
 
-[prog=sprove,size=13,pos=1.924,neg=0.163,total=2.087]
-[prog=sprove,size=14,pos=9.431,neg=2.726,total=12.158]
-[prog=sprove,size=15,pos=48.553,neg=2.735,total=51.288]
+[prog=dprove,size=13,pos=5.299,neg=0.798,total=6.098]
+[prog=dprove,size=14,pos=23.161,neg=13.514,total=36.675]
+[prog=dprove,size=15,pos=107.264,neg=13.645,total=120.909]
+[prog=dprove,size=16,pos=1270.586,neg=240.301,total=1510.887]
 
-[prog=pprove,size=13,pos=1.675,neg=0.168,total=1.843]
-[prog=pprove,size=14,pos=7.444,neg=2.726,total=10.17]
-[prog=pprove,size=15,pos=34.759,neg=2.749,total=37.509]
 
-[prog=hprove,size=13,pos=0.951,neg=0.115,total=1.066]
-[prog=hprove,size=14,pos=4.262,neg=1.86,total=6.122]
-[prog=hprove,size=15,pos=19.351,neg=1.871,total=21.223]
+[prog=hprove,size=13,pos=1.007,neg=0.111,total=1.119]
+[prog=hprove,size=14,pos=4.413,neg=1.818,total=6.231]
+[prog=hprove,size=15,pos=20.09,neg=1.836,total=21.927]
+[prog=hprove,size=16,pos=90.595,neg=30.713,total=121.308]
 
-[prog=xprove,size=13,pos=1.292,neg=0.339,total=1.632]
-[prog=xprove,size=14,pos=5.799,neg=6.567,total=12.367]
-[prog=xprove,size=15,pos=26.83,neg=6.531,total=33.361]
+[prog=eprove,size=13,pos=1.07,neg=0.132,total=1.203]
+[prog=eprove,size=14,pos=4.746,neg=2.27,total=7.017]
+[prog=eprove,size=15,pos=21.562,neg=2.248,total=23.81]
+[prog=eprove,size=16,pos=97.811,neg=43.18,total=140.991]
 
-[prog=dprove,size=13,pos=2.126,neg=0.337,total=2.464]
-[prog=dprove,size=14,pos=10.613,neg=5.686,total=16.299]
-dprove=timeout_after(600)
-
-[prog=kprove,size=13,pos=1.419,neg=0.29,total=1.71]
-[prog=kprove,size=14,pos=6.718,neg=6.059,total=12.778]
-[prog=kprove,size=15,pos=45.52,neg=6.173,total=51.693]
-
-[prog=gprove,size=13,pos=1.694,neg=2.518,total=4.213]
-[prog=gprove,size=14,pos=7.527,neg=373.674,total=381.201]
-[prog=gprove,size=15,pos=33.419,neg=370.791,total=404.21]
-
-[prog=tautology,size=13,pos=3.468,neg=1.136,total=4.605]
-[prog=tautology,size=14,pos=16.386,neg=22.039,total=38.426]
-[prog=tautology,size=15,pos=81.403,neg=22.239,total=103.642]
+[prog=sprove,size=13,pos=1.757,neg=0.173,total=1.931]
+[prog=sprove,size=14,pos=8.037,neg=2.966,total=11.003]
+[prog=sprove,size=15,pos=38.266,neg=2.941,total=41.208]
+[prog=sprove,size=16,pos=188.317,neg=54.802,total=243.12]
 
 done
+
+?- xbm(16,16).
+
+
+
+
+
+
+
+
+
+
+

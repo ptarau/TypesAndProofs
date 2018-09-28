@@ -1,3 +1,12 @@
+ibm:-ibm(7,bprove).
+  
+ibm(M,P):-M1 is M-1,
+ do((
+   between(0,M1,N),
+   time(seqCountProvenFormulas(N,P,A,B),T),
+   writeln([n=N,prover=P,proven=A,total=B,time=T])
+ )).
+
 bm(N,P):-
   bmark(N,P,Res),
   writeln(Res).
@@ -99,6 +108,7 @@ preprocessor(ffprove,(=)).
 preprocessor(fcprove,(=)).
 preprocessor(fdprove,(=)).
 preprocessor(hprove,toHorn).
+preprocessor(hgprove,toHorn).
 preprocessor(h1prove,toHorn).
 preprocessor(h3prove,toHorn).
 preprocessor(hhprove,toHorn).
