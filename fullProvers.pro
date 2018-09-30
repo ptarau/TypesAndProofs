@@ -64,14 +64,13 @@ ljfa(G,Vs1):- % atomic or disj or false
   !,
   ljfa(G,Vs3).
 ljfa(A v B, Vs):-(ljfa(A,Vs);ljfa(B,Vs)),!.
- 
+
 %ljfa_reduce(AB,G,Vs,Vs):-compound(AB),ppp(reduce(G):(AB:-Vs)),fail.
 ljfa_reduce((A->B),_,Vs1,Vs2):-!,ljfa_imp(A,B,Vs1,Vs2).
 ljfa_reduce((A & B),_,Vs,[A,B|Vs]):-!.
 ljfa_reduce((A<->B),_,Vs,[(A->B),(B->A)|Vs]):-!.
 ljfa_reduce((A v B),G,Vs,[B|Vs]):-ljfa(G,[A|Vs]).
   
-	
 %ljfa_imp(CD,_,_,_):-ppp(imp:CD),fail.
 ljfa_imp((C->D),B,Vs,[B|Vs]):-!,ljfa((C->D),[(D->B)|Vs]).
 ljfa_imp((C & D),B,Vs,[(C->(D->B))|Vs]):-!.
@@ -214,6 +213,9 @@ check_ops_in(Ops,A):-
 fb_filter((G:-Vs)):-
   maplist(check_ops_in([(->)/2,(<->)/2]),[G|Vs]). 
  
+i_filter((G:-Vs)):-
+maplist(check_ops_in([(->)/2]),[G|Vs]). 
+
 fbprove(T):-ljfb(T,[]),!.
   
 ljfb(A,Vs):-memberchk(A,Vs),!.

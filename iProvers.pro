@@ -194,7 +194,7 @@ pprove(T):-ljp(T,[]),!.
 ljp(A,Vs):-memberchk(A,Vs),!.
 ljp((A->B),Vs1):-!,add_new(A,Vs1,Vs2),ljp(B,Vs2). 
 ljp(G,Vs1):- % atomic(G),
-  member(T,Vs1),head_of(T,G),!,
+  %member(T,Vs1),head_of(T,G),!,
   select((A->B),Vs1,Vs2),
   ljp_imp(A,B,Vs2),
   !,

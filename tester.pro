@@ -21,6 +21,11 @@ counts=(42998147/579007337=0.07426183444027756)
 time=(4630.17018699646=5346.297565937042-716.1273789405823)
 true.
 */
+
+
+% no purely implicational formulas at ILTP.org :-(
+test_probs0:-time(test_probs(i_filter,bprove)).
+
 test_probs1:-time(test_probs(faprove)).
 
 % [prover=fpprove,total=274,skipped=0,tried=274:[right=150:[proven=96,refuted=54],wrong=0,timed_out(secs,6)=124,error=0]]

@@ -123,7 +123,7 @@ allHarropFormulas(N,T):-hgoal(N,T,_).
 countAllHarrop(M):-
   findall(R,(
       N to M,
-      gen_and_count(N,allHarropFormulas,tautology,R)
+      gen_and_count(N,allHarropFormulas,eprove,R)
     ),
     Rs
   ),

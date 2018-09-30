@@ -40,3 +40,14 @@ harrop_goal(((H->V)->G),[V|Vs1],Vs3)-->z,z,
   harrop_goal(G,Vs2,Vs3).
 
 z(SN,N):-succ(N,SN).
+
+
+hdtrees(N):-do((hdef(N,F,_),ppp(F),ppt(F))).
+
+hgtrees(N):-do((hgoal(N,F,_),ppp(F),ppt(F))).
+
+hdtree(N):-do((
+    harrop_definite(N,F,Vs),
+    maplist(=(x),Vs),
+    ppp(F),ppt(F)
+  )).

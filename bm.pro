@@ -100,6 +100,7 @@ preprocessor(dprove,(=)).
 preprocessor(lprove,(=)).
 preprocessor(bprove,(=)).
 preprocessor(eprove,(=)).
+preprocessor(nprove,(=)).
 preprocessor(pprove,(=)).
 preprocessor(qprove,(=)).
 preprocessor(sprove,(=)).
