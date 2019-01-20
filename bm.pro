@@ -12,7 +12,7 @@ bm(N,P):-
   writeln(Res).
  
 cbm(N,P):-
-  bmark(N,P,Res),
+  cbmark(N,P,Res),
   writeln(Res).
 
 bmark(N,P,Res):-prep(P,BL),!,
@@ -100,20 +100,27 @@ preprocessor(dprove,(=)).
 preprocessor(lprove,(=)).
 preprocessor(bprove,(=)).
 preprocessor(eprove,(=)).
+preprocessor(efprove,(=)).
 preprocessor(nprove,(=)).
 preprocessor(pprove,(=)).
 preprocessor(qprove,(=)).
 preprocessor(sprove,(=)).
 preprocessor(faprove,(=)).
+preprocessor(fxprove,(=)).
+preprocessor(alt_prove,(=)).
 preprocessor(ffprove,(=)).
 preprocessor(fcprove,(=)).
 preprocessor(fdprove,(=)).
 preprocessor(hprove,toHorn).
+preprocessor(hrprove,toHorn).
 preprocessor(hgprove,toHorn).
 preprocessor(h1prove,toHorn).
 preprocessor(h3prove,toHorn).
 preprocessor(hhprove,toHorn).
+preprocessor(hhhprove,toHorn).
 preprocessor(hh1prove,toHorn).
+preprocessor(nhprove,toAHorn).
+preprocessor(ahprove,toAHorn).
 preprocessor(hvprove,toVarHorn).
 preprocessor(wprove,toFlatHorn).
 preprocessor(w3prove,toFlatHorn).
@@ -141,7 +148,8 @@ nice_num(X,R):-R is (truncate(X*1000))/1000.
 
 
 hbm(N,P,Counts,Time=T2-T1):-
-  assertion(member(P,[hlj1,jlj,ljh,ljj,lji,ljy,ljz,ljg])),
+  assertion(member(P,
+     [hrlj,ljh,hlj1,hhlj1,jlj,ljj,lji,ljy,ljz,ljg])),
   new_ctr(All),
   time(
   do((
@@ -173,7 +181,7 @@ fbm(N,P):-
  
 good_full_prover(P):-
    assertion(memberchk(P,
-     [dprove,faprove,flprove,frprove,ffprove,fcprove,fdprove])).
+     [dprove,faprove,fxprove,flprove,frprove,ffprove,fcprove,fdprove,alt_prove])).
 
 fbm(N,P,Counts,Time=T2-T1):-
   good_full_prover(P),
@@ -266,5 +274,11 @@ T =  (226.97890901565552=262.0866060256958-35.10769701004028).
 
 */ 
   
-  
+itaut(N):-
+  do((
+  allFullFormulas(N,F),
+  %simplify(F0,F),
+  faprove(F),
+  ppp(F)
+  )).
   

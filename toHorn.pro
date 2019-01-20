@@ -1,4 +1,4 @@
-% reversible tranlater between implactional
+% reversible translater between implactional
 % end embedded Hron clause form
 
 toHorn((A->B),(H:-Bs)):-!,toHorns((A->B),Bs,H).
@@ -6,6 +6,14 @@ toHorn(H,H).
 
 toHorns((A->B),[HA|Bs],H):-!,toHorn(A,HA),toHorns(B,Bs,H).
 toHorns(H,[],H).  
+
+
+toAHorn((A->B),(H<-Bs)):-!,toAHorns((A->B),Bs,H).
+toAHorn(H,H).
+
+toAHorns((A->B),[HA|Bs],H):-!,toAHorn(A,HA),toAHorns(B,Bs,H).
+toAHorns(H,[],H).  
+
 
 toVarHorn(X,R):-maxvar(X,M),M1 is M+1,functor(D,d,M1),toHorn(X,HBs),toVarHorn1(D,HBs,R).
 
@@ -251,5 +259,59 @@ fromHorn(A,B):-toHorn(B,A).
 
 pro2imp-->term2horn,fromHorn.
 
+
+%%%%%%%%%
+
+toNestedHorn(A,R):-
+  %ppp(orig=A),
+  expand_equiv(A,X),
+  %ppp(equiv=X),
+  hornify(X,R).
+
+hornify(A,X):-
+  toHorn1(A,H),
+  %ppp(horn=H),
+  expand_horn(H,X),
+  %ppp(exp=X),nl,
+  true.
   
-   
+primitive(A):-atomic(A).
+
+expand_equiv(A,R):-primitive(A),!,R=A.
+expand_equiv(~ ~ ~ A,X):-!,expand_equiv(~ A,X).
+expand_equiv(~ A,(X->false)):-!,expand_equiv(A,X).
+expand_equiv(A<->A,R):-!,R=true.
+expand_equiv(A<->B,(X->Y)&(Y->X)):-!,
+  expand_equiv(A,X),
+  expand_equiv(B,Y).
+expand_equiv(A,R):-A=..[F|Xs],
+  maplist(expand_equiv,Xs,Ys),
+  R=..[F|Ys].
+  
+expand_horn(A,R):-primitive(A),!,R=A.
+expand_horn(A&A,R):-!,expand_horn(A,R).
+expand_horn(A&B,Xs):-!,listify(A&B,Xss),flatten_it(Xss,Xs).
+expand_horn((H:-Bs),HBss):-
+  expand_horn(H,HH),flatten_it(HH,Hs),
+  maplist(expand_horn,Bs,Css),
+  flatten_it(Css,Cs),
+  %ppp(hs+Cs=Hs+Cs),
+  distribute_head(Hs,Cs,HBss).
+
+%listify(A,_):-ppp(listify:A),fail.
+listify(A&B,[X|Xs]):-!,expand_horn(A,X),listify(B,Xs).
+listify(A,[X]):-expand_horn(A,X).
+
+distribute_head([],_,[]).
+distribute_head([H|Hs],Bs,[(H:-Bs)|HBss]):-distribute_head(Hs,Bs,HBss).
+
+flatten_it(Xs,Fs):-list:flatten(Xs,Fs).  
+
+toHorn1((A&A),R):-!,toHorn1(A,R).
+toHorn1((A&B),X&Y):-!,toHorn1(A,X),toHorn1(B,Y).
+toHorn1((A->A),R):-!,R=true.
+toHorn1((A->B),(H:-Bs)):-!,toHorns1((A->B),Bs,H).
+toHorn1(H,H).
+
+toHorns1((A->B),[HA|Bs],H):-!,toHorn1(A,HA),toHorns1(B,Bs,H).
+toHorns1(H,[],HH):-toHorn1(H,HH).

@@ -20,6 +20,14 @@ countSortedHorn(M):-
   ),
   maplist(ppp,Rs).
 
+countHorn(M):-
+  findall(R,(
+      N to M,
+      gen_and_count(N,allHornFormulas,hprove,R)
+    ),
+    Rs
+  ),
+  maplist(ppp,Rs). 
   
 % all Horn formulas with bodies in canonical order
 % to break symmetries irrelevant for testing provers
@@ -39,7 +47,12 @@ countSortedHorn3(M):-
   ),
   maplist(ppp,Rs).
 
+countHorn_alt(M):-ncounts(M,allHornFormulas(_,_)).
+  
+  
 countSortedHorn_alt(M):-ncounts(M,allSortedHorn(_,_)).
+
+countSortedHorn3_alt(M):-ncounts(M,allSortedHorn3(_,_)).
   
 :-dynamic(yes/1).
 
@@ -148,6 +161,15 @@ allEqFormulas(N,T):-
   natpartitions(Vs).
   
 
+allNestedFormulas(N,T):-
+  genOpTree(N, [
+      (->)
+      ,(&)
+      ,(<->)
+      ,(~)
+    ], T, Vs),
+  natpartitions(Vs).  
+  
 allFullFormulas(N,T):-
   genOpTree(N,T,Vs),
   natpartitions(Vs).

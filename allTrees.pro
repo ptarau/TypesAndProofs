@@ -8,7 +8,7 @@ genTree((A->B),SN1,N3)-->{SN1>0,N1 is SN1-1},
   genTree(A,N1,N2),
   genTree(B,N2,N3).
 
-% OEIS 1,2,5,14,42,132,429,1430,4862,16796 
+% OEIS A000108 Catalan 1,2,5,14,42,132,429,1430,4862,16796 
 genHorn(N,Tree,Leaves):-genHorn(Tree,N,0,Leaves,[]).
 
 genHorn(V,N,N)-->[V].
@@ -28,28 +28,7 @@ countGenHorn(M,Rs):-
     sols(genHorn(N,_,_),R)
   ),Rs).
   
-/*  
-% [1,2,7,38,266,2263,22300,247737]
-genSortedHorn(N,Tree,Leaves):-
-  genSortedHorn(Tree,N,0,Leaves,[]).
-
-genSortedHorn(V,N,N)-->[V].
-genSortedHorn((A:-[B|Bs]),SN1,N3)-->{succ(N1,SN1)},
-  [A],
-  genSortedHorn(B,N1,N2),
-  genSortedHorns(Bs,N2,N3),
-  {sorted([B|Bs])}.
   
-genSortedHorns([],N,N)-->[].
-genSortedHorns([B|Bs],SN1,N3)-->{succ(N1,SN1)},
-  genSortedHorn(B,N1,N2),
-  genSortedHorns(Bs,N2,N3).
-  
-sorted([]):-!.
-sorted([_]):-!.
-sorted([X,Y|Xs]):-X@<Y,sorted([Y|Xs]).  
-*/
-
 % A105633: [1,2,4,9,22,57,154,429,1223,3550,10455,31160,93802,284789]
 genSortedHorn(N,Tree,Leaves):-
   genSortedHorn(Tree,N,0,Leaves,[]).
@@ -65,6 +44,7 @@ genSortedHorns(B,[C|Bs],SN1,N3)-->{succ(N1,SN1)},
   genSortedHorn(C,N1,N2),
   {B@<C},
   genSortedHorns(C,Bs,N2,N3).
+  
   
 genSortedHorn3(N,Tree,Leaves):-
   genSortedHorn3(3,Tree,N,0,Leaves,[]).

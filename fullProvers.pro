@@ -24,6 +24,14 @@ faprove(T0,Vs):-
   %ppp(FullT),
   ljfa(FullT,[]),!.
 
+fxprove(T0,Vs):-
+  unexpand(Vs,T0,T1),
+  simplify(T1,T),
+  expand_full_neg(T,FullT),
+  %ppp(FullT),
+  ljfa(FullT,[]),!.
+  
+  
 faprove1(T0,Vs0):-
   maplist(expand_full_neg,[T0|Vs0],[T|Vs]),
   %ppp(T),
@@ -37,6 +45,13 @@ faprove(T0):-
   ljfa(T,[]),
   !.    
 
+fxprove(T0):-
+  simplify(T0,T1),
+  expand_full_neg(T1,T),
+  %ppp(here=T),
+  ljfa(T,[]),
+  !.    
+  
 max_steps(100). 
 :-flag(steps,_,0).
 
@@ -214,10 +229,13 @@ fb_filter((G:-Vs)):-
   maplist(check_ops_in([(->)/2,(<->)/2]),[G|Vs]). 
  
 i_filter((G:-Vs)):-
-maplist(check_ops_in([(->)/2]),[G|Vs]). 
+  maplist(check_ops_in([(->)/2]),[G|Vs]). 
 
 fbprove(T):-ljfb(T,[]),!.
   
+nest_filter(G):-
+  check_ops_in([(->)/2,(<->)/2,(&)/2,(~)/1],G). 
+
 ljfb(A,Vs):-memberchk(A,Vs),!.
 ljfb((A->B),Vs):-!,ljfb(B,[A|Vs]). 
 ljfb(A <-> B,Vs):-!,ljfb((A->B),Vs),ljfb((B->A),Vs).
@@ -229,8 +247,8 @@ ljfb(G,Vs1):-
   ljfb(G,Vs3).
 
 
-expand_equiv(X<->Y,Vs,[(X->Y),(Y->X)|Vs]):-!.
-expand_equiv(_,Vs,Vs).
+%expand_equiv(X<->Y,Vs,[(X->Y),(Y->X)|Vs]):-!.
+%expand_equiv(_,Vs,Vs).
 
 eq_head_of((_->B), G) :- !,eq_head_of(B, G).
 eq_head_of((A<->B), G) :- (eq_head_of(A,G);eq_head_of(B,G)),!.

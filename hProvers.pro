@@ -4,7 +4,7 @@
 
 hprove(T0):-toHorn(T0,T),ljh(T).
 
-ljh(A):-ljh(A,[]),!.
+ljh(A):-ljh(A,[]).
 
 %ljh(A,Vs):-ppp((Vs-->A)),fail. % just to trace steps
 
@@ -25,6 +25,36 @@ ljh_imp(A,_B,Vs):-memberchk(A,Vs).
 trimmed((B:-[]),R):-!,R=B. 
 trimmed(BBs,BBs).
 
+hrprove(T0):-toHorn(T0,T),hrlj(T).
+
+hrlj(A):-hrlj(A,[]).
+
+hrlj(A,Vs):-memberchk(A,Vs),!. 
+hrlj((B:-As),Vs1):-!,append(As,Vs1,Vs2),hrlj(B,Vs2).
+hrlj(G,Vs1):- % atomic(G), G not on Vs1
+  memberchk((G:-_),Vs1), % if not, we just fail
+  hrlj_reduces(Vs1,Vs2),
+  hrlj(G,Vs2). 
+  
+hrlj_reduce(Vs1,[NewB|Vs2]):-
+  select((B:-As),Vs1,Vs2), % outer select loop
+  select(A,As,Bs),         % inner select loop
+  hrlj_imp(A,B,Vs2), % A element of the body of B
+  !,
+  trimmed((B:-Bs),NewB). % trim off empty bodies
+
+hrlj_imp((D:-Cs),B,Vs):- !,hrlj((D:-Cs),[(B:-[D])|Vs]).
+hrlj_imp(A,_B,Vs):-memberchk(A,Vs).
+
+% hrlj_reduce changed into hrlj_reduces 
+% is correct but not more efficient
+
+hrlj_reduces-->hrlj_reduce,hrlj_reduces1. % at least one success
+
+hrlj_reduces1-->hrlj_reduce,!,hrlj_reduces1.
+hrlj_reduces1-->[].
+
+
 hgprove(T0):-toHorn(T0,T),ljg(T).
 
 ljg(A):-ljg(A,[]),!.
@@ -43,14 +73,35 @@ ljg(G,Vs0):- % G is atomic
 ljg_imp((D:-Cs),B,Vs):-!,ljg((D:-Cs),[(B:-[D])|Vs]).
 ljg_imp(A,_B,Vs):-memberchk(A,Vs).
 
-% with ~A as A->false
+
+% nested Horn - from all except disjunction
+
+ichprove(T0):-toNestedHorn(T0,T),
+   % ppp(T0),ppp(T),nl,
+   ichs(T).
+
+ichs(A):-ichs(A,[]).
+
+
+%icljh(A,Vs):-ppp((Vs-->A)),fail. % just to trace steps
+
+ichs([],_):-!.
+ichs([C|Cs],Vs):-!,ljnh(C,Vs),ichs(Cs,Vs).
+ichs(X,Vs):-ljnh(X,Vs).
+
+
+
+% with ~A as A->false - only expands negation
 hnprove(T0):-toNHorn(T0,T),ljnh(T).
 
 toNHorn --> expand_neg,toHorn.
 
+% nested Horn + false + true - compiled from all except disjunction
+
 ljnh(A):-ljnh(A,[]),!.
 
 %ljnh(A,Vs):-ppp((Vs-->A)),fail. % just to trace steps
+ljnh(true,_):-!.
 ljnh(A,Vs):-memberchk(A,Vs),!. 
 ljnh(_,Vs):-memberchk(false,Vs),!.
 ljnh((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljnh(B,Vs2).
@@ -62,10 +113,12 @@ ljnh(G,Vs1):- % atomic(G), G not on Vs1
   trimmed((B:-Bs),NewB), % trim empty bodies
   ljnh(G,[NewB|Vs2]).
   
-
 ljnh_imp((D:-Cs),B,Vs):-!,ljnh((D:-Cs),[(B:-[D])|Vs]).
+ljnh_imp(true,_B,_Vs):-!.
 ljnh_imp(A,_B,Vs):-memberchk(A,Vs).
 
+
+%%%%%%%%%%%%%%%%%%%%%%%
 
 hvprove(T0):-toVarHorn(T0,T),ljhv(T).
 
@@ -223,7 +276,7 @@ w3prove(A):-toFlatHorn(A,B),ljh3(B).
 ljh3(A):-ljh3(A,[]),!.
 
 
-ljh3(A,Vs):-portray_clause(((A:-Vs))),nl,fail.
+%ljh3(A,Vs):-portray_clause(((A:-Vs))),nl,fail.
 ljh3(A,Vs):-memberchk(A,Vs),!. 
 ljh3((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljh3(B,Vs2).
 ljh3(G,Vs1):-
@@ -233,7 +286,7 @@ ljh3(G,Vs1):-
   %( K>5->ppp(K),ppp(Vs1),ppp(Vs2),nl;true),
   ljh3(G,Vs2).
 
-ljh3_reduce(Vs1,_):-portray_clause((reduce:-Vs1)),nl,fail.  
+%ljh3_reduce(Vs1,_):-portray_clause((reduce:-Vs1)),nl,fail.  
 ljh3_reduce(Vs1,[NewB|Vs2]):-
   select((B:-As),Vs1,Vs2), % outer select loop
   select(A,As,Bs),         % inner select loop
@@ -241,13 +294,13 @@ ljh3_reduce(Vs1,[NewB|Vs2]):-
   !,
   trimmed((B:-Bs),NewB). % trim empty bodies
  
-ljh3_imp(A,B,Vs):-ppp(ljh3_imp(A,B,Vs)),nl,fail.  
+%ljh3_imp(A,B,Vs):-ppp(ljh3_imp(A,B,Vs)),nl,fail.  
 ljh3_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
 ljh3_imp((D:-Cs),B,Vs):- ljh3((D:-Cs),[(B:-[D])|Vs]).
 
 % loops for reduce->reduces k
 
-ljh3_reduces(K1,_,Vs1,_):-portray_clause((ljh3_reduces(K1):-Vs1)),nl,fail.
+%ljh3_reduces(K1,_,Vs1,_):-portray_clause((ljh3_reduces(K1):-Vs1)),nl,fail.
 ljh3_reduces(K1,K3,Vs1,Vs3):- succ(K1,K2),
    ljh3_reduce(Vs1,Vs2),
    %assertion(Vs1\=Vs2),
@@ -276,6 +329,74 @@ hlj((G:-Vs1)):- % atomic(G), G not on Vs1
 hlj_imp((D:-Cs),B,Vs):-!, hlj((D:-Cs):-[(B:-[D])|Vs]).
 hlj_imp(A,_B,Vs):- memberchk(A,Vs).
 
+%%%%%%%%
+
+:-op(800,xfx,(<-)).
+
+nhprove(A):-toAHorn(A,H),nhlj(H),!.
+
+nhlj1(H):-nhlj(H),!.
+
+nhlj(A<-Vs):-memberchk(A,Vs),!. 
+nhlj((B<-As)<-Vs1):-!,append(As,Vs1,Vs2),nhlj(B<-Vs2).
+nhlj(G<-Vs1):- % atomic(G), G not on Vs1
+  memberchk(G<-_,Vs1), % if not, we just fail
+  select(B<-As,Vs1,Vs2), % outer select loop
+  select(A,As,Bs),         % inner select loop
+  nhlj_imp(A,B,Vs2), % A element of the body of B
+  !,
+  atrimmed(B<-Bs,NewB), % trim empty bodies
+  nhlj(G<-[NewB|Vs2]).
+  
+nhlj_imp(D<-Cs,B,Vs):-!,nhlj((D<-Cs)<-[(B<-[D])|Vs]).
+nhlj_imp(A,_B,Vs):-memberchk(A,Vs).
+
+atrimmed(B<-[],R):-!,R=B. 
+atrimmed(BBs,BBs).
+
+ahprove(A):-toAHorn(A,H),call(H).
+
+A<-Vs:-memberchk(A,Vs),!. 
+(B<-As)<-Vs1:-!,append(As,Vs1,Vs2),B<-Vs2.
+
+G<-Vs1:- % atomic(G), G not on Vs1
+  memberchk((G<-_),Vs1), % if not, we just fail
+  select(B<-As,Vs1,Vs2), % outer select loop
+  select(A,As,Bs),         % inner select loop
+  ahlj_imp(A,B,Vs2), % A element of the body of B
+  !,
+  atrimmed(B<-Bs,NewB), % trim empty bodies
+  G<-[NewB|Vs2].
+  
+ahlj_imp(D<-Cs,B,Vs):-!, (D<-Cs)<-[B<-[D]|Vs].
+ahlj_imp(A,_B,Vs):- memberchk(A,Vs).
+
+
+
+
+%%%%%%%% 
+
+hhhprove(A):-toHorn(A,H),hhlj(H),!.
+
+hhlj1(H):-hhlj(H),!.
+
+hhlj((A:-Vs)):-memberchk(A,Vs),!. 
+hhlj(((B:-As):-Vs1)):-!,append(As,Vs1,Vs2),hhlj(B:-Vs2).
+hhlj((G:-Vs1)):- % atomic(G), G not on Vs1
+  memberchk((G:-_),Vs1), % if not, we just fail
+  select((B:-As),Vs1,Vs2), % outer select loop
+  hhlj_sel((B:-As),Bs,Vs2),
+  !,
+  trimmed((B:-Bs),NewB), % trim empty bodies
+  hhlj((G:-[NewB|Vs2])).
+
+hhlj_sel((_:-As),Bs,Vs):-  
+  select(A,As,Bs),         % inner select loop
+  %atomic(A),
+  memberchk(A,Vs).
+hhlj_sel((B:-As),Bs,Vs):-  
+  select((D:-Cs),As,Bs),         % inner select loop
+  hhlj((D:-Cs):-[(B:-[D])|Vs]).
 
 oprove(T0):-toHorn(T0,T),ljo(T).
 
@@ -291,8 +412,8 @@ ljo(G,Vs1):- % atomic(G), G not on Vs1
   trimmed((B:-Bs),NewB), % trim empty bodies
   ljo(G,[NewB|Vs2]).
   
-ljo_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
-ljo_imp((D:-Cs),B,Vs):- ljo((D:-Cs),[(B:-[D])|Vs]).
+ljo_imp((D:-Cs),B,Vs):-!,ljo((D:-Cs),[(B:-[D])|Vs]).
+ljo_imp(A,_B,Vs):-memberchk(A,Vs).
 
 selsel(G,A,B,Bs,Vs1,Vs2):-
   memberchk((G:-_),Vs1),
@@ -351,10 +472,11 @@ lji(G,Vs1):- % atomic(G), G not on Vs1
   !,
   lji(G,[NewB|Vs2]).
 
-lji_imp(A,B,[], B,Vs):-atomic(A),!,memberchk(A,Vs).
-lji_imp(A,B,Bs, (B:-Bs),Vs):-atomic(A),!,memberchk(A,Vs).
+  
 lji_imp((D:-Cs),B,[], B,Vs):-!,lji((D:-Cs),[(B:-[D])|Vs]).
-lji_imp((D:-Cs),B,Bs, (B:-Bs),Vs):-lji((D:-Cs),[(B:-[D])|Vs]).
+lji_imp((D:-Cs),B,Bs, (B:-Bs),Vs):-!,lji((D:-Cs),[(B:-[D])|Vs]).
+lji_imp(A,B,[], B,Vs):-!,memberchk(A,Vs).
+lji_imp(A,B,Bs, (B:-Bs),Vs):-memberchk(A,Vs).
 
 fprove(T0):-toListHorn(T0,T),ljf(T,[]),!.
 
@@ -384,9 +506,6 @@ ljv([B|As],Vs1):-!,append(As,Vs1,Vs2),ljv(B,Vs2).
 ljv(G,Vs1):-
   memberchk([G|_],Vs1),
   ljv_choice(G,Vs1,End,End).
-  
-ljv_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
-ljv_imp([D|Cs],B,Vs):- ljv([D|Cs],[[B,D]|Vs]).
 
 ljv_choice(G,[[B|As]|End],Vs2,End):-
   select(A,As,Bs),
@@ -396,9 +515,13 @@ ljv_choice(G,[[B|As]|End],Vs2,End):-
 ljv_choice(G,[Ys|Vs1],Vs2,End):-
   ljv_choice(G,Vs1,[Ys|Vs2],End).
 
+ljv_imp([D|Cs],B,Vs):-!,ljv([D|Cs],[[B,D]|Vs]).
+ljv_imp(A,_B,Vs):-memberchk(A,Vs).
 
 vtrimmed([],B,G,Vs):-ljv(G,[B|Vs]).
 vtrimmed([BB|Bs],B,G,Vs):-ljv(G,[[B,BB|Bs]|Vs]).
+
+
 
 % works on Horn clauses - includes
 % preprocessing from implicational form

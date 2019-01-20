@@ -35,6 +35,8 @@ test_probs1:-time(test_probs(faprove)).
 % with andPar only
 test_probs1p:-test_probs(fpprove).
 
+test_probs1x:-test_probs(fxprove).
+
 % expanded to long list of shallow expressions in antecedent
 test_probs1fl:-test_probs(flprove).
 
@@ -90,6 +92,8 @@ test_probs9:-time(test_probs(fb_filter,haprove)).
 
 % random, just for testing the tester
 test_probs10:-time(test_probs(badProve)).
+
+test_probs11:-time(test_probs(nest_filter,ichprove)).
 
 
 gotest1(N):-do((
@@ -348,7 +352,10 @@ gold_test_one(Gold,Silver,T, Res):-
     Res = wrong_failure
   ; Res = agreement
   ).
-  
+ 
+gold_nested_test(N,Prover,Culprit,Unexpected):-
+   %Prover=ichprove,
+   gold_test(N,allNestedFormulas,(=),dprove,Prover, Culprit,Unexpected).
   
 gold_eq_test(N,Prover,Culprit,Unexpected):-
   gold_test(N,allEqFormulas,(=),dprove,Prover, Culprit,Unexpected).
@@ -576,3 +583,48 @@ eq4:-
 fbug:-T=(((0 <-> (((0 <-> 0) <-> 0) -> false)) -> false) -> false) ,
   ppp(T),
   faprove(T).
+  
+% soundness of ljt4 rule  
+ljt4:-L=((d->b)->(c->d)),R=(b->g),LR=(((c->d)->b)->g),
+   bprove(L->(R->LR)).
+   
+   
+/*
+assume 
+  ((d->b)->(c->d))
+  ?(b->g)->(((c->d)->b)->g)
+  
+assumed
+  ((d->b)->(c->d)), b->g
+  ? (((c->d)->b)->g)
+   
+  assumed ((c->d)->b) , b->g, ((d->b)->(c->d)), 
+  ?g
+  
+  (d->b)->b, b->g
+*/
+
+ljt4a:-ljb(g, [
+  ((d->b)->(c->d)), ((c->d)->b) , b->g
+]).
+
+ljt4b:-ljb(b, [
+  ((d->b)->(c->d)), ((c->d)->b) 
+  ]).
+
+ljt4bb:-X=(c->d),ljb(b, [
+  ((d->b)->X), (X->b) 
+  ]).
+
+ljt4c:-ljb(b, [ % QED
+  (d->b),b 
+  ]).  
+  
+  
+  
+hrbug:-
+  hrprove((0:-[(0:-[0])])). 
+ 
+ 
+nestest:-5=N,gold_nested_test(N,ichprove,C,U),ppp(C:U),fail.
+

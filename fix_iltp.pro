@@ -143,8 +143,12 @@ test_probs(Filter,Prover):-
   
   do((    
     prob:iltp(K,Theo,InF,GVs),
-    
-    (call(Filter,GVs)->call_prover(Prover,GVs,Res);Res=not_apply),
+    %ppp(filtering=GVs),
+    ( call(Filter,GVs)->call_prover(Prover,GVs,Res)
+    ; 
+      % ppp(Filter=failed),
+      Res=not_apply
+    ),
     ( member(Res,[true,false])->
        ( Res==Theo->ppp(K:InF=ok(res=Res)),(Res=false->ctr_inc(Refuted);true)
        ; ctr_inc(Wrong),ppp(K:InF=wrong(got=Res,should_be=Theo))

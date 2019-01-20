@@ -1,47 +1,23 @@
-?- xbm(13,16).
+lprove & 13 & 0.94 & 0.253 & 1.194  \\ \cline{1-5}
+lprove & 14 & 4.34 & 5.468 & 9.809  \\ \cline{1-5}
+lprove & 15 & 29.401 & 5.367 & 34.768  \\ \cline{1-5}
 
-[prog=lprove,size=13,pos=0.979,neg=0.261,total=1.24]
-[prog=lprove,size=14,pos=4.551,neg=5.564,total=10.116]
-[prog=lprove,size=15,pos=30.014,neg=5.568,total=35.583]
-[prog=lprove,size=16,pos=3053.202,neg=168.074,total=3221.277]
+bprove & 13 & 0.925 & 0.202 & 1.127  \\ \cline{1-5}
+bprove & 14 & 4.361 & 4.208 & 8.57  \\ \cline{1-5}
+bprove & 15 & 31.378 & 4.138 & 35.516  \\ \cline{1-5}
 
-[prog=bprove,size=13,pos=0.943,neg=0.203,total=1.147]
-[prog=bprove,size=14,pos=4.461,neg=4.294,total=8.755]
-[prog=bprove,size=15,pos=32.206,neg=4.306,total=36.513]
-[prog=bprove,size=16,pos=3484.203,neg=129.91,total=3614.114]
+sprove & 13 & 1.673 & 0.174 & 1.848  \\ \cline{1-5}
+sprove & 14 & 7.697 & 2.815 & 10.513  \\ \cline{1-5}
+sprove & 15 & 36.623 & 2.799 & 39.423  \\ \cline{1-5}
 
-[prog=dprove,size=13,pos=5.299,neg=0.798,total=6.098]
-[prog=dprove,size=14,pos=23.161,neg=13.514,total=36.675]
-[prog=dprove,size=15,pos=107.264,neg=13.645,total=120.909]
-[prog=dprove,size=16,pos=1270.586,neg=240.301,total=1510.887]
+pprove & 13 & 1.386 & 0.259 & 1.646  \\ \cline{1-5}
+pprove & 14 & 6.358 & 5.047 & 11.405  \\ \cline{1-5}
+pprove & 15 & 29.598 & 4.993 & 34.592  \\ \cline{1-5}
 
+hprove & 13 & 0.974 & 0.117 & 1.092  \\ \cline{1-5}
+hprove & 14 & 4.193 & 1.741 & 5.935  \\ \cline{1-5}
+hprove & 15 & 19.155 & 1.761 & 20.917  \\ \cline{1-5}
 
-[prog=hprove,size=13,pos=1.007,neg=0.111,total=1.119]
-[prog=hprove,size=14,pos=4.413,neg=1.818,total=6.231]
-[prog=hprove,size=15,pos=20.09,neg=1.836,total=21.927]
-[prog=hprove,size=16,pos=90.595,neg=30.713,total=121.308]
-
-[prog=eprove,size=13,pos=1.07,neg=0.132,total=1.203]
-[prog=eprove,size=14,pos=4.746,neg=2.27,total=7.017]
-[prog=eprove,size=15,pos=21.562,neg=2.248,total=23.81]
-[prog=eprove,size=16,pos=97.811,neg=43.18,total=140.991]
-
-[prog=sprove,size=13,pos=1.757,neg=0.173,total=1.931]
-[prog=sprove,size=14,pos=8.037,neg=2.966,total=11.003]
-[prog=sprove,size=15,pos=38.266,neg=2.941,total=41.208]
-[prog=sprove,size=16,pos=188.317,neg=54.802,total=243.12]
-
-done
-
-?- xbm(16,16).
-
-
-
-
-
-
-
-
-
-
-
+dprove & 13 & 5.127 & 0.777 & 5.905  \\ \cline{1-5}
+dprove & 14 & 22.426 & 13.207 & 35.633  \\ \cline{1-5}
+dprove & 15 & 103.634 & 13.16 & 116.795  \\ \cline{1-5}

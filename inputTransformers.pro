@@ -13,10 +13,10 @@ varvars(false,false,_):-!.
 varvars(A,V,D):-I is A+1,arg(I,D,V).
 
 
-% variable with larges index
+% variable with largest index
 
 maxvar(X,M):-var(X),!,M=0.
-maxvar(false,M):-!,M=0.
+maxvar(A,M):-atom(A),!,M=0.
 maxvar((A->B),R):-!,maxvar(A,I),maxvar(B,J),R is max(I,J).
 maxvar((A v B),R):-!,maxvar(A,I),maxvar(B,J),R is max(I,J).
 maxvar((A & B),R):-!,maxvar(A,I),maxvar(B,J),R is max(I,J).
@@ -141,4 +141,33 @@ expand_eq((A->B&C))-->!,[(A->B),(A->C)].
 expand_eq((C v D -> B)) -->!,[(C->B),(D->B)].
 expand_eq(E)-->[E].
 
+  
+to_alt(A->B, (X v Y)<->Y):-!,to_alt(A,X),to_alt(B,Y).
+to_alt(A&B, ((X v Y)<->X)<->Y):-!,to_alt(A,X),to_alt(B,Y).
+to_alt(A,A).
+
+
+simplify(X,A):-
+  %nl,ppp(X),
+  maxvar(X,M),M1 is 1+M,
+  simplify(X,A,M1,_),
+  %ppp(A),
+  true.
+
+simplify(~ (X v Y), ~A & ~B )-->!,simplify(X,A),simplify(Y,B).
+simplify(~ (X & Y), (A -> ~B) )-->!,simplify(X,A),simplify(Y,B).
+simplify(X<->X,(0->0))-->!.
+simplify(X -> X,(0->0))-->!.
+simplify(X v X,A)-->!,simplify(X,A).
+simplify(X & X,A)-->!,simplify(X,A).
+simplify((X v Y) <-> Y,(A->B) )--> !,simplify(X,A),simplify(Y,B).
+simplify((X v Y) <-> X,(B->A) )--> !,simplify(X,A),simplify(Y,B).
+simplify((X & Y) <-> X,(A->B) )--> !,simplify(X,A),simplify(Y,B).
+simplify((X & Y) <-> Y,(B->A) )--> !,simplify(X,A),simplify(Y,B).
+simplify(X <-> Y, (A->B) & (B->A))-->
+  %{(atomic(X);atomic(Y))},
+  !,
+  simplify(X,A),simplify(Y,B).
+simplify(A,A)-->[].
+  
   

@@ -83,11 +83,9 @@ ljs(E,G,Vs1):-
   ljs_imp(T,A,B,Vs2),         % target of application
   !,
   ljs(E,G,[a(S,T):B|Vs2]).    % application
-
-
-ljs_imp(E,A,_,Vs):-atomic(A),!,memberchk(E:A,Vs).   
-ljs_imp(l(X,E),(C->D),B,Vs):-ljs(E,(C->D),[X:(D->B)|Vs]).
-
+  
+ljs_imp(l(X,E),(C->D),B,Vs):-!,ljs(E,(C->D),[X:(D->B)|Vs]).
+ljs_imp(E,A,_,Vs):-memberchk(E:A,Vs). 
 /*  
 ljs_imp(E,A,_,Vs):-atomic(A),!,memberchk(E:A,Vs).   
 ljs_imp(l(X,E),(C->D),B,Vs):-ljs(E,(C->D),[X:(D->B)|Vs]),
@@ -117,6 +115,22 @@ lje(G,Vs0):-
 
 lje_imp((C->D),B,Vs):-!,lje((C->D),[(D->B)|Vs]).
 lje_imp(A,_,Vs):-atomic(A),memberchk(A,Vs).   
+
+
+efprove(T):-ljef(T,[]),!.
+
+ljef(A,Vs):-memberchk(A,Vs),!.
+ljef((A->B),Vs):-!,ljef(B,[A|Vs]). 
+ljef(G,Vs1):-
+  member(T,Vs1),head_of(T,G),!,
+  select((A->B),Vs1,Vs2),
+  ljef_imp(A,B,Vs2),
+  !,
+  ljef(G,[B|Vs2]).
+
+ljef_imp((C->D),B,Vs):-!,ljef((C->D),[(D->B)|Vs]).
+ljef_imp(A,_,Vs):-atomic(A),memberchk(A,Vs).   
+
 
 
 
