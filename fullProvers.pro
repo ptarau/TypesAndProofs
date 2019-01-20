@@ -225,14 +225,13 @@ check_ops_in(Ops,A):-
  maplist(check_ops_in(Ops),Xs).
  
 
-fb_filter((G:-Vs)):-
-  maplist(check_ops_in([(->)/2,(<->)/2]),[G|Vs]). 
+fb_filter(G):-check_ops_in([(->)/2,(<->)/2],G). 
  
-i_filter((G:-Vs)):-
-  maplist(check_ops_in([(->)/2]),[G|Vs]). 
+i_filter(G):-check_ops_in([(->)/2],G). 
 
 fbprove(T):-ljfb(T,[]),!.
-  
+ 
+% for nested Horn (all but disj)
 nest_filter(G):-
   check_ops_in([(->)/2,(<->)/2,(&)/2,(~)/1],G). 
 

@@ -24,6 +24,9 @@ true.
 
 
 % no purely implicational formulas at ILTP.org :-(
+
+%[prover=bprove,total=274,skipped=249,tried=25:[right=25:[proven=23,refuted=2],wrong=0,timed_out(secs,6)=0,error=0]]
+
 test_probs0:-time(test_probs(i_filter,bprove)).
 
 test_probs1:-time(test_probs(faprove)).
@@ -86,13 +89,14 @@ test_probs8:-time(test_probs(fb_filter,fbprove)).
 
 % restricted to ->, <->
 % [prover=haprove,total=274,skipped=226,right=33:[proven=30],refuted=3,wrong=0,timed_out(secs,6)=15,error=0]
-
 test_probs9:-time(test_probs(fb_filter,haprove)).
 
 
 % random, just for testing the tester
 test_probs10:-time(test_probs(badProve)).
 
+%[prover=ichprove,total=274,skipped=119,tried=155:[right=79:[proven=42,refuted=37],wrong=0,timed_out(secs,6)=76,error=0]]
+% 1,932,628,878 inferences, 469.690 CPU in 470.951 seconds (100% CPU, 4114691 Lips)
 test_probs11:-time(test_probs(nest_filter,ichprove)).
 
 
