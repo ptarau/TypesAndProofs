@@ -95,13 +95,8 @@ test_probs9:-time(test_probs(fb_filter,haprove)).
 test_probs10:-time(test_probs(badProve)).
 
 %[prover=ichprove,total=274,skipped=119,tried=155:[right=86:[proven=42,refuted=44],wrong=0,timed_out(secs,6)=69,error=0]]
-%[prover=ichprove,total=274,skipped=119,tried=155:[right=86:[proven=43,refuted=43],wrong=0,timed_out(secs,6)=69,error=0]]
-% 2,418,684,541 inferences, 446.061 CPU in 447.715 seconds (100% CPU, 5422323 Lips)
-% 1,932,628,878 inferences, 469.690 CPU in 470.951 seconds (100% CPU, 4114691 Lips)
-% [prover=ichprove,total=274,skipped=119,tried=155:[right=83:[proven=44,refuted=39],wrong=0,timed_out(secs,60)=72,error=0]]
-% 14,618,022,307 inferences, 4438.931 CPU in 4445.014 seconds (100% CPU, 3293140 Lips)
-% [prover=ichprove,total=274,skipped=119,tried=155:[right=85:[proven=45,refuted=40],wrong=0,timed_out(secs,300)=70,error=0]]
-% 66,196,793,651 inferences, 21599.609 CPU in 21620.458 seconds (100% CPU, 3064722 Lips)
+% [prover=ichprove,total=274,skipped=119,tried=155:[right=92:[proven=44,refuted=48],wrong=0,timed_out(secs,60)=63,error=0]]
+% 18,312,812,596 inferences, 4007.917 CPU in 4015.069 seconds (100% CPU, 4569159 Lips)
 test_probs11:-time(test_probs(nest_filter,ichprove)).
 
 % for camparison with nested Horn
