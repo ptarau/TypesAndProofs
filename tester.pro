@@ -23,10 +23,9 @@ true.
 */
 
 
-% no purely implicational formulas at ILTP.org :-(
+% not many purely implicational formulas at ILTP.org :-(
 
 %[prover=bprove,total=274,skipped=249,tried=25:[right=25:[proven=23,refuted=2],wrong=0,timed_out(secs,6)=0,error=0]]
-
 test_probs0:-time(test_probs(i_filter,bprove)).
 
 test_probs1:-time(test_probs(faprove)).
@@ -95,10 +94,22 @@ test_probs9:-time(test_probs(fb_filter,haprove)).
 % random, just for testing the tester
 test_probs10:-time(test_probs(badProve)).
 
-%[prover=ichprove,total=274,skipped=119,tried=155:[right=79:[proven=42,refuted=37],wrong=0,timed_out(secs,6)=76,error=0]]
+%[prover=ichprove,total=274,skipped=119,tried=155:[right=86:[proven=42,refuted=44],wrong=0,timed_out(secs,6)=69,error=0]]
+%[prover=ichprove,total=274,skipped=119,tried=155:[right=86:[proven=43,refuted=43],wrong=0,timed_out(secs,6)=69,error=0]]
+% 2,418,684,541 inferences, 446.061 CPU in 447.715 seconds (100% CPU, 5422323 Lips)
 % 1,932,628,878 inferences, 469.690 CPU in 470.951 seconds (100% CPU, 4114691 Lips)
+% [prover=ichprove,total=274,skipped=119,tried=155:[right=83:[proven=44,refuted=39],wrong=0,timed_out(secs,60)=72,error=0]]
+% 14,618,022,307 inferences, 4438.931 CPU in 4445.014 seconds (100% CPU, 3293140 Lips)
+% [prover=ichprove,total=274,skipped=119,tried=155:[right=85:[proven=45,refuted=40],wrong=0,timed_out(secs,300)=70,error=0]]
+% 66,196,793,651 inferences, 21599.609 CPU in 21620.458 seconds (100% CPU, 3064722 Lips)
 test_probs11:-time(test_probs(nest_filter,ichprove)).
 
+% for camparison with nested Horn
+% [prover=faprove,total=274,skipped=119,tried=155:[right=99:[proven=61,refuted=38],wrong=0,timed_out(secs,6)=56,error=0]]
+% 1,275,469,297 inferences, 341.826 CPU in 342.158 seconds (100% CPU, 3731341 Lips)
+% [prover=faprove,total=274,skipped=119,tried=155:[right=102:[proven=62,refuted=40],wrong=0,timed_out(secs,60)=53,error=0]]
+% 11,839,580,607 inferences, 3227.189 CPU in 3230.193 seconds (100% CPU, 3668697 Lips)
+test_probs12:-time(test_probs(nest_filter,faprove)).
 
 gotest1(N):-do((
   gold_test(N,bprove,Culprit,Unexpected),
@@ -494,9 +505,59 @@ hcolor_([e(C1,C2),e(C2,C3),e(C1,C3),e(C3,C4),e(C4,C5),
    e(C5,C6),e(C4,C6),e(C2,C5),e(C1,C6)]
    ).   
    
+ 
+cmap([_C1,_C2,_C3,_C4,_C5,_C6],[r,g,b]).
+
+colors(Vs):-
+  cmap(Vs,Cs),
+  maplist(element_of(Cs),Vs).
+
+element_of(Vs,V):-member(V,Vs).
    
-   
-  color1_(
+% simple graph coloring in Prolog
+
+qcolor(Es):-
+  Es =[
+  e(C1,C2) ,
+  e(C2,C3) ,
+  e(C1,C3) ,
+  e(C3,C4) ,
+  e(C2,C5) ,
+  e(C4,C5) ,
+  e(C5,C6) ,
+  e(C4,C6) ,
+  e(C1,C6)
+  ],
+  Cs=[r,g,b],
+  qcolor(Es,Cs).
+
+qcolor(Es,Cs):-maplist(edge(Cs),Es).
+
+edge(Cs,e(X,Y)):-select(X,Cs,Ds),member(Y,Ds).
+
+% end
+
+
+color3_(
+  ~(v1<->v2) &
+  ~(v2<->v3) &
+  ~(v1<->v3) &
+  ~(v3<->v4) &
+  ~(v2<->v5) &
+  ~(v4<->v5) &
+  ~(v5<->v6) &
+  ~(v4<->v6) &
+  ~(v1<->v6) &
+  ((v1 <-> r) v (v1 <-> g) v (v1 <-> b)) &
+  ((v2 <-> r) v (v2 <-> g) v (v2 <-> b)) &
+  ((v3 <-> r) v (v3 <-> g) v (v3 <-> b)) &
+  ((v4 <-> r) v (v4 <-> g) v (v4 <-> b)) &
+  ((v5 <-> r) v (v5 <-> g) v (v5 <-> b)) &
+  ((v6 <-> r) v (v6 <-> g) v (v6 <-> b))
+).
+
+
+color1_(
  ((c(r) v c(g) v c(b)) & 
  ((c(X)->c(Y)->(c(X)<->c(Y))->false)->e(X,Y))&
  c(C1)&c(C2)&e(C1,C2) &
@@ -538,7 +599,7 @@ color_(
   e(C4,C6) &
   e(C1,C6) 
   <-> (
-   e(r,g) v
+  e(r,g) v
   e(r,b) v
   e(b,g) v
   e(b,r) v
@@ -629,6 +690,6 @@ ljt4c:-ljb(b, [ % QED
 hrbug:-
   hrprove((0:-[(0:-[0])])). 
  
- 
-nestest:-5=N,gold_nested_test(N,ichprove,C,U),ppp(C:U),fail.
+nestest:-nestest(5). 
+nestest(N):-gold_nested_test(N,ichprove,C,U),ppp(C:U),fail.
 

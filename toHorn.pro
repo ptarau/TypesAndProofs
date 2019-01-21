@@ -266,13 +266,12 @@ toNestedHorn(A,R):-
   %ppp(orig=A),
   expand_equiv(A,X),
   %ppp(equiv=X),
-  hornify(X,R).
-
-hornify(A,X):-
-  toHorn1(A,H),
+  toHorn1(X,H),
   %ppp(horn=H),
-  expand_horn(H,X),
-  %ppp(exp=X),nl,
+  expand_horn(H,E),
+  %ppp(exp=E),
+  reduce_heads(E,R),
+  %ppp(red=R),nl,
   true.
   
 primitive(A):-atomic(A).
@@ -304,6 +303,27 @@ listify(A,[X]):-expand_horn(A,X).
 
 distribute_head([],_,[]).
 distribute_head([H|Hs],Bs,[(H:-Bs)|HBss]):-distribute_head(Hs,Bs,HBss).
+
+reduce_heads(Bs,Cs):-is_list(Bs),!,reduce_body(Bs,Cs).
+reduce_heads(H,R):-reduce_head(H,R).
+
+%reduce_head(H,_R):-ppp(reduce_head(H)),fail.
+reduce_head(H,R):-primitive(H),!,R=H.
+reduce_head((H:-Bs),(H:-Cs)):-primitive(H),!,
+  reduce_body(Bs,Us),
+  sort(Us,Cs).
+reduce_head((CH:-Bs),(H:-Rs)):-
+  reduce_head(CH,(H:-Cs)),
+  reduce_body(Bs,Ds),
+  append(Cs,Ds,Us),
+  sort(Us,Rs).
+
+  
+reduce_body([],[]).
+reduce_body([B|Bs],[C|Cs]):-
+  reduce_head(B,C),
+  reduce_body(Bs,Cs).
+
 
 flatten_it(Xs,Fs):-list:flatten(Xs,Fs).  
 

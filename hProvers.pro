@@ -106,6 +106,7 @@ ljnh(A,Vs):-memberchk(A,Vs),!.
 ljnh(_,Vs):-memberchk(false,Vs),!.
 ljnh((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljnh(B,Vs2).
 ljnh(G,Vs1):- % atomic(G), G not on Vs1
+  membtest(G,Vs1),
   select((B:-As),Vs1,Vs2), % outer select loop
   select(A,As,Bs),         % inner select loop
   ljnh_imp(A,B,Vs2), % A element of the body of B
@@ -117,7 +118,10 @@ ljnh_imp((D:-Cs),B,Vs):-!,ljnh((D:-Cs),[(B:-[D])|Vs]).
 ljnh_imp(true,_B,_Vs):-!.
 ljnh_imp(A,_B,Vs):-memberchk(A,Vs).
 
-
+%membtest(G,Vs):-ppp(membtest(G,Vs)),fail.
+membtest(G,Vs):-memberchk((G:-_),Vs),!. % if not, we just fail
+membtest(_,Vs):-memberchk((false:-_),Vs). % could still be infered from false
+ 
 %%%%%%%%%%%%%%%%%%%%%%%
 
 hvprove(T0):-toVarHorn(T0,T),ljhv(T).
