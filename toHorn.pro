@@ -263,18 +263,28 @@ pro2imp-->term2horn,fromHorn.
 %%%%%%%%%
 
 toNestedHorn(A,R):-
-  %ppp(orig=A),
+    %ppp(orig=A),
   expand_equiv(A,X),
-  %ppp(equiv=X),
+    %ppp(equiv=X),
   toHorn1(X,H),
-  %ppp(horn=H),
+    %ppp(horn=H),
   expand_horn(H,E),
-  %ppp(exp=E),
+    %ppp(exp=E),
   reduce_heads(E,R),
-  %ppp(red=R),nl,
+    %ppp(red=R),nl,
+  %pph(R),
   true.
-  
-primitive(A):-atomic(A).
+ 
+logic_op((~)/1).
+logic_op((->)/2).
+logic_op((<->)/2).
+logic_op((&)/2).
+logic_op((v)/2).
+logic_op((:-)/2).
+
+primitive(A):-atomic(A),!.
+primitive(A):-var(A),!.
+primitive(A):-functor(A,F,N),\+logic_op(F/N).
 
 expand_equiv(A,R):-primitive(A),!,R=A.
 expand_equiv(~ ~ ~ A,X):-!,expand_equiv(~ A,X).

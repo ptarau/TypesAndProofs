@@ -98,7 +98,7 @@ toNHorn --> expand_neg,toHorn.
 
 % nested Horn + false + true - compiled from all except disjunction
 
-ljnh(A):-ljnh(A,[]),!.
+ljnh(A):-ljnh(A,[]).
 
 %ljnh(A,Vs):-ppp((Vs-->A)),fail. % just to trace steps
 ljnh(true,_):-!.

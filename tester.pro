@@ -495,20 +495,38 @@ ggraph([C1,C2,C3,C4,C5,C6]):-
    e(C1,C2),e(C2,C3),e(C1,C3),e(C3,C4),e(C4,C5),
    e(C5,C6),e(C4,C6),e(C2,C5),e(C1,C6).
   
-  
-hcolor_([e(C1,C2),e(C2,C3),e(C1,C3),e(C3,C4),e(C4,C5),
-   e(C5,C6),e(C4,C6),e(C2,C5),e(C1,C6)]
-   ).   
-   
  
-cmap([_C1,_C2,_C3,_C4,_C5,_C6],[r,g,b]).
+cmap([C1,C2,C3,C4,C5,C6],[r,g,b],
+    
+  (r-g) &
+  (r-b) &
+  (b-g) & 
+  (g-r) &
+  (b-r) &
+  (g-b) 
+  ->
+  (C1-C2) &
+  (C2-C3) &
+  (C1-C3) &
+  (C3-C4) &
+  (C2-C5) &
+  (C4-C5) &
+  (C5-C6) &
+  (C4-C6) &
+  (C1-C6) 
+  
+  ).
 
-colors(Vs):-
-  cmap(Vs,Cs),
+colors(Vs,Gs):-
+  cmap(Vs,Cs,Gs),
   maplist(element_of(Cs),Vs).
 
 element_of(Vs,V):-member(V,Vs).
    
+coltest(Vs+Formula):-
+  colors(Vs,Formula),
+  ichprove(Formula).
+  
 % simple graph coloring in Prolog
 
 qcolor(Es):-
@@ -531,92 +549,6 @@ qcolor(Es,Cs):-maplist(edge(Cs),Es).
 edge(Cs,e(X,Y)):-select(X,Cs,Ds),member(Y,Ds).
 
 % end
-
-
-color3_(
-  ~(v1<->v2) &
-  ~(v2<->v3) &
-  ~(v1<->v3) &
-  ~(v3<->v4) &
-  ~(v2<->v5) &
-  ~(v4<->v5) &
-  ~(v5<->v6) &
-  ~(v4<->v6) &
-  ~(v1<->v6) &
-  ((v1 <-> r) v (v1 <-> g) v (v1 <-> b)) &
-  ((v2 <-> r) v (v2 <-> g) v (v2 <-> b)) &
-  ((v3 <-> r) v (v3 <-> g) v (v3 <-> b)) &
-  ((v4 <-> r) v (v4 <-> g) v (v4 <-> b)) &
-  ((v5 <-> r) v (v5 <-> g) v (v5 <-> b)) &
-  ((v6 <-> r) v (v6 <-> g) v (v6 <-> b))
-).
-
-
-color1_(
- ((c(r) v c(g) v c(b)) & 
- ((c(X)->c(Y)->(c(X)<->c(Y))->false)->e(X,Y))&
- c(C1)&c(C2)&e(C1,C2) &
-  c(C3)&e(C2,C3)&e(C1,C3)&
-  c(C4)&e(C3,C4)&
-  c(C5)&e(C2,C5)&e(C4,C5)&
-  c(C6)&e(C5,C6)&e(C4,C6)&e(C1,C6))->g(C1,C2,C3,C4,C5,C6)
-  ).
- 
- color2_((
-  e(r,g) v
-  e(r,b) v
-  e(b,g) v
-  e(b,r) v
-  e(g,r) v
-  e(g,b)
-  ->
-  e(C1,C2) &
-  e(C2,C3) &
-  e(C1,C3) &
-  e(C3,C4) &
-  e(C2,C5) &
-  e(C4,C5) &
-  e(C5,C6) &
-  e(C4,C6) &
-  e(C1,C6)
-  )->g(C1,C2,C3,C4,C5,C6)
-  ).
- 
- 
-color_(
-  e(C1,C2) &
-  e(C2,C3) &
-  e(C1,C3) &
-  e(C3,C4) &
-  e(C2,C5) &
-  e(C4,C5) &
-  e(C5,C6) &
-  e(C4,C6) &
-  e(C1,C6) 
-  <-> (
-  e(r,g) v
-  e(r,b) v
-  e(b,g) v
-  e(b,r) v
-  e(g,r) v
-  e(g,b))
-  ).
-  
-
-cgo:-(
-  color_(C),
-  ljfa(C,[])*->
-  ppp(C);fail
-).
-
- 
-cgo1:-do((
-  %C=(c(0) v c(1) -> c(X)),
-  C=(c(0)->c(_) -> c(1)),
-  ljfa(C,[]),
-  ppp('SUCCES'),
-  ppp(C)
-  )).
 
 
 sx_(((v0(V0)->v1(V1)->v2(V2))->(v0(V0)->v1(V1))->v0(V0)->v2(V2))). 

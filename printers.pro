@@ -1,5 +1,12 @@
 p1:- do((s_(T),varvars(T,TT),(qqq(TT);ppt(TT)))).
 
+pph(Horns):-is_list(Horns),!,
+  do((
+    member(H,Horns),
+    pph(H),nl
+  )),
+  nl.
+  
 pph(Horn):-horn2term(Horn,Term),ppt(Term).
 
 showImpForms(N):-
