@@ -37,7 +37,7 @@ rev_ord_subterm_of(T,S):-
   member(_-S,Sorted).
  
 revkeysort(RXs, RevRXs) :-
-sort(1, @>=, RXs, RevRXs).
+  sort(1, @>=, RXs, RevRXs).
 
 ord_subterm_of(T,S):-
   findall(U,unique_subterm_of(T,U),Us),

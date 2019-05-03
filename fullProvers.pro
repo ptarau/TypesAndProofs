@@ -1,5 +1,11 @@
-
-
+fmprove(G):-
+  expand_full_neg(G,F),
+  mints(F,H,Bs),
+  %length(Bs,L),ppp(H:L),
+  %ppp(Bs->H),
+  %ppp(H),
+  ljfa(H,Bs).
+  
   
 fftprove(T0):-
   tautology(T0), % calls Fitting's prover to filter out some non-tautolgies
@@ -190,14 +196,13 @@ expand_full_neg(A,R,Ops):-
   expand_full_neg(A,R,Os,[]),
   sort(Os,Ops).
 
-  % f seems to mean just an atom, not false in the tests
+% f seems to mean just an atom, not false in the tests
 %expand_full_neg(f,R)-->{!,R=false}. % DO NOT UNCOMMENT!
-expand_full_neg(A,R)-->{atomic(A),!,R=A}.
+expand_full_neg(false,R)-->!,{R=false}.
+expand_full_neg(true,R)-->!,{R=true}.
+expand_full_neg(A,R)-->{primitive(A),!,R= '?'(A)}.
 expand_full_neg(~(A),(B->false))-->!,[(~)],
   expand_full_neg(A,B).
-%expand_full_neg(A & A,B)-->!, expand_full_neg(A,B).
-%expand_full_neg(A v A,B)-->!, expand_full_neg(A,B).
-%expand_full_neg(A <-> A,B)-->!,{B=(false->false)}.
 expand_full_neg(A,B)-->
   {A=..[F|Xs]},
   [F],
@@ -235,6 +240,11 @@ fbprove(T):-ljfb(T,[]),!.
 nest_filter(G):-
   check_ops_in([(->)/2,(<->)/2,(&)/2,(~)/1],G). 
 
+  
+hand_filter(G):-
+  check_ops_in([(->)/2,(&)/2,(<->)/2,(~)/1],G).
+
+  
 ljfb(A,Vs):-memberchk(A,Vs),!.
 ljfb((A->B),Vs):-!,ljfb(B,[A|Vs]). 
 ljfb(A <-> B,Vs):-!,ljfb((A->B),Vs),ljfb((B->A),Vs).
@@ -246,8 +256,6 @@ ljfb(G,Vs1):-
   ljfb(G,Vs3).
 
 
-%expand_equiv(X<->Y,Vs,[(X->Y),(Y->X)|Vs]):-!.
-%expand_equiv(_,Vs,Vs).
 
 eq_head_of((_->B), G) :- !,eq_head_of(B, G).
 eq_head_of((A<->B), G) :- (eq_head_of(A,G);eq_head_of(B,G)),!.

@@ -73,9 +73,19 @@ ljg(G,Vs0):- % G is atomic
 ljg_imp((D:-Cs),B,Vs):-!,ljg((D:-Cs),[(B:-[D])|Vs]).
 ljg_imp(A,_B,Vs):-memberchk(A,Vs).
 
+% with ~A as A->false - only expands negation
+hnprove(T0):-toNHorn(T0,T),ljnh(T).
+
+toNHorn --> expand_neg,toHorn.
+
+
+% nested Horn - from all except disjunction after Mints transform
+
+hmprove(T0):-hmints(T0,T),
+   % ppp(T0),ppp(T),nl,
+   ichs(T).
 
 % nested Horn - from all except disjunction
-
 ichprove(T0):-toNestedHorn(T0,T),
    % ppp(T0),ppp(T),nl,
    ichs(T).
@@ -88,13 +98,6 @@ ichs(A):-ichs(A,[]).
 ichs([],_):-!.
 ichs([C|Cs],Vs):-!,ljnh(C,Vs),ichs(Cs,Vs).
 ichs(X,Vs):-ljnh(X,Vs).
-
-
-
-% with ~A as A->false - only expands negation
-hnprove(T0):-toNHorn(T0,T),ljnh(T).
-
-toNHorn --> expand_neg,toHorn.
 
 % nested Horn + false + true - compiled from all except disjunction
 
@@ -121,7 +124,8 @@ ljnh_imp(A,_B,Vs):-memberchk(A,Vs).
 %membtest(G,Vs):-ppp(membtest(G,Vs)),fail.
 membtest(G,Vs):-memberchk((G:-_),Vs),!. % if not, we just fail
 membtest(_,Vs):-memberchk((false:-_),Vs). % could still be infered from false
- 
+
+
 %%%%%%%%%%%%%%%%%%%%%%%
 
 hvprove(T0):-toVarHorn(T0,T),ljhv(T).
@@ -271,7 +275,7 @@ fine_atom_in([_|Xs],G,Atom,Impl):-fine_atom_in(Xs,G,Atom,Impl).
 wprove(A):-toFlatHorn(A,B),ljh(B).
 
 
-% reduces eagely, possibly better for Horn3
+% reduces eagerly, possibly better for Horn3
 % but tests do not confirm this
 h3prove(T0):-toHorn(T0,T),ljh3(T).
 
@@ -464,7 +468,7 @@ timed_hprove(Max,T):-
   
 iprove(T0):-toHorn(T0,T),lji(T).  
 
-lji(A):-lji(A,[]),!.
+lji(A):-lji(A,[]).
 
 lji(A,Vs):-memberchk(A,Vs),!. 
 lji((B:-As),Vs1):-!,append(As,Vs1,Vs2),lji(B,Vs2).
@@ -482,7 +486,30 @@ lji_imp((D:-Cs),B,Bs, (B:-Bs),Vs):-!,lji((D:-Cs),[(B:-[D])|Vs]).
 lji_imp(A,B,[], B,Vs):-!,memberchk(A,Vs).
 lji_imp(A,B,Bs, (B:-Bs),Vs):-memberchk(A,Vs).
 
-fprove(T0):-toListHorn(T0,T),ljf(T,[]),!.
+
+
+iiprove(T0):-toHorn(T0,T),ljii(T).  
+
+ljii(A):-ljii(A,[]).
+
+ljii(A,Vs):-memberchk(A,Vs),!. 
+ljii((B:-As),Vs1):-!,append(As,Vs1,Vs2),lji(B,Vs2).
+ljii(G,Vs1):- % atomic(G), G not on Vs1
+  memberchk((G:-_),Vs1), % if not, we just fail
+  select((B:-As),Vs1,Vs2), % outer select loop
+  select(A,As,Bs),         % inner select loop
+  lji_imp2(Bs,A,B,NewB,Vs2), % A element of the body of B
+  !,
+  ljii(G,[NewB|Vs2]).
+
+lji_imp2([],A,B,B,Vs):-!,lji_imp1(A,B,Vs).
+lji_imp2(Bs,A,B,(B:-Bs),Vs):-lji_imp1(A,B,Vs).
+
+lji_imp1((D:-Cs),B,Vs):-!,ljii((D:-Cs),[(B:-[D])|Vs]).
+lji_imp1(A,_,Vs):-memberchk(A,Vs).
+
+
+fprove(T0):-toListHorn(T0,T),ljf(T,[]).
 
 ljf(A,Vs):-memberchk(A,Vs),!. 
 ljf([B|As],Vs1):-!,append(As,Vs1,Vs2),ljf(B,Vs2).
@@ -495,8 +522,9 @@ ljf(G,Vs1):- % atomic(G), G not on Vs
   ftrimmed([B|Bs],NewB),
   ljf(G,[NewB|Vs2]).
   
-ljf_imp(A,_B,Vs):-atomic(A),!,memberchk(A,Vs).
-ljf_imp([D|Cs],B,Vs):- ljf([D|Cs],[[B,D]|Vs]).
+
+ljf_imp([D|Cs],B,Vs):-!,ljf([D|Cs],[[B,D]|Vs]).
+ljf_imp(A,_B,Vs):-memberchk(A,Vs).
 
 ftrimmed([B],R):-!,R=B.
 ftrimmed(BBs,BBs).

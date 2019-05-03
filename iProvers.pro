@@ -46,7 +46,7 @@ ljt(G,Vs1):- % atomic(G),
 % simplest, with multisets, no contraction
 % with a single select/3 operation
 
-bprove(T):-ljb(T,[]),!.
+bprove(T):-ljb(T,[]).
 
 %ljb(A,Vs):-ppp((Vs-->A)),fail. % fo traing only
 
@@ -166,6 +166,25 @@ ljt1(G,Vs1):- %atomic(G),                % imp => 1, atom A
   
 % Hudelmaier's O(n*log(n)) space algorithm
 
+nvprove(T):-ljnv(T,[],10000,_).
+
+ljnv(A,Vs)-->{memberchk(A,Vs)},!.
+ljnv((A->B),Vs)-->!,ljnv(B,[A|Vs]). 
+ljnv(G,Vs1)--> % atomic(G),
+  {select((A->B),Vs1,Vs2)},
+  ljnv_imp(A,B,Vs2),
+  !,
+  ljnv(G,[B|Vs2]).
+
+ljnv_imp((C->D),B,Vs)-->!,
+  newvar(P),
+  ljnv(P,[C,(D->P),(P->B)|Vs]).
+ljnv_imp(A,_,Vs)-->{memberchk(A,Vs)}.  
+
+newvar(N,N,SN):-succ(N,SN).
+
+% variant of Hudelmaier's O(n*log(n)) space algorithm
+% with sets instead of multisets
 nprove(T):-ljn(T,[],100,_),!.
 
 ljn(A,Vs)-->{memberchk(A,Vs)},!.
@@ -188,7 +207,7 @@ ljn_imp((C->D),B,Vs1)-->newvar(P),
    },
    ljn(P,Vs2).
 
-newvar(N,N,SN):-succ(N,SN).
+
 
 add_all([],Ys,Ys):-!.
 add_all([X|Xs],Ys,Rs):-
@@ -198,6 +217,9 @@ add_all([X|Xs],Ys,Rs):-
 add_all([X|Xs],Ys,[X|Rs]):-
 add_all(Xs,Ys,Rs).
    
+
+
+
 
 
 % combines simplicity of bprove and

@@ -10,13 +10,14 @@ c:-['tp.pro']. % quick iteractive reloader
 :-op(800,xfx,(for)).
 :-op(30,xfx,to).
 
+:- op(100,  fx,  (?) ). 
 :- op(425,  fy,  ~ ).
 :- op(450, xfy,  & ).    % right associative
 :- op(475, xfy,  v ).    % right associative
 :- op(500, xfx,  <-> ).  % non associative
 %:- op(500, xfy,  ->).    % right associative  
 %%% WARNING, this overwrites Prolog's ->
-                
+               
                 
 :-include('stats.pro'). % tools, including statistical and displayers
 
@@ -42,7 +43,9 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('parProvers.pro'). % other provers
 
-:-include('hProvers.pro'). % other provers with embedded Horn clauses
+:-include('hProvers.pro'). % provers with nested Horn clauses
+
+:-include('nProvers.pro'). % provers with nested Horn clauses for &,<->,->,~
 
 :-include('cProvers.pro'). % provers  for classical propostional logic
 
@@ -67,6 +70,8 @@ c:-['tp.pro']. % quick iteractive reloader
 :-include('harrop.pro').
 
 :-include('tools.pro').
+
+:-include('counts.pro').
 
 :-include('benchmarks.pro').
 :-include('bm.pro').

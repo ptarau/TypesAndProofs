@@ -43,6 +43,36 @@ type_of(a(A,B),T,Vs):-
   type_of(A,(S->T),Vs),
   type_of(B,S,Vs).
 
+
+% alternative implementations
+
+% typable closed normal form of size N and its type
+typed_nf(N,X:T):-typed_nf(X,T,[],N,0).
+
+pred(SX,X):-succ(X,SX).
+
+typed_nf(l(X,E),(P->Q),Ps)-->pred,typed_nf(E,Q,[X:P|Ps]).  
+typed_nf(X,P,Ps)-->typed_nf_no_left_lambda(X,P,Ps).
+
+typed_nf_no_left_lambda(X,P,[Y:Q|Ps])--> agrees(X:P,[Y:Q|Ps]).
+typed_nf_no_left_lambda(a(A,B),Q,Ps)-->pred,pred,
+  typed_nf_no_left_lambda(A,(P->Q),Ps),
+  typed_nf(B,P,Ps).
+
+agrees(P,Ps,N,N):-member(Q,Ps),unify_with_occurs_check(P,Q).
+
+% type of closed normal form of size N, with lambda term omitted
+% formula known-for-sure: an implicational intuitionistic
+% propositional tautology
+impl_taut(N,T):-impl_taut(T,[],N,0).
+
+impl_taut((P->Q),Ps)-->pred,impl_taut(Q,[P|Ps]).  
+impl_taut(P,Ps)-->impl_taut_no_left_lambda(P,Ps).
+
+impl_taut_no_left_lambda(P,[Q|Ps])--> agrees(P,[Q|Ps]).
+impl_taut_no_left_lambda(Q,Ps)-->pred,pred,
+  impl_taut_no_left_lambda((P->Q),Ps),
+  impl_taut(P,Ps).  
   
   /*
   ?- findall(S,(between(0,16,N),sols(tnf(N,_),S)),Xs).

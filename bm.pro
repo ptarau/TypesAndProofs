@@ -102,6 +102,7 @@ preprocessor(bprove,(=)).
 preprocessor(eprove,(=)).
 preprocessor(efprove,(=)).
 preprocessor(nprove,(=)).
+preprocessor(nvprove,(=)).
 preprocessor(pprove,(=)).
 preprocessor(qprove,(=)).
 preprocessor(sprove,(=)).
@@ -112,6 +113,7 @@ preprocessor(ffprove,(=)).
 preprocessor(fcprove,(=)).
 preprocessor(fdprove,(=)).
 preprocessor(hprove,toHorn).
+preprocessor(npro,toHorn).
 preprocessor(hrprove,toHorn).
 preprocessor(hgprove,toHorn).
 preprocessor(h1prove,toHorn).
@@ -129,6 +131,7 @@ preprocessor(jprove,toHorn).
 preprocessor(timed_hprove,toHorn).
 preprocessor(timed_hprove(_),toHorn).
 preprocessor(iprove,toHorn).
+preprocessor(iiprove,toHorn).
 preprocessor(xprove,toHorn).
 preprocessor(vprove,toListHorn).
 preprocessor(fprove,toListHorn).
@@ -181,7 +184,7 @@ fbm(N,P):-
  
 good_full_prover(P):-
    assertion(memberchk(P,
-     [dprove,faprove,fxprove,flprove,frprove,ffprove,fcprove,fdprove,alt_prove])).
+     [dprove,xfprove,fmprove,faprove,fxprove,flprove,frprove,ffprove,fcprove,fdprove,alt_prove])).
 
 fbm(N,P,Counts,Time=T2-T1):-
   good_full_prover(P),

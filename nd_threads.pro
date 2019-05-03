@@ -1,7 +1,7 @@
 % thread pool mechanism for execution of 
 % _nondeterministically_  generated nondeterministic goals
 % a form of staged programming: a generator creates goals
-% it usable to run things in constant space, nor recursion involved
+% it is usable to run things in constant space, no recursion involved
 
 test_nondet_first:-
   Gen=(

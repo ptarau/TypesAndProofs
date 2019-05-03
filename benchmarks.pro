@@ -18,7 +18,15 @@ xbm(From,To):-
 %    cbm(N,P),
 %  fail	
 ; nl,writeln(done).
-  
+ 
+
+xcbm(From,To):-
+  member(P,[lprove,bprove,sprove,pprove,hprove,dprove]),
+  nl,between(From,To,N),
+    cbm(N,P),
+  fail
+; nl,writeln(done).
+
 timed_call(Secs,Goal,Time):-
   get_time(T0),
   catch(

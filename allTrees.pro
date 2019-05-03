@@ -22,28 +22,85 @@ genHorns([B|Bs],SN1,N3)-->{succ(N1,SN1)},
   genHorn(B,N1,N2),
   genHorns(Bs,N2,N3).
 
-countGenHorn(M,Rs):-
-  findall(R,(
-    between(1,M,N),
-    sols(genHorn(N,_,_),R)
-  ),Rs).
-  
   
 % A105633: [1,2,4,9,22,57,154,429,1223,3550,10455,31160,93802,284789]
 genSortedHorn(N,Tree,Leaves):-
-  genSortedHorn(Tree,N,0,Leaves,[]).
+  succ(N,SN),length(Leaves,SN),
+  generateSortedHorn(Tree,Leaves,[]).
 
-genSortedHorn(V,N,N)-->[V].
-genSortedHorn((A:-[B|Bs]),SN1,N3)-->{succ(N1,SN1)},
+generateSortedHorn(V)-->[V].
+generateSortedHorn((A:-[B|Bs]))-->
   [A],
-  genSortedHorn(B,N1,N2),
-  genSortedHorns(B,Bs,N2,N3).
+  generateSortedHorn(B),
+  generateSortedHorns(B,Bs).
   
-genSortedHorns(_,[],N,N)-->[].
-genSortedHorns(B,[C|Bs],SN1,N3)-->{succ(N1,SN1)},
-  genSortedHorn(C,N1,N2),
+generateSortedHorns(_,[])-->[].
+generateSortedHorns(B,[C|Bs])-->
+  generateSortedHorn(C),
   {B@<C},
-  genSortedHorns(C,Bs,N2,N3).
+  generateSortedHorns(C,Bs).
+  
+  
+
+% A004111		Number of rooted identity trees with n
+% ?- countGen2(genSetTree,12,R).
+% R = [1,1,2,3,6,12,25,52,113,247,548,1226].
+
+genSetTree(N,Tree):-genSetTree(Tree,N,0).
+  
+genSetTree([],N,N).
+genSetTree([B|Bs],SN1,N3):-succ(N1,SN1),
+  genSetTree(B,N1,N2),
+  genSetTrees(B,Bs,N2,N3).
+  
+genSetTrees(_,[],N,N).
+genSetTrees(B,[C|Bs],SN1,N3):-succ(N1,SN1),
+  genSetTree(C,N1,N2),
+  B@<C,
+  genSetTrees(C,Bs,N2,N3).
+  
+
+% hereditarily finite sets generators
+
+nat2nats(N,Ns):-findall(I,nat2bit(N,I),Ns).
+
+nat2bit(N,I):-
+  M is msb(N),
+  between(0,M,I),
+  1 is getbit(N,I).
+
+nat2hfs(0,[]).
+nat2hfs(N,Hs):-N>0,
+  nat2nats(N,Ns),
+  maplist(nat2hfs,Ns,Hs).
+  
+nats2nat([],0).
+nats2nat([I|Ns],N):-
+  E is 1<<I,
+  nats2nat(Ns,N1),
+  N is N1+E.
+
+hfs2nat(Ns,N):-
+  maplist(hfs2nat,Ns,Ms),
+  nats2nat(Ms,N).  
+  
+% will be distinct from genSortedHorn only when Leaves are bound  
+genStrictHorn(N,Tree,Leaves):-
+  genStrictHorn(Tree,N,0,Leaves,[]).
+  
+genStrictHorn(V,N,N)-->[V].
+genStrictHorn((H:-[B|Bs]),SN1,N3)-->{succ(N1,SN1)},
+  [H],
+  genStrictHorn(B,N1,N2),
+  genStrictHorns(B,Bs,N2,N3),
+  {\+ ((member(X,[B|Bs]),X==H))}.
+  
+genStrictHorns(_,[],N,N)-->[].
+genStrictHorns(B,[C|Bs],SN1,N3)-->{succ(N1,SN1)},
+  genStrictHorn(C,N1,N2),
+  {B@<C},
+  genStrictHorns(C,Bs,N2,N3).
+  
   
   
 genSortedHorn3(N,Tree,Leaves):-
@@ -61,14 +118,7 @@ genSortedHorn3s(K,B,[C|Bs],SN1,N3)-->{succ(N1,SN1)},
   {B@<C},
   genSortedHorn3s(K,C,Bs,N2,N3).
 
-% 1,2,4,8,20,47,122,316,845,2284,6264,17337,48424,136196,385548  
-countSortedHorn3(M,Rs):-
-  findall(R,(
-    between(1,M,N),
-    sols(genSortedHorn3(N,_,_),R)
-    ),Rs).  
-
-
+  
 genHorn3(N,Tree):-
   genHorn3(3,Tree,N,0).
 
@@ -82,15 +132,7 @@ genHorn3s(K,_B,[C|Bs],SN1,N3):-succ(N1,SN1),
   genHorn3(K,C,N1,N2),
   genHorn3s(K,C,Bs,N2,N3).
 
-% [1,1,2,5,13,37,109,331,1027,3241,10367,33531,109463] this
-% [1,1,2,5,14,42,132,429,1430,4862,16796,58786,208012] vs Catalans
-countHorn3(M,Rs):-
-  findall(R,(
-    between(1,M,N),
-    sols(genHorn3(N,_),R)
-    ),Rs).  
   
-
 genOpTree(N,Tree,Leaves):-genOpTree(N,[(~),(->),(<->),(&),(v)],Tree,Leaves).
 
 genOpTree(N,Ops,Tree,Leaves):-genTree(Ops,Tree,N,0,Leaves,[]).
@@ -132,7 +174,7 @@ genSortedTree(Ops,Cops,OpAB,SN1,N3)-->
   {A@<B}.
   
 
- genTrimmedTree(N,Tree,Leaves):-
+genTrimmedTree(N,Tree,Leaves):-
    genTrimmedTree(N,[(->)],[(<->),(&),(v)],Tree,Leaves).
  
 add_neg_ops(OpAB,OpAB,N,N).
@@ -163,24 +205,5 @@ genTrimmedTree(Ops,Cops,OpAB,SN1,N4)-->
   {A@<B}.  
   
 
-% [1,5,10,49,134,614,1996,8773,31590,135898,521188,2221802]
-% Motzkin trees, with binary nodes 4-colored and unary nodes
-countFull(M,Rs):-
-  findall(R,(
-    between(0,M,N),
-    sols(genOpTree(N,_,_),R)
-    ),Rs).  
   
-countFullSorted(M,Rs):-
-  findall(R,(
-    between(0,M,N),
-    sols(genSortedTree(N,_,_),R)
-    ),Rs).     
-    
-countFullTrimmed(M,Rs):-
-  findall(R,(
-    between(0,M,N),
-    sols(genTrimmedTree(N,_,_),R)
-    ),Rs).    
-    
    

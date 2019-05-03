@@ -69,5 +69,20 @@ do(Goal):-
 
 to(I,SN):-succ(N,SN),between(0,N,I).
 
+remdup([],[]).
+remdup([A|As],Rs):-
+  length([A|As],L),
+  numlist(1,L,Is),
+  maplist(pair,[A|As],Is,Ps),
+  keysort(Ps,Qs),
+  group_pairs_by_key(Qs,Gs),
+  maplist(pick_first,Gs,Fs),
+  keysort(Fs,Ss),
+  maplist(arg(2),Ss,Rs).
+  
+  
+  
+pick_first(X-[Y|_],Y-X).
 
+pair(X,Y,X-Y).  
   

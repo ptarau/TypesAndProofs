@@ -14,6 +14,21 @@ toAHorn(H,H).
 toAHorns((A->B),[HA|Bs],H):-!,toAHorn(A,HA),toAHorns(B,Bs,H).
 toAHorns(H,[],H).  
 
+%%%%%%%
+
+toAndHorn((A->B),(H:-Bs)):-!,
+  toAndHorns((A->B),Bss,H),
+  flatten_it(Bss,Bs).
+toAndHorn(A&B,R):-!,toAndHorn(A,AA),toAndHorn(B,BB),
+  R=[AA,BB].
+toAndHorn(H,H).
+
+toAndHorns((A->B),[HA|Bs],H):-!,toAndHorn(A,HA),toAndHorns(B,Bs,H).
+toAndHorns((A&B),[],R):-!,toAndHorn(A,AA),toAndHorn(B,BB),
+  R=[AA,BB].
+toAndHorns(H,[],H). %:-flatten_it([H],R).
+
+%%%%%%%
 
 toVarHorn(X,R):-maxvar(X,M),M1 is M+1,functor(D,d,M1),toHorn(X,HBs),toVarHorn1(D,HBs,R).
 
@@ -151,7 +166,6 @@ hsize((_:-Bs),D):-!,
 hsize(_,1).
   
 % flattens to embedded Horn clauses of depth at most 3
-
 
 toFlatHorn(A,Horn3):-
   toHorn(A,Horn),
@@ -340,8 +354,42 @@ flatten_it(Xs,Fs):-list:flatten(Xs,Fs).
 toHorn1((A&A),R):-!,toHorn1(A,R).
 toHorn1((A&B),X&Y):-!,toHorn1(A,X),toHorn1(B,Y).
 toHorn1((A->A),R):-!,R=true.
+toHorn1((A<->A),R):-!,R=true.
 toHorn1((A->B),(H:-Bs)):-!,toHorns1((A->B),Bs,H).
 toHorn1(H,H).
 
 toHorns1((A->B),[HA|Bs],H):-!,toHorn1(A,HA),toHorns1(B,Bs,H).
 toHorns1(H,[],HH):-toHorn1(H,HH).
+
+mints0(~X,false)-->[X],{primitive(X)},!.
+mints0((X->Y),Y)-->[X],{primitive(X),primitive(Y)},!.
+mints0((X->(Y->Z)),Z)-->[X,Y],{primitive(X),primitive(Y),primitive(Z)},!.
+mints0(((X->Y)->Z),Z)-->[X->Y],{primitive(X),primitive(Y),primitive(Z)},!.
+mints0(((X&Y)->Z),Z)-->[X,Y],{primitive(X),primitive(Y),primitive(Z)},!.
+
+mints(~A,R)-->mints((A->false),R).
+mints((B->C),A)-->nv(A),mints(B,B1),mints(C,C1),[A->(B1->C1),(B1->C1)->A].
+mints(B&C,A)-->nv(A),mints(B,B1),mints(C,C1),[A->B1,A->C1,B1->(C1->A)].
+mints(B<->C,A)-->mints(B,B1),mints(C,C1),mints((B1->C1) & (C1->B1),A).
+mints(B v C,A)-->nv(A),mints(B,B1),mints(C,C1),[B1->A,C1->A,A->(B1 v C1)].
+mints(P,A)-->{primitive(P)},{A=P}.
+
+nv(X,Es,Es):-gensym('nv',X).
+
+mints(E,T,Rs):-mints0(E,T,Rs,[]),!.
+mints(E,T,Rs):-
+  reset_gensym('nv'),
+  mints(E,T,Es,[]),
+  !,
+  reverse(Es,Xs),
+  %remdup(Xs,Rs),
+  %revsort(Xs,Rs),
+  sort(Xs,Rs),
+  %ppp(T:Rs),
+  true.
+  
+hmints(E,(H:-Bs)):-mints(E,H,Gs),maplist(toHorn1,Gs,Bs).
+
+
+
+  
