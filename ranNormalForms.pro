@@ -18,14 +18,19 @@ ranTNF(Seed,N,K,X:T,Size:TSize):-
   natvars(T),
   tsize(T,TSize).
   
+/*
+
+?- ranTNF(40,_X:T),haprove(T),ppp(T),fail.
+((0->0)->1)->(1->(((2->3->4->5->6->(7->8)->7->8)->2->3->4->5->6->(7->8)->7->8)->2->3->4->5->6->(7->8)->7->8)->9)->9
+*/
 
 boltzmann_nf_lambda(R):-R<0.3333158264186935. % an l/1, otherwise neutral
 boltzmann_nf_index(R):-R<0.5062759837493023.  % neutral: index, not a/2
 boltzmann_nf_leaf(R):-R<0.6666841735813065.   % neutral: 0, otherwise s/1
 
 ranTypableNF0(Max,Min,MaxSteps,X,T,Size,Steps):-
-  tryRanTypableNF(Max,Min,0,MaxSteps,X,T,Size,Steps),
-  !.
+  tryRanTypableNF(Max,Min,30,MaxSteps,X,T,Size,Steps),
+  !. %%%%%%%%%%%%%%%%%%%%^^^ min size of inferred type!!!
 
 % API element  
 tryRanTypableNF(Max,Min,TSize0,MaxSteps,X,T,Size,Steps):-

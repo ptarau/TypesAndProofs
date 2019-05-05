@@ -1,28 +1,37 @@
 % random binary tree with N internal nodes 
 % (built with ->/2) and variables in Vs as leaves
 
-remy(N,Tree,Vs):-remyR(N,Tree,Vs).
-  
-remyR(N,Tree,Vs):-
+remy(N,Tree,Vs):-remyR(N,(->),Tree,Vs).
+
+remy(N,Tree):-remyR(N,(*),Tree,Vs),maplist(=(x),Vs).
+
+remy_sk(N,Tree):-remyR(N,(*),Tree,Vs),maplist(ran_sk,Vs).
+
+ran_sk(X):-0=:=random(2)->X=s;X=k.
+
+
+remyR(N,Fun,Tree,Vs):-
   Size is 2*N+1,
   functor(Links,x,Size),
   set(Links,0,0),
   remyStep(0,N,Links),
   get(Links,0,Root),
-  links2bin(Root,Links,Tree,Leaves,[]),
+  links2bin(Root,Fun,Links,Tree,Leaves,[]),
   Vs=Leaves.
   
-links2bin(K,Links,Tree,Ts1,Ts3):-
+links2bin(K,Fun,Links,Tree,Ts1,Ts3):-
   ( K mod 2 =:= 0 -> Ts1=[Tree|Ts3]
   ; get(Links,K,A),
     K1 is K+1,
     get(Links,K1,B),
-    links2bin(A,Links,X,Ts1,Ts2),
-    links2bin(B,Links,Y,Ts2,Ts3),
-    Tree=(X->Y)
+    links2bin(A,Fun,Links,X,Ts1,Ts2),
+    links2bin(B,Fun,Links,Y,Ts2,Ts3),
+    functor(Tree,Fun,2),
+    arg(1,Tree,X),
+    arg(2,Tree,Y)
   ).
-
-set(Links,I0,Tree):-I is I0+1,nb_setarg(I,Links,Tree).
+    
+set(Links,I0,Tree):-I is I0+1,nb_linkarg(I,Links,Tree).
 get(Links,I0,Tree):-I is I0+1,arg(I,Links,Tree).
 
 remyStep(N,N,_).

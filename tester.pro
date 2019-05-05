@@ -74,7 +74,7 @@ test_probs2a:-time(test_probs(fftprove)).
 % [prover=dprove,total=274,right=171:[proven=108],refuted=63,wrong=0,timed_out(secs,16)=52,error=51]
 % 32GB stacks
 % [prover=dprove,total=274,skipped=0,tried=274:[right=175:[proven=109,refuted=66],wrong=0,timed_out(secs,60)=99,error=0]]
-% 64GB staks [prover=dprove,total=274,skipped=0,tried=271:[right=181:[proven=111,refuted=70],wrong=0,timed_out(secs,1500)=90,error=3]]
+% 64GB stacks [prover=dprove,total=274,skipped=0,tried=271:[right=181:[proven=111,refuted=70],wrong=0,timed_out(secs,1500)=90,error=3]]
 test_probs3:-time(test_probs(dprove)).
 test_probs3p:-time(test_probs(par_dprove)).
 

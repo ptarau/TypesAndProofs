@@ -129,4 +129,20 @@ unInhabitableVars(N,Vs):-N>0,
     hprove(T)
   ).  
     
+% X combinator expressions
+
+xType((((A->B->A)->((C->D->E)->(C->D)->C->E)->(F->G->F)->H)->H),[A,B,C,D,E,F,G,H]).
+
+xType(T):-xType(T,_).
+
+genX(N,X,T):-genX(X,T,N,0).
+
+genX(x,T)-->{xType(T)}.
+genX((A*B),T)-->pred,
+  genX(A,ST),
+  genX(B,S),
+  {unify_with_occurs_check(ST,(S->T))}. 
+ 
+  
+  
   

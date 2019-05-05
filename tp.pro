@@ -61,6 +61,8 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('inputTransformers.pro').
 
+:-include('mints.pro').
+
 :-include('testGenerators.pro').
 
 :-include('testProvers.pro').

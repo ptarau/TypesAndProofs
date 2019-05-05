@@ -341,9 +341,7 @@ hlj_imp(A,_B,Vs):- memberchk(A,Vs).
 
 :-op(800,xfx,(<-)).
 
-nhprove(A):-toAHorn(A,H),nhlj(H),!.
-
-nhlj1(H):-nhlj(H),!.
+nhprove(A):-toAHorn(A,H),nhlj(H).
 
 nhlj(A<-Vs):-memberchk(A,Vs),!. 
 nhlj((B<-As)<-Vs1):-!,append(As,Vs1,Vs2),nhlj(B<-Vs2).

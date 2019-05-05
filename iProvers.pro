@@ -171,6 +171,7 @@ nvprove(T):-ljnv(T,[],10000,_).
 ljnv(A,Vs)-->{memberchk(A,Vs)},!.
 ljnv((A->B),Vs)-->!,ljnv(B,[A|Vs]). 
 ljnv(G,Vs1)--> % atomic(G),
+  % {member(T,Vs1),eq_head_of(T,G)},!, % slows down
   {select((A->B),Vs1,Vs2)},
   ljnv_imp(A,B,Vs2),
   !,
