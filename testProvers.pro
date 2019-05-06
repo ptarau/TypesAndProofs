@@ -182,3 +182,10 @@ rntest_maybe(P):-
      fail
   ;  true
   ).
+
+  
+bigrlamb(T):-
+  T=((_A->_B->((C->D->D)->E->F->G)->(((E->F->G)->G)->
+    ((E->F->G)->G)->C->D->D)->
+    ((E->F->G)->G)->E->F->G)),
+  natvars(T).
