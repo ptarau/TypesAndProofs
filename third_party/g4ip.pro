@@ -1,6 +1,6 @@
 % G4IP in Prolog
 % https://www.andrew.cmu.edu/course/15-317/recitations/g4ip.pl
-% adapted to share  notation with others - Paul Taray
+% adapted to share  notation with others - Paul Tarau
 % times out on ntest(7,g4prove) and ptest(12,g4prove)
 % also very slow on others
 

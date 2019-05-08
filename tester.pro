@@ -2,7 +2,7 @@
 
 :-dynamic(proven/2).
  
-max_time(6).
+max_time(600).
 
 % adaptor to run ILPT benchmarks from http://www.iltp.de
 /*
@@ -40,8 +40,18 @@ time=(4996.20118522644=5652.213847160339-656.0126619338989)
 %[prover=bprove,total=274,skipped=249,tried=25:[right=25:[proven=23,refuted=2],wrong=0,timed_out(secs,6)=0,error=0]]
 test_probs0:-time(test_probs(i_filter,bprove)).
 
+
+
 % [prover=faprove,total=274,skipped=0,tried=274:[right=156:[proven=97,refuted=59],wrong=0,timed_out(secs,6)=118,error=0]]
+
+% [prover=faprove,total=274,skipped=0,tried=274:[right=161:[proven=99,refuted=62],wrong=0,timed_out(secs,60)=113,error=0]]
+% 44,126,013,525 inferences, 6873.586 CPU in 6881.504 seconds (100% CPU, 6419650 Lips)
+% 44,126,013,639 inferences, 6873.586 CPU in 6881.504 seconds (100% CPU, 6419650 Lips)
+
 test_probs1:-time(test_probs(faprove)).
+
+
+
 
 % [prover=fpprove,total=274,skipped=0,tried=274:[right=150:[proven=96,refuted=54],wrong=0,timed_out(secs,6)=124,error=0]]
 %[prover=fpprove,total=274,skipped=0,tried=273:[right=158:[proven=99,refuted=59],wrong=0,timed_out(secs,300)=115,error=1]]
@@ -49,6 +59,7 @@ test_probs1:-time(test_probs(faprove)).
 % with andPar only
 test_probs1p:-test_probs(fpprove).
 
+% [prover=fxprove,total=274,skipped=0,tried=273:[right=155:[proven=97,refuted=58],wrong=0,timed_out(secs,6)=118,error=1]]
 test_probs1x:-test_probs(fxprove).
 
 % expanded to long list of shallow expressions in antecedent

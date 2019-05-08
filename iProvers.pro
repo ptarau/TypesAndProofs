@@ -177,9 +177,7 @@ ljnv(G,Vs1)--> % atomic(G),
   !,
   ljnv(G,[B|Vs2]).
 
-ljnv_imp((C->D),B,Vs)-->!,
-  newvar(P),
-  ljnv(P,[C,(D->P),(P->B)|Vs]).
+ljnv_imp((C->D),B,Vs)-->!,newvar(P),ljnv(P,[C,(D->P),(P->B)|Vs]).
 ljnv_imp(A,_,Vs)-->{memberchk(A,Vs)}.  
 
 newvar(N,N,SN):-succ(N,SN).

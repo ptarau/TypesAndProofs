@@ -91,9 +91,11 @@ ljfa_reduce((A->B),_,Vs1,Vs2):-!,ljfa_imp(A,B,Vs1,Vs2).
 ljfa_reduce((A & B),_,Vs,[A,B|Vs]):-!.
 ljfa_reduce((A<->B),_,Vs,[(A->B),(B->A)|Vs]):-!.
 ljfa_reduce((A v B),G,Vs,[B|Vs]):-ljfa(G,[A|Vs]).
-  
-%ljfa_imp(CD,_,_,_):-ppp(imp:CD),fail.
+ 
+% alternative, avoidng duplication of D
+%ljfa_imp((C->D),B,Vs,[B|Vs]):-!,gensym(p__,P),ljfa(P,[C,(D->P),(P->B)|Vs]).
 ljfa_imp((C->D),B,Vs,[B|Vs]):-!,ljfa((C->D),[(D->B)|Vs]).
+
 ljfa_imp((C & D),B,Vs,[(C->(D->B))|Vs]):-!.
 ljfa_imp((C v D),B,Vs,[(C->B),(D->B)|Vs]):-!.
 ljfa_imp((C<->D),B,Vs,[((C->D)->((D->C)->B))|Vs]):-!.
