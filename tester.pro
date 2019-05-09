@@ -85,6 +85,7 @@ test_probs2a:-time(test_probs(fftprove)).
 % [prover=dprove,total=274,right=171:[proven=108],refuted=63,wrong=0,timed_out(secs,16)=52,error=51]
 % 32GB stacks
 % [prover=dprove,total=274,skipped=0,tried=274:[right=175:[proven=109,refuted=66],wrong=0,timed_out(secs,60)=99,error=0]]
+% 32GB [prover=dprove,total=274,skipped=0,tried=232:[right=180:[proven=111,refuted=69],wrong=0,timed_out(secs,600)=52,error=42]]
 % 64GB stacks [prover=dprove,total=274,skipped=0,tried=271:[right=181:[proven=111,refuted=70],wrong=0,timed_out(secs,1500)=90,error=3]]
 test_probs3:-time(test_probs(dprove)).
 test_probs3p:-time(test_probs(par_dprove)).
@@ -102,7 +103,7 @@ test_probs5:-time(test_probs(ilprove)).
 %[prover=sep_prove,total=274,skipped=0,tried=274:[right=50:[proven=46,refuted=4],wrong=0,timed_out(secs,60)=224,error=0]]
 test_probs6:-time(test_probs(sep_prove)).
 
-test_probs7:-rime(test_probs(coprove)).
+test_probs7:-time(test_probs(coprove)).
 
 % restricted to ->, <->
 % [prover=fbprove,total=274,skipped=226,right=34:[proven=30],refuted=4,wrong=0,timed_out(secs,3)=14,error=0]

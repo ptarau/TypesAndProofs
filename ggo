@@ -1,0 +1,1 @@
+swipl --stack_limit=96G -s tp.pro
