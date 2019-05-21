@@ -78,7 +78,7 @@ hnprove(T0):-toNHorn(T0,T),ljnh(T).
 
 toNHorn --> expand_neg,toHorn.
 
-
+   
 % nested Horn - from all except disjunction after Mints transform
 
 hmprove(T0):-hmints(T0,T),

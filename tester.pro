@@ -737,3 +737,14 @@ classimp0(M,A):-
   
 classimp0:-
  \+ classimp0(12,_).
+
+ 
+ 
+ iltp(Prover):-
+    consult('test_data/iltp.pro'),
+    do((
+      iltp(N,A,B,C),ppp(N:A+B),
+      catch(time(call(Prover,C)),E,(ppp(E),sleep(20)))
+    )).
+
+ 

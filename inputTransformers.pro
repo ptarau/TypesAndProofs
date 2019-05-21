@@ -171,3 +171,31 @@ simplify(X <-> Y, (A->B) & (B->A))-->
 simplify(A,A)-->[].
   
   
+
+toConjBiCond(A->B,R):-!,toConjBiCond(A,X),toConjBiCond(B,Y),!,R= ((X&Y)<->X).
+toConjBiCond(A&B,R):-!,toConjBiCond(A,X),toConjBiCond(B,Y),!,R=(X&Y).
+toConjBiCond(A<->B,R):-!,toConjBiCond(A,X),toConjBiCond(B,Y),!,R=(X<->Y).
+toConjBiCond(A,A).
+
+toDisjBiCond(A->B,R):-!,toDisjBiCond(A,X),toDisjBiCond(B,Y),!,R=((X v Y)<->Y).
+toDisjBiCond(A&B,R):-!,toDisjBiCond(A,X),toDisjBiCond(B,Y),!,R=((X v Y)<->(X<->Y)).
+toDisjBiCond(A v B,R):-!,toDisjBiCond(A,X),toDisjBiCond(B,Y),!,R=(X v Y).
+toDisjBiCond(A<->B,R):-!,toDisjBiCond(A,X),toDisjBiCond(B,Y),!,R=(X<->Y).
+toDisjBiCond(A,A).
+
+
+cmints(A,H,Bs):-cmints(A,H,Bs,[]).
+
+cmints(~A,R)-->cmints((A->false),R).
+cmints((X->Y),A)-->cmints(X<->(X&Y),A).
+cmints(B&C,A)-->nv(A),cmints(B,B1),cmints(C,C1),[A<->(B1&C1)].
+cmints(B<->C,A)-->nv(A),cmints(B,B1),cmints(C,C1),[A<->(B1<->C1)].
+cmints(P,A)-->{primitive(P)},{A=P}.
+
+
+cnv(_,Xs,Xs).
+
+
+
+   
+   

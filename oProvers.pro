@@ -12,3 +12,11 @@ oljb(G,Vs1):-
 
 oljb_imp((C->D),B,Vs):-!,oljb((C->D),[(D->B)|Vs]).
 oljb_imp(A,_,Vs):-memberchk(A,Vs).   
+
+cmprove(E):-
+  cmints(E,H,Gs),
+  %ppp((H:-Gs)),
+  %maplist(simplify,Gs,Bs), 
+  ppp(E),nl,ppp((H:-Gs)),nl,
+  ljfa(H,Gs).
+  
