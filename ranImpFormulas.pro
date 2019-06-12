@@ -88,8 +88,10 @@ xtype_of((A*B),T):-
 */
 
 
-
-ranSK(N,M,T):-
+ranSK(N,M,T):-ranSK(random,N,M,T).
+  
+ranSK(Seed,N,M,T):-
+  set_random(seed(Seed)),
   repeat,
     remy_sk(N,X),
     sk_type_of(X,T),

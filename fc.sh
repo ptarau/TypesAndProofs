@@ -1,0 +1,1 @@
+swipl -G1g -s "$HOME/Desktop/sit/SOFTWARE/PROVERS/fCube-4.1/fCube/fCube"

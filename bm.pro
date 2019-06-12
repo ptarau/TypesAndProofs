@@ -96,6 +96,7 @@ bmark(N,P,Pos,Neg,BL,Res):-
 prep(Name,Proc):-preprocessor(Name,Proc),!.
 prep(Name,Prog):-throw(unknown_prep(Name,Prog)).
 
+preprocessor(fc,(toPrefix)).
 preprocessor(dprove,(=)).
 preprocessor(lprove,(=)).
 preprocessor(bprove,(=)).
@@ -184,7 +185,7 @@ fbm(N,P):-
  
 good_full_prover(P):-
    assertion(memberchk(P,
-     [dprove,xfprove,fmprove,faprove,fxprove,flprove,frprove,ffprove,fcprove,fdprove,alt_prove])).
+     [fc,dprove,xfprove,fmprove,faprove,fxprove,flprove,frprove,ffprove,fcprove,fdprove,alt_prove])).
 
 fbm(N,P,Counts,Time=T2-T1):-
   good_full_prover(P),

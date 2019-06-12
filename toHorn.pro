@@ -351,6 +351,7 @@ reduce_body([B|Bs],[C|Cs]):-
 
 flatten_it(Xs,Fs):-list:flatten(Xs,Fs).  
 
+toHorn1((~A),(R->false)):-!,toHorn1(A,R).
 toHorn1((A&A),R):-!,toHorn1(A,R).
 toHorn1((A&B),X&Y):-!,toHorn1(A,X),toHorn1(B,Y).
 toHorn1((A->A),R):-!,R=true.

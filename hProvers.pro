@@ -360,6 +360,7 @@ nhlj_imp(A,_B,Vs):-memberchk(A,Vs).
 atrimmed(B<-[],R):-!,R=B. 
 atrimmed(BBs,BBs).
 
+% faster so far
 ahprove(A):-toAHorn(A,H),call(H).
 
 A<-Vs:-memberchk(A,Vs),!. 
@@ -378,6 +379,35 @@ ahlj_imp(D<-Cs,B,Vs):-!, (D<-Cs)<-[B<-[D]|Vs].
 ahlj_imp(A,_B,Vs):- memberchk(A,Vs).
 
 
+/*
+% alternative ahprove: definitely slower !!!
+% it seems that forcing the clean-up of reversible rules first
+% does not help with performance, at least on terms up to size 15
+ahprove(A):-toAHorn(A,H),call(H).
+
+A<-Vs:-memberchk(A,Vs),!. 
+(B<-As)<-Vs1:-!,append(As,Vs1,Vs2),B<-Vs2.
+
+G<-Vs1:- % atomic(G), G not on Vs1
+  memberchk((G<-_),Vs1), % if not, we just fail
+  hreduce(BBs,Vs1,Vs2),
+  !,
+  atrimmed(BBs,NewB), % trim empty bodies  
+  G<-[NewB|Vs2].
+
+hreduce(B<-Bs,Vs1,Vs2):-
+  select(B<-As,Vs1,Vs2), % outer select loop
+  select(A,As,Bs),         % inner select loop
+  memberchk(A,Vs2),
+  !.
+hreduce(B<-Bs,Vs1,Vs2):-
+  select(B<-As,Vs1,Vs2),   % outer select loop
+  select(A,As,Bs),         % inner select loop
+  ahlj_imp(A,B,Vs2).       % A element of the body of B
+  
+ahlj_imp(D<-Cs,B,Vs):-(D<-Cs)<-[B<-[D]|Vs].
+%ahlj_imp(A,_B,Vs):- memberchk(A,Vs).
+*/
 
 
 %%%%%%%% 

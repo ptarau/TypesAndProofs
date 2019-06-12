@@ -172,15 +172,17 @@ simplify(A,A)-->[].
   
   
 
-toConjBiCond(A->B,R):-!,toConjBiCond(A,X),toConjBiCond(B,Y),!,R= ((X&Y)<->X).
-toConjBiCond(A&B,R):-!,toConjBiCond(A,X),toConjBiCond(B,Y),!,R=(X&Y).
-toConjBiCond(A<->B,R):-!,toConjBiCond(A,X),toConjBiCond(B,Y),!,R=(X<->Y).
+toConjBiCond(A->B,R):-!,toConjBiCond(A,X),toConjBiCond(B,Y),R= ((X&Y)<->X).
+toConjBiCond(A&B,R):-!,toConjBiCond(A,X),toConjBiCond(B,Y),R=(X&Y).
+toConjBiCond(A<->B,R):-!,toConjBiCond(A,X),toConjBiCond(B,Y),R=(X<->Y).
+toConjBiCond(~A,R):-!,toConjBiCond(A,X),R = (~X).
 toConjBiCond(A,A).
 
-toDisjBiCond(A->B,R):-!,toDisjBiCond(A,X),toDisjBiCond(B,Y),!,R=((X v Y)<->Y).
-toDisjBiCond(A&B,R):-!,toDisjBiCond(A,X),toDisjBiCond(B,Y),!,R=((X v Y)<->(X<->Y)).
-toDisjBiCond(A v B,R):-!,toDisjBiCond(A,X),toDisjBiCond(B,Y),!,R=(X v Y).
-toDisjBiCond(A<->B,R):-!,toDisjBiCond(A,X),toDisjBiCond(B,Y),!,R=(X<->Y).
+toDisjBiCond((A->B),R):-!,toDisjBiCond(A,X),toDisjBiCond(B,Y),R=((X v Y)<->Y).
+toDisjBiCond(A & B,R):-!,toDisjBiCond(A,X),toDisjBiCond(B,Y),R=((X v Y)<->(X<->Y)).
+toDisjBiCond(A v B,R):-!,toDisjBiCond(A,X),toDisjBiCond(B,Y),R=(X v Y).
+toDisjBiCond(A<->B,R):-!,toDisjBiCond(A,X),toDisjBiCond(B,Y),R=(X<->Y).
+toDisjBiCond(~A,R):-!,toDisjBiCond(A,X),R = (~X).
 toDisjBiCond(A,A).
 
 
@@ -194,6 +196,14 @@ cmints(P,A)-->{primitive(P)},{A=P}.
 
 
 cnv(_,Xs,Xs).
+
+% translate to fcube compatible format
+toPrefix((X->Y),im(A,B)):-!,toPrefix(X,A),toPrefix(Y,B).
+toPrefix((X<->Y),equiv(A,B)):-!,toPrefix(X,A),toPrefix(Y,B).
+toPrefix((X & Y),and(A,B)):-!,toPrefix(X,A),toPrefix(Y,B).
+toPrefix((X v Y),or(A,B)):-!,toPrefix(X,A),toPrefix(Y,B).
+toPrefix((~X),non(A)):-!,toPrefix(X,A).
+toPrefix(X,Y):-atomic_list_concat([x,X],Y).
 
 
 

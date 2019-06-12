@@ -9,7 +9,31 @@ remy_sk(N,Tree):-remyR(N,(*),Tree,Vs),maplist(ran_sk,Vs).
 
 ran_sk(X):-0=:=random(2)->X=s;X=k.
 
-
+remyExpr(N,FunList,Tree,Vs):-
+  Funs=..[funs|FunList],
+  Size is 2*N+1,
+  functor(Links,x,Size),
+  set(Links,0,0),
+  remyStep(0,N,Links),
+  get(Links,0,Root),
+  ranlinks2bin(Root,Funs,Links,Tree,Leaves,[]),
+  Vs=Leaves.
+  
+  
+ranlinks2bin(K,Funs,Links,Tree,Ts1,Ts3):-
+  ( K mod 2 =:= 0 -> Ts1=[Tree|Ts3]
+  ; get(Links,K,A),
+    K1 is K+1,
+    get(Links,K1,B),
+    ranlinks2bin(A,Funs,Links,X,Ts1,Ts2),
+    ranlinks2bin(B,Funs,Links,Y,Ts2,Ts3),
+    functor(Funs,_,OpCount),
+    I0 is random(OpCount),I is I0+1,arg(I,Funs,Fun),
+    functor(Tree,Fun,2),
+    arg(1,Tree,X),
+    arg(2,Tree,Y)
+  ).
+    
 remyR(N,Fun,Tree,Vs):-
   Size is 2*N+1,
   functor(Links,x,Size),
@@ -49,5 +73,4 @@ remyStep(I0,N,Links):-I0<N,
   set(Links,K,J3),
   remyStep(I,N,Links).
   
-
   

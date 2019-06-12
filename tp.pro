@@ -33,6 +33,8 @@ c:-['tp.pro']. % quick iteractive reloader
 :-include('allTypedNFs.pro'). % generator for simply typed normal forms
 :-include('ranNormalForms.pro'). % random normal form generator (Boltzmann)
 
+:-include('ranFullFormulas.pro'). % random full intuitionistic formulas
+
 :-include('allFormulas.pro').
 
 :-include('ranImpFormulas.pro'). % random implicational formulas
@@ -62,6 +64,8 @@ c:-['tp.pro']. % quick iteractive reloader
 :-include('inputTransformers.pro').
 
 :-include('mints.pro').
+
+:-include('hardening.pro').
 
 :-include('testGenerators.pro').
 
@@ -100,3 +104,4 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('fix_iltp.pro').
 
+:-include('fc.pro').

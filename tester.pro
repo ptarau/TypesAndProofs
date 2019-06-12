@@ -2,7 +2,7 @@
 
 :-dynamic(proven/2).
  
-max_time(600).
+max_time(16).
 
 % adaptor to run ILPT benchmarks from http://www.iltp.de
 /*
@@ -154,6 +154,26 @@ test_probs17:-time(test_probs(hand_filter,handprove)).
 % [prover=ljxprove,total=274,skipped=119,tried=155:[right=87:[proven=42,refuted=45],wrong=0,timed_out(secs,6)=68,error=0]]
 % 5,043,398,671 inferences, 430.363 CPU in 431.955 seconds (100% CPU, 11718943 Lips)
 test_probs18:-time(test_probs(hand_filter,ljxprove)).
+
+% BEST 3rd party
+
+% [prover=fcube,total=274,skipped=0,tried=274:[right=260:[proven=125,refuted=135],wrong=0,timed_out(secs,6)=14,error=0]]
+% 1,213,923,468 inferences, 105.541 CPU in 105.704 seconds (100% CPU, 11501926 Lips)
+% 1,213,923,582 inferences, 105.541 CPU in 105.705 seconds (100% CPU, 11501917 Lips)
+%[prover=fcube,total=274,skipped=0,tried=274:[right=261:[proven=126,refuted=135],wrong=0,timed_out(secs,16)=13,error=0]]
+% 2,781,180,708 inferences, 238.631 CPU in 238.948 seconds (100% CPU, 11654711 Lips)
+% 2,781,180,822 inferences, 238.632 CPU in 238.948 seconds (100% CPU, 11654707 Lips)
+% [prover=fc,total=274,skipped=0,tried=274:[right=262:[proven=127,refuted=135],wrong=0,timed_out(secs,600)=12,error=0]]
+% 86,111,898,153 inferences, 7310.606 CPU in 7321.506 seconds (100% CPU, 11779037 Lips)
+% 86,111,898,267 inferences, 7310.606 CPU in 7321.506 seconds (100% CPU, 11779037 Lips)
+/*
+42:probs/SYJ/SYJ202+1.009.pl=is(timeout(600))+should_be(true)
+........
+53:probs/SYJ/SYJ202+1.020.pl=is(timeout(600))+should_be(false)
+*/
+test_probs19:-time(test_probs(fcube)).
+
+% -----------------------
 
 bug17:-T=((0&1<->0)<->(0->1)),
   handprove(T).
@@ -443,12 +463,20 @@ gold_classical_test(N,Silver,Culprit,Unexpected):-
  
 gold_full_test(N,Culprit,Unexpected):-
   gold_full_test(N,faprove,Culprit,Unexpected).
+    
   
-
 gold_full_test(N,Prover,Culprit,Unexpected):-
- gold_test(N,allFullFormulas,(=),dprove,Prover, Culprit,Unexpected).
+  gold_test(N,allFullFormulas,(=),dprove,Prover, Culprit,Unexpected).
  
+% hardened tests
+
+gold_hard_full_test(N,Prover,Culprit,Unexpected):-
+  gold_test(N,allFullFormulas,(=),dprove,Prover, Culprit,Unexpected).
  
+gold_DB_full_test(N,Prover,Culprit,Unexpected):-
+  gold_test(N,allFullDBFormulas,(=),dprove,Prover, Culprit,Unexpected).
+
+  
 gold_ran_imp_test(N,K, Silver, Culprit, Unexpected):-
   gold_test(N,genRanImpFormulas(K),(=),dprove,Silver, Culprit, Unexpected).  
 
