@@ -6,7 +6,6 @@ fmprove(G):-
   %ppp(H),
   ljfa(H,Bs).
   
-  
 fftprove(T0):-
   tautology(T0), % calls Fitting's prover to filter out some non-tautolgies
   expand_full_neg(T0,T),

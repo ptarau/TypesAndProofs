@@ -129,7 +129,7 @@ test_probs11:-time(test_probs(nest_filter,ichprove)).
 test_probs11a:-time(test_probs(nest_filter,hmprove)).
 
 
-% for camparison with nested Horn
+% for comparison with nested Horn
 % [prover=faprove,total=274,skipped=119,tried=155:[right=99:[proven=61,refuted=38],wrong=0,timed_out(secs,6)=56,error=0]]
 % 1,275,469,297 inferences, 341.826 CPU in 342.158 seconds (100% CPU, 3731341 Lips)
 % [prover=faprove,total=274,skipped=119,tried=155:[right=102:[proven=62,refuted=40],wrong=0,timed_out(secs,60)=53,error=0]]
@@ -175,12 +175,12 @@ test_probs19:-time(test_probs(fcube)).
 
 % -----------------------
 
-bug17:-T=((0&1<->0)<->(0->1)),
+nobug17:-T=((0&1<->0)<->(0->1)),
   handprove(T).
   
-bug17a:-T=(~ (p->q)->q->p),handprove(T).
+nobug17a:-T=(~ (p->q)->q->p),handprove(T).
 
-bug17b:-
+nobug17b:-
  T=(s->(~ (t->r)->p)-> ~ ((p->q)&(t->r))-> ~ ~p&s&s),
  handprove(T).
 

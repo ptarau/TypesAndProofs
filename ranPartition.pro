@@ -1,6 +1,6 @@
 % random partition generator
 
-%:-use_module(library(tabling)).
+:-use_module(library(tabling)).
 :-table(stir/3).
 
 ranSetPart(N,Rs):-bell(N,B),ranPart(N,B,Rs).
@@ -20,7 +20,7 @@ ranPart(N,B,Rs):-
   Bs=..[_|Rs].
 
   
-% striling nimbers of 2nd kind
+% stirling numbers of 2nd kind
 stir(0,0,1).
 stir(N,0,0):-N>0.
 stir(0,N,0):-N>0.
@@ -81,7 +81,7 @@ normalize(_,_,C,C).
 
 /*
 % ?- stir(50,13,R).
-% R = 92263734836.
+% R = 6238901276275784811492861794826737563889288230.
 
 ?- bell(10,B),urn_probability(10,5,B,U).
 B = 115975,

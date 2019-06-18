@@ -266,7 +266,7 @@ xljf_imp((C & D),B,Vs,[(C->(D->B))|Vs]).
 xljf_imp((C v D),B,Vs,[(C->B),(D->B)|Vs]).
 xljf_imp((C<->D),B,Vs,[((C->D)->((D->C)->B))|Vs]).
 
-
+% no bug anymore
 xbug:-
   %T=((?0<->(?0<-> ?0)->false)->false),
   %T=(?0<->(?1<->(?0<->(?1<-> ?0)))),

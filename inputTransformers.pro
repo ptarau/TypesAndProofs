@@ -141,10 +141,6 @@ expand_eq((A->B&C))-->!,[(A->B),(A->C)].
 expand_eq((C v D -> B)) -->!,[(C->B),(D->B)].
 expand_eq(E)-->[E].
 
-  
-to_alt(A->B, (X v Y)<->Y):-!,to_alt(A,X),to_alt(B,Y).
-to_alt(A&B, ((X v Y)<->X)<->Y):-!,to_alt(A,X),to_alt(B,Y).
-to_alt(A,A).
 
 
 simplify(X,A):-
@@ -170,6 +166,10 @@ simplify(X <-> Y, (A->B) & (B->A))-->
   simplify(X,A),simplify(Y,B).
 simplify(A,A)-->[].
   
+  
+to_alt(A->B, (X v Y)<->Y):-!,to_alt(A,X),to_alt(B,Y).
+to_alt(A&B, ((X v Y)<->X)<->Y):-!,to_alt(A,X),to_alt(B,Y).
+to_alt(A,A).
   
 
 toConjBiCond(A->B,R):-!,toConjBiCond(A,X),toConjBiCond(B,Y),R= ((X&Y)<->X).
