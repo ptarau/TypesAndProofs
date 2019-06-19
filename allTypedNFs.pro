@@ -73,6 +73,9 @@ impl_taut_no_left_lambda(P,[Q|Ps])--> agrees(P,[Q|Ps]).
 impl_taut_no_left_lambda(Q,Ps)-->pred,pred,
   impl_taut_no_left_lambda((P->Q),Ps),
   impl_taut(P,Ps).  
+ 
+
+implTaut(N,T):-impl_taut(N,T),natvars(T). 
   
   /*
   ?- findall(S,(between(0,16,N),sols(tnf(N,_),S)),Xs).
