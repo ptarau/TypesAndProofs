@@ -1,4 +1,4 @@
-:-include('/Users/tarau/Desktop/sit/SOFTWARE/PROVERS/fCube-4.1/fCube/fCube').
+:-include('../SOFTWARE/PROVERS/fCube-4.1/fCube/fCube').
 
 fcube(A):-toPrefix(A,X),intDecide0(X,_).
 
@@ -12,6 +12,26 @@ intDecide0(X,COUNTERMODEL):-
   fail.
 intDecide0(_,[valida]).
 
-fcok:-mints((p <-> ~q)<-> (~q <-> p),T),ppp(T),faprove(T).
+notfc:-T0=(p <-> ~q)<-> (~q <-> p),ppp(T),
+  mints(T0,T),ppp(T),faprove(T),dprove(T).
 
-fcbug:-mints((p <-> ~q) <-> (~q <-> p),T),ppp(T),fcube(T).
+fcbug:-T0=(p <-> ~q)<-> (~q <-> p),
+   fcube(T0),ppp(should_be_true(T0)),
+   mints(T0,T),
+   ppp(trying_equivalent=T),
+   fcube(T).
+   
+fcbug1:-
+  T0=((p <-> ~q)-> (~q -> p)),
+   fcube(T0),ppp(should_be_true(T0)),
+   mints(T0,T),
+   ppp(trying_equivalent=T),
+   fcube(T).
+  
+fcbug2:-
+  T0=((~p <-> q)-> (q -> ~p)),
+  mints(T0,T),
+  fcube(T0),ppp(should_be_true(T0)),
+  mints(T0,T),
+  ppp(trying_equivalent=T),
+  fcube(T).

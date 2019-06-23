@@ -55,11 +55,11 @@ test_probs1:-time(test_probs(faprove)).
 
 % [prover=fpprove,total=274,skipped=0,tried=274:[right=150:[proven=96,refuted=54],wrong=0,timed_out(secs,6)=124,error=0]]
 %[prover=fpprove,total=274,skipped=0,tried=273:[right=158:[proven=99,refuted=59],wrong=0,timed_out(secs,300)=115,error=1]]
-
 % with andPar only
 test_probs1p:-test_probs(fpprove).
 
-% [prover=fxprove,total=274,skipped=0,tried=273:[right=155:[proven=97,refuted=58],wrong=0,timed_out(secs,6)=118,error=1]]
+%[prover=fxprove,total=274,skipped=0,tried=274:[right=157:[proven=97,refuted=60],wrong=0,timed_out(secs,16)=117,error=0]]
+% 12,598,768,252 inferences, 1904.692 CPU in 1909.755 seconds (100% CPU, 6614597 Lips)
 test_probs1x:-test_probs(fxprove).
 
 % expanded to long list of shallow expressions in antecedent
@@ -71,7 +71,6 @@ test_probs1fr:-test_probs(flprove).
 %[prover=par_faprove,total=274,skipped=0,tried=274:[right=155:[proven=98,refuted=57],wrong=0,timed_out(secs,6)=119,error=0]]
 % scrambled
 test_probs2p:-time(test_probs(par_faprove)).
-
 
 
 test_probs1c:-time(test_probs(fcprove)).
@@ -129,7 +128,7 @@ test_probs11:-time(test_probs(nest_filter,ichprove)).
 test_probs11a:-time(test_probs(nest_filter,hmprove)).
 
 
-% for comparison with nested Horn
+% for camparison with nested Horn
 % [prover=faprove,total=274,skipped=119,tried=155:[right=99:[proven=61,refuted=38],wrong=0,timed_out(secs,6)=56,error=0]]
 % 1,275,469,297 inferences, 341.826 CPU in 342.158 seconds (100% CPU, 3731341 Lips)
 % [prover=faprove,total=274,skipped=119,tried=155:[right=102:[proven=62,refuted=40],wrong=0,timed_out(secs,60)=53,error=0]]
@@ -175,12 +174,12 @@ test_probs19:-time(test_probs(fcube)).
 
 % -----------------------
 
-nobug17:-T=((0&1<->0)<->(0->1)),
+bug17:-T=((0&1<->0)<->(0->1)),
   handprove(T).
   
-nobug17a:-T=(~ (p->q)->q->p),handprove(T).
+bug17a:-T=(~ (p->q)->q->p),handprove(T).
 
-nobug17b:-
+bug17b:-
  T=(s->(~ (t->r)->p)-> ~ ((p->q)&(t->r))-> ~ ~p&s&s),
  handprove(T).
 
