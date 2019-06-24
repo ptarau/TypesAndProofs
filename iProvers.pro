@@ -102,7 +102,7 @@ ljs_imp(l(X,E),(C->D),B,Vs):-ljs(E,(C->D),[X:(D->B)|Vs]),
 head_of(_->B,G):-!,head_of(B,G).
 head_of(G,G).  
   
-eprove(T):-lje(T,[]),!.
+eprove(T):-lje(T,[]).
 
 lje(A,Vs):-memberchk(A,Vs),!.
 lje((A->B),Vs):-!,lje(B,[A|Vs]). 
@@ -184,7 +184,7 @@ newvar(N,N,SN):-succ(N,SN).
 
 % variant of Hudelmaier's O(n*log(n)) space algorithm
 % with sets instead of multisets
-nprove(T):-ljn(T,[],100,_),!.
+nprove(T):-ljn(T,[],1000,_).
 
 ljn(A,Vs)-->{memberchk(A,Vs)},!.
 ljn((A->B),Vs1)-->!,{add_new(A,Vs1,Vs2)},ljn(B,Vs2). 

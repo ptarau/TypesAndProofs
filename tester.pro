@@ -452,10 +452,14 @@ gold_nested_test(N,Prover,Culprit,Unexpected):-
    %Prover=ichprove,
    gold_test(N,allNestedFormulas,(=),dprove,Prover, Culprit,Unexpected).
   
+gold_imp_test(N,Prover,Culprit,Unexpected):-
+  gold_test(N,allImpFormulas,(=),dprove,Prover, Culprit,Unexpected).   
+   
 gold_eq_test(N,Prover,Culprit,Unexpected):-
-  gold_test(N,allEqFormulas,(=),dprove,Prover, Culprit,Unexpected).
+  gold_test(N,allEqImplFormulas,(=),dprove,Prover, Culprit,Unexpected).
   
-
+gold_eq_neg_test(N,Prover,Culprit,Unexpected):-
+gold_test(N,allEqNegFormulas,(=),faprove,Prover, Culprit,Unexpected).
 
 gold_classical_test(N,Silver,Culprit,Unexpected):-
   gold_test(N,allClassFormulas,(=),tautology,Silver, Culprit,Unexpected).

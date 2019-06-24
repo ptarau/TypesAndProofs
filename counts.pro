@@ -93,6 +93,8 @@ countAllSortedHorn3(M):-ncounts(M,allSortedHorn3(_,_)).
 
 
 countFull(M,Rs):-countGen3(genOpTree,M,Rs).
+
+countEqNeg(M,Rs):-countGen2(allEqNegFormulas,M,Rs).
   
 countFullSorted(M,Rs):-countGen3(genSortedTree,M,Rs).
 

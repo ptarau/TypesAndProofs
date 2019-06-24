@@ -82,7 +82,7 @@ allClassFormulas(N,T,NNT):-
   dneg(T,NNT),
   natvars(Vs).
 
-allEqFormulas(N,T):-
+allEqImplFormulas(N,T):-
   genOpTree(N, [(->),(<->)], T, Vs),
   natpartitions(Vs).
   
@@ -95,6 +95,14 @@ allNestedFormulas(N,T):-
       ,(~)
     ], T, Vs),
   natpartitions(Vs).  
+
+allEqNegFormulas(N,T):-
+  genOpTree(N, [
+      (<->)
+      ,(~)
+    ], T, Vs),
+    natpartitions(Vs).  
+
   
 allFullFormulas(N,T):-
   genOpTree(N,T,Vs),
