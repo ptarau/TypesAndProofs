@@ -19,7 +19,7 @@ disjBiCondHard(N,Prover,Generated,Hard):-
   
 ht1:-do((hardTrue(6,dprove,T,R),ppp(T),ppp(R),nl)).
 
-ht2:-do((hardTrue(6,fcube,T,R),ppp(T),ppp(R),nl)).
+ht2:-do((hardTrue(10,fcube,T,R),ppp(T),ppp(R),nl)).
 
 ht4:-do((hardTrue(4,faprove,T,R),ppp(T),ppp(R),nl)).
   

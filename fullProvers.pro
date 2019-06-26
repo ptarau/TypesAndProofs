@@ -29,6 +29,7 @@ faprove(T0,Vs):-
   %ppp(FullT),
   ljfa(FullT,[]),!.
 
+% works with hardened disj-eq-neg formulas
 fxprove(T0,Vs):-
   unexpand(Vs,T0,T1),
   simplify(T1,T),

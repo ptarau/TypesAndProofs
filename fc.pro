@@ -1,7 +1,5 @@
 :-include('../SOFTWARE/PROVERS/fCube-4.1/fCube/fCube').
 
-mints_fcube(A):-mints(A,MA),fcube(MA).
-
 fcube(A):-toPrefix(A,X),fc(X).
 
 fc(X):-intDecide0(X,_).
@@ -35,20 +33,59 @@ fcbug2:-
   fcube(T0),ppp(should_be_true(T0)),
   ppp(trying_equivalent=T),
   fcube(T).
-  
+
+
+ 
 fcbugs:-fcbugs(5).
+
+mints_fcube(A):-mints(A,MA),fcube(MA).
 
 fcbugs(N):-
  do((
    gold_eq_neg_test(N,mints_fcube,Culprit,Unexpected),ppp([Unexpected,Culprit])
  )).
 
+
+ 
 mints_dprove(A):-mints(A,MA),dprove(MA).
 
 mints_faprove(A):-mints(A,MA),faprove(MA).
 
+mints_coprove(A):-mints(A,MA),coprove(MA).
 
 mints_eprove(A):-mints(A,MA),eprove(MA).
+
+mints_impl_taut(N,T,MT):-implTaut(N,T),mints(T,MT).
+
+alt_impl_taut(N,T,AT):-implTaut(N,T),toDisjBiCond(T,AT).
+
+
+small_taut_bug(M,Prover):-
+ do((
+   between(0,M,N),
+   mints_impl_taut(N,T,MT),
+   \+ call(Prover,MT),
+   ppp(unexpected_failure_on),
+   ppp(T),
+   ppp((<=>)),
+   ppp(MT),nl
+ )).
+  
+
+ 
+alt_small_taut_bug(M,Prover):-
+ do((
+   between(0,M,N),
+   alt_impl_taut(N,T,MT),
+   ppp(trying=T),
+    ppp(as=MT),
+   \+ call(Prover,MT),
+   ppp(unexpected_failure_on),
+   ppp(T),
+   ppp((<=>)),
+   ppp(MT),nl
+   )).
+   
 
 dnobugs(N):-
  do((
