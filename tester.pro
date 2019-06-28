@@ -169,6 +169,9 @@ test_probs18:-time(test_probs(hand_filter,ljxprove)).
 42:probs/SYJ/SYJ202+1.009.pl=is(timeout(600))+should_be(true)
 ........
 53:probs/SYJ/SYJ202+1.020.pl=is(timeout(600))+should_be(false)
+
+% same with version 11
+[prover=fcube,total=274,skipped=0,tried=274:[right=261:[proven=126,refuted=135],wrong=0,timed_out(secs,16)=13,error=0]]
 */
 test_probs19:-time(test_probs(fcube)).
 

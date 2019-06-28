@@ -239,10 +239,10 @@ tratio(D):-
   plotl(Qs).
   
     
-% [1,0,1,1,4,7,23,53,163]
+% 1,0,1,1,4,7,23,53,163,432,1306
 countUnInhabitableTree(M):-ncounts(M,unInhabitableTree(_,_)).
 
-% [0,1,1,4,9,30,122,528,2517,12951]
+% [0,1,1,4,9,30,122,528,2517,12951,71455]
 countUnInhabitableVars(M):-ncounts(M,unInhabitableVars(_,_)).
 
 
@@ -362,6 +362,16 @@ countAllHarrop(M):-
     Rs
   ),
   maplist(ppp,Rs). 
+
+/*
+?- countAllSortedFull(6).
+[proven=0,total=1,ratio=0]
+[proven=2,total=9,ratio=0.222]
+[proven=19,total=119,ratio=0.159]
+[proven=403,total=2652,ratio=0.151]
+[proven=9684,total=75458,ratio=0.128]
+[proven=293579,total=2578164,ratio=0.113]
+*/
 
 countAllSortedFull(M):-
   findall(R,(

@@ -1,15 +1,24 @@
 :-include('../SOFTWARE/PROVERS/fCube-4.1/fCube/fCube').
+%:-include('../SOFTWARE/PROVERS/fCube-11.1/fCube/fCube').
 
 fcube(A):-toPrefix(A,X),fc(X).
 
-fc(X):-intDecide0(X,_).
+fc(X):-intDecide0(X,_). % edit here for other version
 
+%for version 4.1
 intDecide0(X,COUNTERMODEL):-	
   permanenzaSegno([swff(f,X)],StartingSet),
   orderEquivSet(StartingSet, OrderedStartingSet),
-  reapply(OrderedStartingSet, COUNTERMODEL, 1, 1),!,
-  fail.
+  reapply(OrderedStartingSet, COUNTERMODEL, 1, 1),!,fail.
 intDecide0(_,[valida]).
+
+% for version 11
+intDecide1(X,[]):-
+					permanenzaSegno([swff(f,X)],StartingSet, _),
+					orderEquivSet(StartingSet, OrderedStartingSet),
+					reapply(OrderedStartingSet, _, 1, 1),
+					!,fail.
+intDecide1(_,[valida]).          
 
 notfc:-T0=(p <-> ~q)<-> (~q <-> p),ppp(T),
   mints(T0,T),ppp(T),faprove(T),dprove(T).

@@ -34,8 +34,8 @@ harrop_goal(N,Form,Vs):-harrop_goal(Form,Vs,[],N,0).
 harrop_definite((G->V),[V|Vs1],Vs2)-->harrop_goal(G,Vs1,Vs2).
 
 harrop_goal(V,[V|Vs],Vs)-->[].
-harrop_goal((V->G),[V|Vs1],Vs2)-->z,harrop_goal(G,Vs1,Vs2).
-harrop_goal(((H->V)->G),[V|Vs1],Vs3)-->z,z,
+harrop_goal((V->G),[V|Vs1],Vs2)-->pred,harrop_goal(G,Vs1,Vs2).
+harrop_goal(((H->V)->G),[V|Vs1],Vs3)-->pred,pred,
   harrop_goal(H,Vs1,Vs2),
   harrop_goal(G,Vs2,Vs3).
 
