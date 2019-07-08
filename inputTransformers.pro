@@ -185,6 +185,7 @@ toDisjBiCond(A<->B,R):-!,toDisjBiCond(A,X),toDisjBiCond(B,Y),R=(X<->Y).
 toDisjBiCond(~A,R):-!,toDisjBiCond(A,X),R = (~X).
 toDisjBiCond(A,A).
 
+cmints(A,MA):-cmints(A,H,Bs),unexpand(Bs,H,MA).
 
 cmints(A,H,Bs):-cmints(A,H,Bs,[]).
 

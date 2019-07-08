@@ -119,23 +119,7 @@ allSortedFullFormulas(N,T):-
 allTrimmedFormulas(N,T):-
   genTrimmedTree(N,T,Vs),
   natpartitions(Vs).
-
   
-
-unInhabitableTree(N,T):-
-  genSortedHorn(N,T,Vs),
-  \+ (
-    natpartitions(Vs),
-    hprove(T)
-  ).
-  
-unInhabitableVars(N,Vs):-N>0,
-  N1 is N-1,
-  vpartitions(N,Vs),natvars(Vs),
-  \+ (
-    genSortedHorn(N1,T,Vs),
-    hprove(T)
-  ).  
     
 % X combinator expressions
 

@@ -75,6 +75,10 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('harrop.pro').
 
+:-include('treeRanking.pro').
+
+:-include('inhab.pro').
+
 :-include('tools.pro').
 
 :-include('counts.pro').
