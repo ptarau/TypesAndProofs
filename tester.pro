@@ -175,6 +175,9 @@ test_probs18:-time(test_probs(hand_filter,ljxprove)).
 */
 test_probs19:-time(test_probs(fcube)).
 
+
+% test_probs20:-time(test_probs(bdprove)).
+
 % -----------------------
 
 bug17:-T=((0&1<->0)<->(0->1)),

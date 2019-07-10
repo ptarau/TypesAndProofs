@@ -145,7 +145,7 @@ preprocessor(looper,(=)).
 preprocessor(rprove,(toRandomHorn)).
 preprocessor(parProve,(=)).
 preprocessor(parProveHorn,toHorn).
-
+preprocessor(bdprove,(=)).
 
 nice_num(X,R):-R is (truncate(X*1000))/1000.
 
@@ -185,7 +185,7 @@ fbm(N,P):-
  
 good_full_prover(P):-
    assertion(memberchk(P,
-     [fc,dprove,xfprove,fmprove,faprove,fxprove,flprove,frprove,ffprove,fcprove,fdprove,alt_prove])).
+     [fc,dprove,xfprove,fmprove,faprove,fxprove,flprove,frprove,ffprove,fcprove,fdprove,alt_prove,bdprove])).
 
 fbm(N,P,Counts,Time=T2-T1):-
   good_full_prover(P),

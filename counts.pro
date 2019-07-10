@@ -242,10 +242,10 @@ tratio(D):-
 % 1,0,1,1,4,7,23,53,163,432,1306
 countUnInhabitableTree(M):-ncounts(M,unInhabitableTree(_,_)).
 
-% [0,1,1,4,9,30,122,528,2517,12951,71455]
+% 0,1,1,4,9,30,122,528,2517,12951,71455
 countUnInhabitableVars(M):-ncounts(M,unInhabitableVars(_,_)).
 
-% 1,0,1,1,5,11,41,120,421
+% 1,0,1,1,5,11,41,120,421,1381
 countUnInhabitableImplTree(M):-ncounts(M,unInhabitableImplTree(_,_)).
   
   
