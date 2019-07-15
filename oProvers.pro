@@ -73,3 +73,44 @@ is_conj((Y<->X)<->(X v Y),X,Y).
 
 */
 
+/*
+
+% tableau prover - Fitting - still buggy
+
+
+%ftprove(F):- \+ ((treduce([f(F)],Xs),ppp(Xs),open(Xs))).
+
+ftprove(F):- forall(
+  (treduce([f(F)],Xs)),
+  closed(Xs)
+).
+
+closed(Xs):-select(t(A),Xs,Ys),memberchk(f(A),Ys),!.
+
+
+%treduce([X|_],_):-ppp(X),fail.
+treduce([],[]).
+treduce([t(A)|Xs],[t(A)|Ys]):-atomic(A),treduce(Xs,Ys).
+treduce([f(A)|Xs],[f(A)|Ys]):-atomic(A),treduce(Xs,Ys).
+treduce([f(A->B)|Xs],Zs):-ftrim(Xs,Ys),treduce([t(A),f(B)|Ys],Zs).  
+treduce([t(A->_B)|Xs],Ys):-treduce([f(A)|Xs],Ys).
+treduce([t(_A->B)|Xs],Ys):-treduce([t(B)|Xs],Ys).
+
+
+ftrim([],[]).
+ftrim([f(_)|Xs],Ys):-ftrim(Xs,Ys).
+ftrim([t(X)|Xs],[t(X)|Ys]):-ftrim(Xs,Ys).
+
+% incmpleteness: should succeed
+ftbug:-ftprove((((0->1)->2)->1->2)).
+
+%is_closed(t(X),Xs):-memberchk(f(X),Xs).
+%is_closed(f(X),Xs):-memberchk(t(X),Xs).
+
+*/
+
+
+
+
+
+
