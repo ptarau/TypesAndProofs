@@ -1,3 +1,5 @@
+% other, possibly incorrect provers
+
 obprove(T):-oljb(T,[]).
 
 %oljb(A,Vs):-ppp((Vs-->A)),fail. % for trainig only
@@ -73,44 +75,68 @@ is_conj((Y<->X)<->(X v Y),X,Y).
 
 */
 
-/*
 
-% tableau prover - Fitting - still buggy
+% intuitionistic tableau prover - Fitting 1969
+% sound but apparently incomplete, at least when restricted
+% to implicational fragment - see following examples
+%  - possible bug in this implementation? 
 
+% should succeed
+rgo:-ftprove((((((0->1)->0)->0)->1)->1)).
+rgo1:-ftprove((0->((((1->2)->1)->1)->2)->2)).
+rgo2:-ftprove( (0->0->((((1->2)->1)->1)->2)->2)).
+rgo3:-ftprove((0->0->0->((((1->2)->1)->1)->2)->2)).
+rgo4:-ftprove((0->0->0->0->((((1->2)->1)->1)->2)->2)).
+rgo5:-ftprove((0->0->1->0->((((2->3)->2)->2)->3)->3)).
+rgo6:-ftprove((0->1->2->3->((((4->5)->4)->4)->5)->5)).
+rgo7:-ftprove(0->0->1->2->1->((((3->4)->3)->3)->4)->4).
+rgo8:-ftprove(0->1->2->3->4->((((5->6)->5)->5)->6)->6).
+rgo9:-ftprove(0->1->2->3->4->5->((((6->7)->6)->6)->7)->7).
 
-%ftprove(F):- \+ ((treduce([f(F)],Xs),ppp(Xs),open(Xs))).
-
-ftprove(F):- forall(
-  (treduce([f(F)],Xs)),
-  closed(Xs)
-).
-
-closed(Xs):-select(t(A),Xs,Ys),memberchk(f(A),Ys),!.
-
-
-%treduce([X|_],_):-ppp(X),fail.
-treduce([],[]).
-treduce([t(A)|Xs],[t(A)|Ys]):-atomic(A),treduce(Xs,Ys).
-treduce([f(A)|Xs],[f(A)|Ys]):-atomic(A),treduce(Xs,Ys).
-treduce([f(A->B)|Xs],Zs):-ftrim(Xs,Ys),treduce([t(A),f(B)|Ys],Zs).  
-treduce([t(A->_B)|Xs],Ys):-treduce([f(A)|Xs],Ys).
-treduce([t(_A->B)|Xs],Ys):-treduce([t(B)|Xs],Ys).
+unsound_ft(N,F):-allImpFormulas(N,F),ftprove(F),\+eprove(F).
 
 
-ftrim([],[]).
-ftrim([f(_)|Xs],Ys):-ftrim(Xs,Ys).
-ftrim([t(X)|Xs],[t(X)|Ys]):-ftrim(Xs,Ys).
-
-% incmpleteness: should succeed
-ftbug:-ftprove((((0->1)->2)->1->2)).
-
-%is_closed(t(X),Xs):-memberchk(f(X),Xs).
-%is_closed(f(X),Xs):-memberchk(t(X),Xs).
-
-*/
+incomplete_ft(N,F):-allImpFormulas(N,F),eprove(F),\+ftprove(F).
 
 
+% prover
+
+ftprove(X):-redstart(X,_Rss),!.
+
+redstart(X,Rss):-redloop([[f:X]],Rss).
+
+redend(Fss):-
+ forall(
+    member(Fs,Fss),
+    closed(Fs)
+ ).
+
+closed(Xs):-select(t:A,Xs,Ys),memberchk(f:A,Ys),!. 
+  
+redloop(Fss,Rss):-%ppp(Fss),
+  redend(Fss),!,Rss=Fss.
+redloop(Fss,Rss):-redstep(Fss,Gss),redloop(Gss,Rss).
+
+redstep(Fss,Hss):-
+  select(Fs,Fss,Gss),
+  select(X,Fs,Xs),
+  ( X=f:(A->B),trim_fs(Xs,TXs),Gs=[t:A,f:B|TXs],Hss=[Gs|Gss]
+  ; X=t:(A->B),Gs1=[f:A|Xs],Gs2=[t:B|Xs],Hss=[Gs1,Gs2|Gss]
+  ).
+  
+trim_fs([],[]).
+trim_fs([f:_|Xs],Ys):-trim_fs(Xs,Ys).
+trim_fs([t:X|Xs],[t:X|Ys]):-trim_fs(Xs,Ys).
 
 
+% using this breaks soundess 
+trim_fs([],[],_).
+trim_fs([f:(A->B)|Xs],[f:(A->B)|Ys],(f:(A->_))):-!,
+  atomic(A),atomic(B),
+  ppp(A->B),
+  trim_fs(Xs,Ys,f:(A->B)).
+trim_fs([f:X|Xs],Ys,Y):-ppp(trim=X),trim_fs(Xs,Ys,Y).
+trim_fs([t:X|Xs],[t:X|Ys],Y):-trim_fs(Xs,Ys,Y).
 
-
+  
+  
