@@ -120,7 +120,7 @@ thread_stop(Id):-catch(
  
 ljfp(T):-ljfp(T,[]),!.
  
-%jfp(A,Vs):-ppp(ljfp:(Vs-->A)),fail. % fo traing only
+%jfp(A,Vs):-ppp(ljfp:(Vs-->A)),fail. % for tracing only
 
 ljfp(_A,_Vs):-mustStop,!,timeout.
 
