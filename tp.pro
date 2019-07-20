@@ -11,10 +11,10 @@ c:-['tp.pro']. % quick iteractive reloader
 :-op(30,xfx,to).
 
 :- op(100,  fx,  (?) ). 
-:- op(425,  fy,  ~ ).
-:- op(450, xfy,  & ).    % right associative
-:- op(475, xfy,  v ).    % right associative
-:- op(500, xfx,  <-> ).  % non associative
+:- op(525,  fy,  ~ ).
+:- op(550, xfy,  & ).    % right associative
+:- op(575, xfy,  v ).    % right associative
+:- op(600, xfx,  <-> ).  % non associative
 %:- op(500, xfy,  ->).    % right associative  
 %%% WARNING, this overwrites Prolog's ->
                
@@ -74,6 +74,8 @@ c:-['tp.pro']. % quick iteractive reloader
 :-include('circSynt.pro').
 
 :-include('harrop.pro').
+
+:-include('k.pro'). % experiments with embedding an epistemic operator
 
 :-include('treeRanking.pro').
 

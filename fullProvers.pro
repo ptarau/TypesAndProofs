@@ -45,11 +45,7 @@ faprove1(T0,Vs0):-
   !.
 
   
-faprove(T0):-
-  expand_full_neg(T0,T),
-  %ppp(here=T),
-  ljfa(T,[]),
-  !.    
+  
 
 fxprove(T0):-
   simplify(T0,T1),
@@ -70,7 +66,14 @@ spy(Mes,T,Vs):-
 	  ppp(done),
 		abort
 	).	
-	    
+
+
+faprove(T0):-
+  expand_full_neg(T0,T),
+  %ppp(here=T),
+  ljfa(T,[]),
+  !.    
+  
 ljfa(T):-  ljfa(T,[]).
 
 %ljfa(G,Vs):-spy('ljf',G,Vs),fail.
