@@ -143,22 +143,35 @@ genOpTree(N,Ops,Tree,Leaves):-
   genTree(Ops,Tree,N,0,Leaves,[]).
 
 genTree(_,V,N,N)-->[V].
+genTree(Ops,OpA,SN1,N2)-->
+  { SN1>0,N1 is SN1-1,
+    member(Op/1,Ops),make_op1(Op,A,OpA)
+  },
+  genTree(Ops,A,N1,N2).
 genTree(Ops,OpAB,SN1,N3)-->
   { SN1>0,N1 is SN1-1,
-    member(Op,Ops),make_op(Op,A,B,OpAB)
+    member(Op,Ops),atomic(Op), % by default, Ops have arity 2
+    make_op(Op,A,B,OpAB)
   },
   genTree(Ops,A,N1,N2),
   genTree(Ops,B,N2,N3).
   
 genNegTree(_,NegV,N1,N2)-->[V],{add_neg_ops(V,NegV,N1,N2)}.
+genNegTree(Ops,OpA,SN1,N2)-->
+  { SN1>0,N1 is SN1-1,
+    member(Op/1,Ops),make_op1(Op,A,OpA)
+  },
+  genNegTree(Ops,A,N1,N2).
 genNegTree(Ops,NegOpAB,SN1,N4)-->
   { SN1>0,N1 is SN1-1,
-    member(Op,Ops),make_op(Op,A,B,OpAB)
+    member(Op,Ops),atomic(Op),make_op(Op,A,B,OpAB)
   },
   genNegTree(Ops,A,N1,N2),
   genNegTree(Ops,B,N2,N3),
   {add_neg_ops(OpAB,NegOpAB,N3,N4)}.
-  
+ 
+make_op1(Op,A,OpA):-functor(OpA,Op,1),arg(1,OpA,A).  
+
 make_op(Op,A,B,OpAB):-functor(OpAB,Op,2),arg(1,OpAB,A),arg(2,OpAB,B).
 
 

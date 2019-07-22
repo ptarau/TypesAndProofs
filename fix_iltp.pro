@@ -285,6 +285,8 @@ file2db(F):-Db=prob,
 %map_operator(f,R)-->{!,R=false}.
 
 map_operators(A,B):-map_operator([
+  (#)-(box),
+  (*)-(diam),
   (&)-(,),
   (v)-(;),
   (<->)-(<=>),
