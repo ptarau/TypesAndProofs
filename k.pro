@@ -1,4 +1,4 @@
-
+% discovery of epistemic and alethic logic extensions
 :- op( 500,  fy, #).   
 :- op( 500,  fy, *).
 
@@ -25,7 +25,7 @@ expand_defs(_,false,R) :-!,R=false.
 expand_defs(_,true,R) :-!,R=true.
 expand_defs(_,A,R) :-atomic(A),!,R= A.
 expand_defs(D,~(A),(B->false)) :-!,expand_defs(D,A,B).
-expand_defs(D,* A,R):-!,expand_defs(D,~ (# (~ A)),R).
+expand_defs(D,* A,R):-!,expand_defs(D,~ (# (~ (A))),R).
 
 expand_defs(D,#(X),R) :-!,copy_term(D,(#(X):-T)),
   %ppp(D+here(X)=T),
@@ -39,118 +39,130 @@ expand_defs(D,A,B) :-
 expand_def_list(_,[],[]).
 expand_def_list(D,[X|Xs],[Y|Ys]) :-expand_defs(D,X,Y),expand_def_list(D,Xs,Ys).
 
-kaprove(D,T0) :-
+iel_prove(D,T0) :-
   %ppp(t0=T0),
   expand_defs(D,T0,T1),
   %ppp(t1=T1),
   ljfa(T1,[]).
   
-k_synt(D):-
-  genDef(D),
+def_synth(M,D):-def_synth(M,iel_th,iel_nth,D).
+
+def_synth(M,Th,NTh,D):-
+  genDef(M,D),
   %ppp(D),
-  forall(thk(T),kaprove(D,T)),
-  %forall(thk(T),kaprove(D,#T)), % necessitation rule would fail
-  forall(nthk(NT), \+kaprove(D,NT)).
+  forall(call(Th,T),iel_prove(D,T)),
+  %forall(iel_th(T),iel_prove(D,#T)), % necessitation rule would fail
+  forall(call(NTh,NT), \+iel_prove(D,NT)).
 
-/* assuming an S4 prover modprove
-m_synt(D):-
-  genDef(D),
-  %ppp(D),
-  forall(genModForms(2,T),kaprove(D,T)),
-  forall(nthk(NT), \+kaprove(D,NT)).
+
   
-gen_mod_th(M,T):-genModForms(M,T),
-  ppp(T),
-  modprove(T).
-*/
-
-/*
-thk(# a -> a).
-thk(# (a->b) -> (# a -> # b)). 
-thk(# a <-> # # a).
-thk(* * a <-> * a).
-thk(a -> * a).
-thk(# a -> * a).
-
-thk(# a v # b -> # (a v b)). 
-thk(# (a v b) -> # a v # b). 
-
-nthk(# a).
-nthk(~ (# a)).
-nthk(# false).
-nthk(* false).
-nthk(* a -> # * a).
-nthk(a -> # a).
-nthk(* a -> a).
-nthk(# a <-> ?).
-nthk(* a <-> ?).
-*/
   
-% some theorems
+% IEL embedding
+
 % IEL- axioms
-thk(a -> # a).
-thk(# (a->b)->(# a-> # b)).
-thk(# p <-> # # p).
+iel_th(a -> # a).
+iel_th(# (a->b)->(# a-> # b)).
+iel_th(# p <-> # # p).
 
 % IEL axiom
-thk(# a -> ~ ~ a).
+iel_th(# a -> ~ ~ a).
 
 % some theorems
-thk(#   (a & b) <-> (# a & # b)).
-thk(~ # false).
-thk(~ (# a & ~ a)).
-thk(~a -> ~ # a).
-thk( ~ ~ (# a -> a)).
+iel_th(#   (a & b) <-> (# a & # b)).
+iel_th(~ # false).
+iel_th(~ (# a & ~ a)).
+iel_th(~a -> ~ # a).
+iel_th( ~ ~ (# a -> a)).
 
 % some other
-thk(# a & # (a->b) -> # b).
-thk(# a -> ~ # (~ a)).
+iel_th(# a & # (a->b) -> # b).
+iel_th(# a -> ~ # (~ a)).
 
-thk(* (a & b) <-> (* a & * b)).
+iel_th(* (a & b) <-> (* a & * b)).
 
-thk(# a -> * a).
-thk(# a v # b -> # (a v b) ).
-thk(* a <-> * * a).
+iel_th(# a -> * a).
+iel_th(# a v # b -> # (a v b) ).
+iel_th(* a <-> * * a).
 
 % should fail
-nthk(# a -> a).
-nthk(# (a v b) -> # a v # b).
+iel_nth(# a -> a).
+iel_nth(# (a v b) -> # a v # b).
 
-nthk(# a).
-nthk(~ (# a)).
-nthk(# false).
-nthk(# a).
-nthk(~ (# a)).
-nthk(* false).
+iel_nth(# a).
+iel_nth(~ (# a)).
+iel_nth(# false).
+iel_nth(# a).
+iel_nth(~ (# a)).
+iel_nth(* false).
 
-kgo:-
+iel_nec_th(T):-iel_th(T).
+iel_nec_th(# T):-iel_th(T).
+
+% S4 embedding
+
+s4_th(# a -> a).
+s4_th(# (a->b) -> (# a -> # b)). 
+s4_th(# a <-> # # a).
+s4_th(* * a <-> * a).
+s4_th(a -> * a).
+s4_th(# a -> * a).
+
+s4_th(# a v # b -> # (a v b)). 
+s4_th(# (a v b) -> # a v # b). 
+
+s4_nth(# a).
+s4_nth(~ (# a)).
+s4_nth(# false).
+s4_nth(* false).
+s4_nth(* a -> # * a).
+s4_nth(a -> # a).
+s4_nth(* a -> a).
+s4_nth(# a <-> ?).
+s4_nth(* a <-> ?).
+
+s4_nec_th(T):-s4_th(T).
+s4_nec_th(# T):-s4_th(T).
+
+% discovery of IEL formula definitions
+iel_discover:-
+   do((def_synth(2,iel_th,iel_nth,D),ppp(D))).
+ 
+iel_nec_discover:-
+  do((def_synth(2,iel_nec_th,iel_nth,D),ppp(D))).   
+   
+% test of the most interesting descovered formula 
+iel_test:-
    %Def=(#X :- X & (?)),
    Def=(#A:-(A->(?))->A),
    ppp('theorems'),
    do((
-     thk(T),write(T),
+     iel_th(T),write(T),
      %expand_defs(Def,T,ET),write('==>'),write(ET),
-     (kaprove(Def,T)->write(' :: expected to be PROVEN');true),
+     (iel_prove(Def,T)->write(' :: expected to be PROVEN');true),
      nl
    )),
    nl,
    ppp('necessitation rule: if proven A then #A'),
    do((
-     thk(T0),T= #T0,write(T),
+     iel_th(T0),T= #T0,write(T),
      %expand_defs(Def,T,ET),write('==>'),write(ET),
-     (kaprove(Def,T)->write(' :: expected to be PROVEN');true),
+     (iel_prove(Def,T)->write(' :: expected to be PROVEN');true),
      nl
      )),
    nl,
    ppp('non-theorems'),
    do((
-     nthk(T),write(T),
+     iel_nth(T),write(T),
      %expand_defs(Def,T,ET),write('==>'),write(ET),
-     (\+kaprove(Def,T)->write(' :: proof expected to FAIL');true),
+     (\+iel_prove(Def,T)->write(' :: proof expected to FAIL');true),
      nl
    )).
    
-   
+s4_discover:-
+  do((def_synth(2,s4_th,s4_nth,D),ppp(D))).   
+  
+s4_nec_discover:-
+  do((def_synth(3,s4_nec_th,s4_nth,D),ppp(D))).   
    
    
    
