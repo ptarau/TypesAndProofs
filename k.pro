@@ -5,21 +5,16 @@
 
 genDef(Def):-genDef(2,Def).
 
-genDef(M,Def):-genDef(M,[->,&,v],[false,?],Def).
+genDef(M,Def):-genDef(M,[(->)/2,(&)/2,(v)/2],[false,?],Def).
 
 genDef(M,Ops,Cs,(#(X):-T)):-
   between(0,M,N),
-  genOpTree(N,Ops,T,Vs),
+  genOperatorTree(N,Ops,T,Vs),
   pick_leaves(Vs,[X|Cs]),
   term_variables(Vs,[X]).
    
 pick_leaves([],_).
 pick_leaves([V|Vs],Ls):-member(V,Ls),pick_leaves(Vs,Ls).
-
-genModForms(M,T):-
-  between(0,M,N),
-  genOpTree(N,[(#)/1,(*)/1,&,v,->,<->,~],T,Vs),
-  natvars(Vs).
 
 expand_defs(_,false,R) :-!,R=false.
 expand_defs(_,true,R) :-!,R=true.
@@ -76,7 +71,6 @@ iel_th( ~ ~ (# a -> a)).
 
 % some other
 iel_th(# a & # (a->b) -> # b).
-iel_th(# a -> ~ # (~ a)).
 
 iel_th(* (a & b) <-> (* a & * b)).
 
@@ -84,8 +78,11 @@ iel_th(# a -> * a).
 iel_th(# a v # b -> # (a v b) ).
 iel_th(* a <-> * * a).
 
+iel_th(a -> *a). % discuss this
+
 % should fail
 iel_nth(# a -> a).
+
 iel_nth(# (a v b) -> # a v # b).
 
 iel_nth(# a).
@@ -94,6 +91,8 @@ iel_nth(# false).
 iel_nth(# a).
 iel_nth(~ (# a)).
 iel_nth(* false).
+
+%iel_nth(* a -> # a).
 
 iel_nec_th(T):-iel_th(T).
 iel_nec_th(# T):-iel_th(T).
@@ -162,12 +161,34 @@ s4_discover:-
   do((def_synth(2,s4_th,s4_nth,D),ppp(D))).   
   
 s4_nec_discover:-
-  do((def_synth(3,s4_nec_th,s4_nth,D),ppp(D))).   
+  do((def_synth(2,s4_nec_th,s4_nth,D),ppp(D))).   
    
    
-   
-   
-   
+% helpers
+  
+
+
+genOperatorTree(N,Ops,Tree,Leaves):-
+  genOperatorTree(Ops,Tree,N,0,Leaves,[]).
+    
+genOperatorTree(_,V,N,N)-->[V].
+genOperatorTree(Ops,OpA,SN1,N2)-->
+  { SN1>0,N1 is SN1-1,
+    member(Op/1,Ops),make_oper1(Op,A,OpA)
+  },
+  genOperatorTree(Ops,A,N1,N2).
+genOperatorTree(Ops,OpAB,SN1,N3)-->
+  { SN1>0,N1 is SN1-1,
+    member(Op/2,Ops),make_oper2(Op,A,B,OpAB)
+  },
+  genOperatorTree(Ops,A,N1,N2),
+  genOperatorTree(Ops,B,N2,N3).
+  
+make_oper1(Op,A,OpA):-functor(OpA,Op,1),arg(1,OpA,A).  
+
+make_oper2(Op,A,B,OpAB):-functor(OpAB,Op,2),arg(1,OpAB,A),arg(2,OpAB,B).
+
+
    
    
    
