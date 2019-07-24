@@ -75,7 +75,7 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('harrop.pro').
 
-:-include('k.pro'). % experiments with embedding an epistemic operator
+:-include('ieltp.pro'). % experiments with embedding an epistemic operator
 
 :-include('treeRanking.pro').
 
