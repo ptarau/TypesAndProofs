@@ -72,7 +72,9 @@ expand_def_list(D,[X|Xs],[Y|Ys]) :-
   expand_defs(D,X,Y),
   expand_def_list(D,Xs,Ys).
 
-prove_with_def(Def,T0) :-expand_defs(Def,T0,T1),prove_in_ipc(T1,[]).
+%prove_with_def(Def,T0) :-expand_defs(Def,T0,T1),prove_in_ipc(T1,[]).
+
+prove_with_def(Def,T0) :-expand_defs(Def,T0,T1),dprove(T1).
 
 def_synth(M,D):-def_synth(M,iel_th,iel_nth,D).
 
@@ -174,3 +176,5 @@ s4_discover:-
 s4_nec_discover:-
   backtrack_over((def_synth(2,s4_nec_th,s4_nth,D),println(D))). 
 
+mk(0,X,X).
+mk(SN,X, ~ (* (~Y))):-succ(N,SN),mk(N,X,Y).
