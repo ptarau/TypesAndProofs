@@ -21,7 +21,7 @@ prove_in_ipc_reduce((A->B),_,Vs1,Vs2):-!,prove_in_ipc_imp(A,B,Vs1,Vs2).
 prove_in_ipc_reduce((A & B),_,Vs,[A,B|Vs]):-!.
 prove_in_ipc_reduce((A<->B),_,Vs,[(A->B),(B->A)|Vs]):-!.
 prove_in_ipc_reduce((A v B),G,Vs,[B|Vs]):-prove_in_ipc(G,[A|Vs]).
-  
+
 prove_in_ipc_imp((C->D),B,Vs,[B|Vs]):-!,prove_in_ipc((C->D),[(D->B)|Vs]).
 prove_in_ipc_imp((C & D),B,Vs,[(C->(D->B))|Vs]):-!.
 prove_in_ipc_imp((C v D),B,Vs,[(C->B),(D->B)|Vs]):-!.
@@ -72,9 +72,7 @@ expand_def_list(D,[X|Xs],[Y|Ys]) :-
   expand_defs(D,X,Y),
   expand_def_list(D,Xs,Ys).
 
-%prove_with_def(Def,T0) :-expand_defs(Def,T0,T1),prove_in_ipc(T1,[]).
-
-prove_with_def(Def,T0) :-expand_defs(Def,T0,T1),dprove(T1).
+prove_with_def(Def,T0) :-expand_defs(Def,T0,T1),prove_in_ipc(T1,[]).
 
 def_synth(M,D):-def_synth(M,iel_th,iel_nth,D).
 
@@ -149,9 +147,9 @@ iel_prove(P):-prove_with_def((#A :- (A -> eureka) -> A),P).
 
 s4_th(# a -> a).
 s4_th(# (a->b) -> (# a -> # b)). 
-s4_th(# a <-> # # a).
-s4_th(* * a <-> * a).
+s4_th(# a -> # # a).
 
+s4_th(* * a <-> * a).
 s4_th(a -> * a).
 s4_th(# a -> * a).
 s4_th(# a v # b -> # (a v b)). 
@@ -161,7 +159,7 @@ s4_nth(# a).
 s4_nth(~ (# a)).
 s4_nth(# false).
 s4_nth(* false).
-s4_nth(* a -> # * a).
+s4_nth(* a -> # * a). % true only in S5
 s4_nth(a -> # a).
 s4_nth(* a -> a).
 s4_nth(# a <-> ?).
@@ -176,5 +174,3 @@ s4_discover:-
 s4_nec_discover:-
   backtrack_over((def_synth(2,s4_nec_th,s4_nth,D),println(D))). 
 
-mk(0,X,X).
-mk(SN,X, ~ (* (~Y))):-succ(N,SN),mk(N,X,Y).
