@@ -32,7 +32,7 @@ unInhabitableTree(N,T):-
     hprove(T)
   ).
 
-  
+  sprove
 % partition of variables, such that no tree
 % labeled with them is inhabitable
 unInhabitableVars(N,Vs):-N>0,
