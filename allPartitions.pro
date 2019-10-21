@@ -1,5 +1,7 @@
 % partitions with variables replaced with natural numbers
-natpartitions(Vs):-
+natpartitions(Vs):-natpartitions(Vs,_Ns).
+
+natpartitions(Vs,Ns):-
    mpart_of(Vs,Ns),
    length(Ns,SL),
    succ(L,SL),
