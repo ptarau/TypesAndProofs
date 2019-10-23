@@ -75,24 +75,35 @@ abduce_for2(P,T0,Hyps):-
   ksubset(K,Arrs,Hyps),
   call(P,(T:-Hyps)).
   
+abduce_impl(N):-
+  Generator=genTree,Prover=eprove,
+  abduce_atomics(N,Generator,Prover).
 
-abtest(N,P):-
-  N1 is N-1,
-  genTree(N, T, Vs),
-  natpartitions(Vs,Us),  
-  %ppp(Us),
-  select(G,Us,OtherUs),
-  %\+call(P,(T->G)),
-  once((
-    between(0,N1,K),
-    ksubset(K,OtherUs,SomeUs),
-    list2impl(SomeUs,T->G,Abduced),
-    %ppp(Us:T->G),
-    call(P,Abduced)
-  )),
-  %ppp(Us->T->G),
-  ppp(SomeUs:(T->G)),
+abduce_full(N):-
+  Generator=genOpTree,Prover=faprove,
+  abduce_atomics(N,Generator,Prover).
+  
+abduce_atomics(N,Generator,Prover):-
+  call(Generator,N, T, Vs),
+  natpartitions(Vs,Us),% length(Us,Len),  
+  (
+    abduce_with_prover(Prover,G,T,Us,Assumptions,NewT)->
+    ( Assumptions=[]->ppp(tautology:T)
+    ; ppp(Assumptions:(NewT->G))
+    )
+  ; ppp(unabducible:T)
+  ),
   fail.
+
+abduce_with_prover(Prover,G,T,Us,Assumptions,NewT):-
+  length(Us,N),N1 is N-1,
+  select(G,Us,OtherUs),
+  between(0,N1,K),
+  ksubset(K,OtherUs,Assumptions),
+  list2impl(Assumptions,T->G,NewT),
+  %ppp(Us:T->G),
+  call(Prover,NewT).
+
   
 list2impl([],G,G).
 list2impl([X|Xs],G,(X->R)):-list2impl(Xs,G,R).
