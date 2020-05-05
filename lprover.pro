@@ -28,7 +28,7 @@ Catalan(N)*Bell(N+1) formula trees
 
 */
 
-% generators for linear, affine and intiotionistic taultologies
+% generators for linear, affine and intuitionistic tautologies
 % together with their proof terms
 
 generate_linear(N,T,Proof):-allImpFormulas(N,T),prove_linear(Proof,T).
@@ -142,12 +142,12 @@ mplace_element(_,X,Zs,[X|Zs]).
 
 % tools
 
-ppp(X):-numbervars(X,0,_),writeln(X);fail.
+%ppp(X):-numbervars(X,0,_),writeln(X);fail.
 
 % stats
 
 % counts nb. of solutions of Goal 
-sols(Goal, Times) :-
+sols_count(Goal, Times) :-
         Counter = counter(0),
         (   Goal,
             arg(1, Counter, N0),
@@ -158,7 +158,7 @@ sols(Goal, Times) :-
         ).
 
 counts_for(M,Generator,Ks):-
-  findall(K,(between(0,M,L),sols(call(Generator,L,_,_),K)),Ks).
+  findall(K,(between(0,M,L),sols_count(call(Generator,L,_,_),K)),Ks).
   
 % count linear, affine, and intuitionistic tautologies of up to size 7
 
@@ -166,7 +166,20 @@ lin_counts(Ks):-counts_for(7,generate_linear,Ks).
 aff_counts(Ks):-counts_for(7,generate_affine,Ks).
 intuit_counts(Ks):-counts_for(7,generate_intuitionist,Ks).
 
+:-include('stats.pro').
+
 go:-generate_linear(5,T,Proof),ppp(formula=T),ppp(proof_term=Proof),nl,fail;true.
+
+tgo(N):-
+  generate_linear(N,T,Proof),
+  ppp(formula=T),
+  ppt(T),
+  namevars(Proof,Proof1),
+  ppp(proof_term=Proof1),
+  ppt(Proof1),
+  nl,fail
+; true.
+
 
 /*
 ?- go.
