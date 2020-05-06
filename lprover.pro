@@ -140,6 +140,50 @@ mcomplement_of(U,[X|Xs],NewZs):-
 mplace_element(U,U,Zs,Zs).
 mplace_element(_,X,Zs,[X|Zs]).
 
+% linear and affine generators
+
+z(SN,N):-succ(N,SN).
+
+
+% counted bu A281270
+affine(N,X,T):-affine(X,[],N,0),type_of(X,T).
+
+affine(X,Vs)-->{member(V,Vs),var(V),V=v(X)}.
+affine(l(X,E),Vs)-->z,affine(E,[V|Vs]),{V=v(X)}.
+affine(a(A,B),Vs)-->z,z,affine(A,Vs),affine(B,Vs).
+
+
+% counted by A062980
+linear(N,X,T):-linear(X,[],N,0),type_of(X,T).
+
+linear(X,Vs)-->{member(V,Vs),var(V),V=v(X)}.
+linear(l(X,E),Vs)-->z,linear(E,[V|Vs]),{nonvar(V),V=v(X)}.
+linear(a(A,B),Vs)-->z,z,linear(A,Vs),linear(B,Vs).
+
+% computes type of an linear of affine expression X
+type_of(X,T):-type_of(X,T,[]).
+
+type_of(X,T,Vs):-var(X),!,member(X0:T,Vs),X==X0.
+type_of(l(X,A),(S->T),Vs):-type_of(A,T,[X:S|Vs]).
+type_of(a(A,B),T,Vs):-type_of(A,(S->T),Vs),type_of(B,S,Vs).
+
+% TODO - fold generation and type inference into one
+% TODO - extend to BCK and BCI algebras
+% TODO - use actual B,C,I,K combinators instead of lambda terms
+% NOTE: for counting, no need to build term or type !
+
+% generate combinator trees, infer their types - all typable !
+
+/*
+% unnecessary - no cycles can form !
+type_of(X,T0,Vs):-var(X),!,
+   member(X0:T,Vs),X==X0,
+   unify_with_occurs_check(T0,T),
+   T0=T.
+type_of(l(X,A),(S->T),Vs):-type_of(A,T,[X:S|Vs]).
+type_of(a(A,B),T,Vs):-type_of(A,(S->T),Vs),type_of(B,S,Vs).
+*/
+
 % tools
 
 %ppp(X):-numbervars(X,0,_),writeln(X);fail.
@@ -165,6 +209,10 @@ counts_for(M,Generator,Ks):-
 lin_counts(Ks):-counts_for(7,generate_linear,Ks).  
 aff_counts(Ks):-counts_for(7,generate_affine,Ks).
 intuit_counts(Ks):-counts_for(7,generate_intuitionist,Ks).
+
+lin_gen_counts(Ks):-counts_for(7,linear,Ks).  
+
+aff_gen_counts(Ks):-counts_for(7,affine,Ks).
 
 :-include('stats.pro').
 
