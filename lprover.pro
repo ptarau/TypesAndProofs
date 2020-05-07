@@ -209,7 +209,7 @@ typed_nf_no_left_lambda(a(A,B),Q,Ps)-->pred,pred,
 
 agrees(P,Ps,N,N):-member(Q,Ps),unify_with_occurs_check(P,Q).
 
-% TODO - fold generation and type inference into one
+% TODO - fold generation and type inference into one - done for ND
 % TODO - extend to BCK and BCI algebras
 % TODO - use actual B,C,I,K combinators instead of lambda terms
 % NOTE: for counting, no need to build term or type !
@@ -358,4 +358,85 @@ proof_term=l(A,A)
 
 true.
 
+
+
+linear_nf(4,X,T),ppt(X),ppt(T),writeln('---------'),nl,fail.
+   l
+  _|_
+ /   \
+ X    l
+     _|
+    /  \
+    Y   a
+        |
+       / \
+       Y  X
+
+
+   ->
+  __|_
+ /    \
+ X    ->
+      _|_
+     /   \
+    ->    Y
+     |
+    / \
+    X  Y
+
+
+---------
+
+   l
+  _|_
+ /   \
+ X    l
+     _|
+    /  \
+    Y   a
+        |
+       / \
+       X  Y
+
+
+    ->
+   __|_
+  /    \
+ ->    ->
+  |     |
+ / \   / \
+ X  Y  X  Y
+
+
+---------
+
+   l
+  _|_
+ /   \
+ X    a
+     _|
+    /  \
+    X   l
+        |
+       / \
+       Y  Y
+
+
+      ->
+     __|_
+    /    \
+   ->     Y
+   _|_
+  /   \
+ ->    Y
+  |
+ / \
+ X  X
+
+
+---------
+
+false.
+
+?- 
 */
