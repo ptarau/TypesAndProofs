@@ -142,30 +142,72 @@ mplace_element(_,X,Zs,[X|Zs]).
 
 % linear and affine generators
 
-z(SN,N):-succ(N,SN).
+pred(SX,X):-succ(X,SX).
 
-
-% counted bu A281270
+% counted by https://oeis.org/A281270
 affine(N,X,T):-affine(X,[],N,0),type_of(X,T).
 
 affine(X,Vs)-->{member(V,Vs),var(V),V=v(X)}.
-affine(l(X,E),Vs)-->z,affine(E,[V|Vs]),{V=v(X)}.
-affine(a(A,B),Vs)-->z,z,affine(A,Vs),affine(B,Vs).
+affine(l(X,E),Vs)-->pred,affine(E,[V|Vs]),{V=v(X)}.
+affine(a(A,B),Vs)-->pred,pred,affine(A,Vs),affine(B,Vs).
 
 
-% counted by A062980
+% counted by https://oeis.org/A062980
 linear(N,X,T):-linear(X,[],N,0),type_of(X,T).
 
 linear(X,Vs)-->{member(V,Vs),var(V),V=v(X)}.
-linear(l(X,E),Vs)-->z,linear(E,[V|Vs]),{nonvar(V),V=v(X)}.
-linear(a(A,B),Vs)-->z,z,linear(A,Vs),linear(B,Vs).
+linear(l(X,E),Vs)-->pred,linear(E,[V|Vs]),{nonvar(V),V=v(X)}.
+linear(a(A,B),Vs)-->pred,pred,linear(A,Vs),linear(B,Vs).
 
-% computes type of an linear of affine expression X
+% computes type of a linear or affine expression X
 type_of(X,T):-type_of(X,T,[]).
 
 type_of(X,T,Vs):-var(X),!,member(X0:T,Vs),X==X0.
 type_of(l(X,A),(S->T),Vs):-type_of(A,T,[X:S|Vs]).
 type_of(a(A,B),T,Vs):-type_of(A,(S->T),Vs),type_of(B,S,Vs).
+
+% 1,2,3,7,17,36,93,269,723,2085,6583,20271,63867,213994,718043,2431211
+% not yet in OEIS
+affine_nf(N,X,T):-affine_nf(X,T,[],N,0).
+
+affine_nf(l(X,E),(P->Q),Ps)-->pred,affine_nf(E,Q,[V:P|Ps]),{V=v(X)}.  
+affine_nf(X,P,Ps)-->affine_nf_no_left_lambda(X,P,Ps).
+
+affine_nf_no_left_lambda(X,P,[Y:Q|Ps])--> agrees_and_binds(X:P,[Y:Q|Ps]).
+affine_nf_no_left_lambda(a(A,B),Q,Ps)-->pred,pred,
+affine_nf_no_left_lambda(A,(P->Q),Ps),
+  affine_nf(B,P,Ps).
+
+agrees_and_binds(X:P,Ps,N,N):-
+  member(V:Q,Ps),
+  var(V),
+  V=v(X),
+  P=Q.
+
+% https://oeis.org/A262301
+linear_nf(N,X,T):-linear_nf(X,T,[],N,0).
+
+linear_nf(l(X,E),(P->Q),Ps)-->pred,linear_nf(E,Q,[V:P|Ps]),lin_confirms(X,V).  
+linear_nf(X,P,Ps)-->linear_nf_no_left_lambda(X,P,Ps).
+
+linear_nf_no_left_lambda(X,P,[Y:Q|Ps])--> agrees_and_binds(X:P,[Y:Q|Ps]).
+linear_nf_no_left_lambda(a(A,B),Q,Ps)-->pred,pred,
+  linear_nf_no_left_lambda(A,(P->Q),Ps),
+  linear_nf(B,P,Ps).
+
+lin_confirms(X,V,N,N):-nonvar(V),V=v(X).
+
+typed_nf(N,X:T):-typed_nf(X,T,[],N,0).
+
+typed_nf(l(X,E),(P->Q),Ps)-->pred,typed_nf(E,Q,[X:P|Ps]).  
+typed_nf(X,P,Ps)-->typed_nf_no_left_lambda(X,P,Ps).
+
+typed_nf_no_left_lambda(X,P,[Y:Q|Ps])--> agrees(X:P,[Y:Q|Ps]).
+typed_nf_no_left_lambda(a(A,B),Q,Ps)-->pred,pred,
+  typed_nf_no_left_lambda(A,(P->Q),Ps),
+  typed_nf(B,P,Ps).
+
+agrees(P,Ps,N,N):-member(Q,Ps),unify_with_occurs_check(P,Q).
 
 % TODO - fold generation and type inference into one
 % TODO - extend to BCK and BCI algebras
@@ -183,6 +225,8 @@ type_of(X,T0,Vs):-var(X),!,
 type_of(l(X,A),(S->T),Vs):-type_of(A,T,[X:S|Vs]).
 type_of(a(A,B),T,Vs):-type_of(A,(S->T),Vs),type_of(B,S,Vs).
 */
+
+
 
 % tools
 
