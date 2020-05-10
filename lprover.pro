@@ -64,6 +64,27 @@ ljs_imp(E,A,_,Vs):-memberchk(E:A,Vs).
 head_of(_->B,G):-!,head_of(B,G).
 head_of(G,G). 
 
+/*
+% NOT WORKING !!!
+% not all are linear
+prove_lpc(X,T):-ljl(X,T,[],[]).
+
+ljl(X,A,Vs1,Vs2):-select(X:A,Vs1,Vs2),!. % leaf variable
+
+ljl(l(X,E),(A->B),Vs1,Vs2):-!,ljl(E,B,[X:A|Vs1],Vs2).  % lambda term
+
+ljl(E,G,Vs1,Vs4):- 
+  select(S:(A->B),Vs1,Vs2),   % source of application
+  ljl_imp(T,A,B,Vs2,Vs3),         % target of application
+  !,
+  ljl(E,G,[a(S,T):B|Vs3],Vs4).    % application
+  
+ljl_imp(l(X,E),(C->D),B,Vs1,Vs2):-!,ljl(E,(C->D),[X:(D->B)|Vs1],Vs2).
+ljl_imp(E,A,_,Vs1,Vs2):-select(E:A,Vs1,Vs2),!. 
+
+*/
+
+
 % extracts leaf variables and their lambda binders
 % from a proof term
 vars_of(T,Vs,Xs):-vars_of(T,Vs,[],Xs,[]).
@@ -89,6 +110,7 @@ is_affine(LambdaTerm):-
   length(Us,LenUniques),
   LenUniques =:= LenAll.
 
+/*
 % tests that a lambda term is linear
 is_linear(LambdaTerm):-
   vars_of(LambdaTerm,Vars,Binders),
@@ -98,6 +120,7 @@ is_linear(LambdaTerm):-
   LenUniques =:= LenAll,
   sort(Binders,Sorted),
   Sorted==Us.
+*/
 
 % all implicational logic formulas of size N
 % A289679		a(n) = Catalan(n-1)*Bell(n).
@@ -153,11 +176,19 @@ affine(a(A,B),Vs)-->pred,pred,affine(A,Vs),affine(B,Vs).
 
 
 % counted by https://oeis.org/A062980
+% generated 0,1,0,0,5,0,0,60,0,0,1105,0,0,27120,0,0,828250,0,0,30220800
 linear(N,X,T):-linear(X,[],N,0),type_of(X,T).
 
 linear(X,Vs)-->{member(V,Vs),var(V),V=v(X)}.
 linear(l(X,E),Vs)-->pred,linear(E,[V|Vs]),{nonvar(V),V=v(X)}.
 linear(a(A,B),Vs)-->pred,pred,linear(A,Vs),linear(B,Vs).
+
+is_linear(X) :- \+ \+ is_linear1(X).
+
+is_linear1(V):-var(V),!,V='$bound'.
+is_linear1(l(X,E)):-is_linear1(E),nonvar(X).
+is_linear1(a(A,B)):-is_linear1(A),is_linear1(B).
+
 
 % computes type of a linear or affine expression X
 type_of(X,T):-type_of(X,T,[]).
@@ -166,17 +197,26 @@ type_of(X,T,Vs):-var(X),!,member(X0:T,Vs),X==X0.
 type_of(l(X,A),(S->T),Vs):-type_of(A,T,[X:S|Vs]).
 type_of(a(A,B),T,Vs):-type_of(A,(S->T),Vs),type_of(B,S,Vs).
 
+
 % 1,2,3,7,17,36,93,269,723,2085,6583,20271,63867,213994,718043,2431211
 % not yet in OEIS
 affine_nf(N,X,T):-affine_nf(X,T,[],N,0).
 
 affine_nf(l(X,E),(P->Q),Ps)-->pred,affine_nf(E,Q,[V:P|Ps]),{V=v(X)}.  
-affine_nf(X,P,Ps)-->affine_nf_no_left_lambda(X,P,Ps).
+affine_nf(X,P,Ps)-->affine_nf_neutral_terms(X,P,Ps).
 
-affine_nf_no_left_lambda(X,P,[Y:Q|Ps])--> agrees_and_binds(X:P,[Y:Q|Ps]).
-affine_nf_no_left_lambda(a(A,B),Q,Ps)-->pred,pred,
-affine_nf_no_left_lambda(A,(P->Q),Ps),
+affine_nf_neutral_terms(X,P,[Y:Q|Ps])--> agrees_and_binds(X:P,[Y:Q|Ps]).
+affine_nf_neutral_terms(a(A,B),Q,Ps)-->pred,pred,
+  affine_nf_neutral_terms(A,(P->Q),Ps),
   affine_nf(B,P,Ps).
+
+pol(A,X):-pol(1,A,X).
+
+flip(1,0).
+flip(0,1).
+
+pol(P,X,R):-var(X),!,R=P:X.
+pol(P,A->B,(X->Y)):-flip(P,N),pol(N,A,X),pol(P,B,Y).
 
 agrees_and_binds(X:P,Ps,N,N):-
   member(V:Q,Ps),
@@ -184,18 +224,16 @@ agrees_and_binds(X:P,Ps,N,N):-
   V=v(X),
   P=Q.
 
-% https://oeis.org/A262301
+% was, with pred.pred for app.  https://oeis.org/A262301
 linear_nf(N,X,T):-linear_nf(X,T,[],N,0).
 
-linear_nf(l(X,E),(P->Q),Ps)-->pred,linear_nf(E,Q,[V:P|Ps]),lin_confirms(X,V).  
-linear_nf(X,P,Ps)-->linear_nf_no_left_lambda(X,P,Ps).
+linear_nf(l(X,E),(P->Q),Ps)-->pred,linear_nf(E,Q,[V:P|Ps]),{nonvar(V),V=v(X)}.  
+linear_nf(X,P,Ps)-->linear_nf_neutral_terms(X,P,Ps).
 
-linear_nf_no_left_lambda(X,P,[Y:Q|Ps])--> agrees_and_binds(X:P,[Y:Q|Ps]).
-linear_nf_no_left_lambda(a(A,B),Q,Ps)-->pred,pred,
-  linear_nf_no_left_lambda(A,(P->Q),Ps),
+linear_nf_neutral_terms(X,P,[Y:Q|Ps])--> agrees_and_binds(X:P,[Y:Q|Ps]).
+linear_nf_neutral_terms(a(A,B),Q,Ps)-->pred,
+  linear_nf_neutral_terms(A,(P->Q),Ps),
   linear_nf(B,P,Ps).
-
-lin_confirms(X,V,N,N):-nonvar(V),V=v(X).
 
 typed_nf(N,X:T):-typed_nf(X,T,[],N,0).
 
@@ -203,11 +241,143 @@ typed_nf(l(X,E),(P->Q),Ps)-->pred,typed_nf(E,Q,[X:P|Ps]).
 typed_nf(X,P,Ps)-->typed_nf_no_left_lambda(X,P,Ps).
 
 typed_nf_no_left_lambda(X,P,[Y:Q|Ps])--> agrees(X:P,[Y:Q|Ps]).
-typed_nf_no_left_lambda(a(A,B),Q,Ps)-->pred,pred,
+typed_nf_no_left_lambda(a(A,B),Q,Ps)-->pred,
   typed_nf_no_left_lambda(A,(P->Q),Ps),
   typed_nf(B,P,Ps).
 
 agrees(P,Ps,N,N):-member(Q,Ps),unify_with_occurs_check(P,Q).
+
+tsize(A,R):-var(A),!,R=0.
+tsize(A,R):-atomic(A),!,R=0.
+tsize((A->B),R):-tsize(A,R1),tsize(B,R2),R is 1+R1+R2.
+
+lsize(A,R):-var(A),!,R=0.
+lsize(A,R):-atomic(A),!,R=0.
+lsize(l(_,B),R):-lsize(B,R2),R is 1+R2.
+lsize(a(A,B),R):-lsize(A,R1),lsize(B,R2),R is 1+R1+R2.
+
+nf_term_type(X,T):-nonvar(T),!,tsize(T,N),nf_term_type(X,T,[],N,0),numvars(X).
+
+nf_term_type(X,T):-nonvar(X),lsize(X,N),nf_term_type(X,T,[],N,0),numvars(T).
+
+nf_term_type(l(X,E),(P->Q),Ps)-->pred,nf_term_type(E,Q,[X:P|Ps]).  
+nf_term_type(X,P,Ps)-->nf_neutral(X,P,Ps).
+
+nf_neutral(X,P,Ps)--> {memberchk(X:P,Ps)}.
+nf_neutral(a(A,B),Q,Ps)-->pred,
+  nf_neutral(A,(P->Q),Ps),
+  nf_term_type(B,P,Ps).
+
+numvars(X):-
+  term_variables(X,Vs),
+  length(Vs,Len),Len1 is Len-1,
+  numlist(0,Len1,Vs).
+
+nfaff(N):-nfgo(affine_nf,N).
+nflin(N):-nfgo(linear_nf,N).
+
+nfgo(AffOrLin,M):-
+  between(0,M,N),ppp(n=N),
+  nf_synt(AffOrLin,N).
+
+nf_synt(AffOrLin,N):-
+  call(AffOrLin,N,X,T),
+  ppt(X),ppt(T),
+  numvars(X),numvars(T),
+  ppp('------'),nl,
+  lsize(X,LS),
+  tsize(T,TS),
+  assertion(LS=:=TS),
+  nf_term_type(XX,T),
+  assertion(X=XX),
+  nf_term_type(XX,TT),
+  assertion(T=TT),
+  fail.
+
+% A024489: 1, 6, 70, 1050, 18018, 336336 ...
+lmot(N,E,_):-succ(N,N1),lmot(E,N,0,N1,0).
+
+lmot(x,A,A,L,L).
+lmot(l(E),A1,A2,L1,L3):-pred(L1,L2),lmot(E,A1,A2,L2,L3).
+lmot(a(E,F),A1,A4,L1,L3):-pred(A1,A2),
+   lmot(E,A2,A3,L1,L2),
+   lmot(F,A3,A4,L2,L3).
+
+lclos(N,E,_):-succ(N,N1),lclos(E,N,0,N1,0,[]).
+
+lclos(X,A,A,L,L,Vs):-member(X,Vs).
+lclos(l(X,E),A1,A2,L1,L3,Vs):-pred(L1,L2),lclos(E,A1,A2,L2,L3,[X|Vs]).
+lclos(a(E,F),A1,A4,L1,L3,Vs):-pred(A1,A2),
+  lclos(E,A2,A3,L1,L2,Vs),
+  lclos(F,A3,A4,L2,L3,Vs).
+
+%A062980: 1, 5, 60, 1105, 27120, 828250
+llin(N,E,_):-succ(N,N1),llin(E,N,0,N1,0,[]).
+
+llin(X,A,A,L,L,Vs):-member(V,Vs),var(V),V=v(X).
+llin(l(X,E),A1,A2,L1,L3,Vs):-pred(L1,L2),
+  llin(E,A1,A2,L2,L3,[V|Vs]),
+  nonvar(V),
+  V=v(X).
+llin(a(E,F),A1,A4,L1,L3,Vs):-pred(A1,A2),
+  llin(E,A2,A3,L1,L2,Vs),
+  llin(F,A3,A4,L2,L3,Vs).
+
+% A262301: 1, 3, 26, 367, 7142, 176766, 5,304,356, 186954535
+tlin(N,E,T):-succ(N,N1),tlin(E,T,N,0,N1,0,[]).
+
+tlin(l(X,E),(S->T),A1,A2,L1,L3,Vs):-pred(L1,L2),
+  tlin(E,T,A1,A2,L2,L3,[V:S|Vs]),
+  nonvar(V),
+  V=v(X). 
+tlin(E,T,A1,A2,L1,L3,Vs):-tlneut(E,T,A1,A2,L1,L3,Vs).
+
+tlneut(X,T,A,A,L,L,Vs):-member(V:TT,Vs),var(V),V=v(X),T=TT.
+tlneut(a(E,F),T,A1,A4,L1,L3,Vs):-pred(A1,A2),
+  tlneut(E,(S->T),A2,A3,L1,L2,Vs),
+  tlin(F,S,A3,A4,L2,L3,Vs).
+
+/*
+?- time(counts_for(7,tlin,Ks)).
+% 8,855,659,045 inferences, 552.730 CPU in 553.015 seconds (100% CPU, 16021680 Lips)
+Ks = [1, 3, 26, 367, 7142, 176766, 5304356, 186954535].
+*/
+
+
+lgo:-
+  A=(((0->1)->0->(1->2)->2)),
+  nf_term_type(X,A),
+  ppp(here=X),
+  lsize(X,XS),ppp(xs=XS),
+
+  nf_term_type(X,B),
+  ppp(A=B),
+  fail.
+
+
+:-op(900,xfy,<=).
+:-op(900,xfy,=>).
+
+%linfer(U):-ppp(U),nl,fail.
+
+linfer([X:A]<=X<=A):-!.
+linfer(G<=T=>A):-var(A),!,
+  linfer(G<=T<=A).
+linfer(G<=l(X,T)=>(A->B)):-!,
+  linfer([X:A|G]<=T=>B).
+linfer(GD<=TU<=B):-ppp(TU),ppp(GD),ppp(B),TU=a(T,U),abort,
+  append(G,D,GD),
+  linfer(G<=T<=(A->B)),
+  type_of(T,(A->B),[]),
+  linfer(D<=U=>A).
+
+
+lgo1:-
+  A=(((A0->A1)->A0->(A1->A2)->A2)),
+  linfer([]<=X=>A),
+  ppp(X),
+  fail.
+
 
 % TODO - fold generation and type inference into one - done for ND
 % TODO - extend to BCK and BCI algebras
@@ -262,6 +432,9 @@ aff_gen_counts(Ks):-counts_for(7,affine,Ks).
 
 go:-generate_linear(5,T,Proof),ppp(formula=T),ppp(proof_term=Proof),nl,fail;true.
 
+
+ngo:-linear_nf(7,A,B),ppt(A),ppt(B),ppp('---'),nl,fail.
+
 tgo(N):-
   generate_linear(N,T,Proof),
   ppp(formula=T),
@@ -269,8 +442,14 @@ tgo(N):-
   namevars(Proof,Proof1),
   ppp(proof_term=Proof1),
   ppt(Proof1),
-  nl,fail
+  nl,
+  assertion(is_linear(Proof)),
+  fail
 ; true.
+
+
+tlgo(N):-
+  tlin(N,X,T),ppt(X),ppt(T),ppp('----'),nl,fail.
 
 
 /*
@@ -359,8 +538,8 @@ proof_term=l(A,A)
 true.
 
 
+?-linear_nf(4,X,T),ppt(X),ppt(T),writeln('---------'),nl,fail.
 
-linear_nf(4,X,T),ppt(X),ppt(T),writeln('---------'),nl,fail.
    l
   _|_
  /   \
