@@ -358,24 +358,25 @@ lgo:-
 :-op(900,xfy,<=).
 :-op(900,xfy,=>).
 
-%linfer(U):-ppp(U),nl,fail.
+linfer(U):-ppp(U),nl,fail.
 
 linfer([X:A]<=X<=A):-!.
-linfer(G<=T=>A):-var(A),!,
+linfer(G<=T=>A):-atomic(A),!,
   linfer(G<=T<=A).
 linfer(G<=l(X,T)=>(A->B)):-!,
   linfer([X:A|G]<=T=>B).
-linfer(GD<=TU<=B):-ppp(TU),ppp(GD),ppp(B),TU=a(T,U),abort,
-  append(G,D,GD),
+linfer(GD<=TU<=B):-% ppp(TU),ppp(gd=GD),ppp(b=B),
+  TU=a(T,U),
+  append(G,D,GD),%(G=[_|_],D=[_|_]),
   linfer(G<=T<=(A->B)),
   type_of(T,(A->B),[]),
   linfer(D<=U=>A).
 
 
 lgo1:-
-  A=(((A0->A1)->A0->(A1->A2)->A2)),
+  A=(((0->1)->0->(1->2)->2)),
   linfer([]<=X=>A),
-  ppp(X),
+  ppp(res=X),
   fail.
 
 
@@ -451,171 +452,5 @@ tgo(N):-
 tlgo(N):-
   tlin(N,X,T),ppt(X),ppt(T),ppp('----'),nl,fail.
 
+%:-include('polar.pro').
 
-/*
-?- go.
-formula=(0->1->(1->0->2)->2)
-proof_term=l(A,l(B,l(C,a(a(C,B),A))))
-
-formula=(0->1->(0->1->2)->2)
-proof_term=l(A,l(B,l(C,a(a(C,A),B))))
-
-formula=(0->(0->1)->(0->0)->1)
-proof_term=l(A,l(B,l(C,a(B,a(C,A)))))
-
-formula=(0->(1->2)->(0->1)->2)
-proof_term=l(A,l(B,l(C,a(B,a(C,A)))))
-
-formula=(0->(0->1)->(1->2)->2)
-proof_term=l(A,l(B,l(C,a(C,a(B,A)))))
-
-formula=(0->(1->0->2)->1->2)
-proof_term=l(A,l(B,l(C,a(a(B,C),A))))
-
-formula=(0->(0->1->2)->1->2)
-proof_term=l(A,l(B,l(C,a(a(B,A),C))))
-
-formula=(0->(0->(1->1)->1)->1)
-proof_term=l(A,l(B,a(a(B,A),l(C,C))))
-
-formula=((0->1)->0->(0->0)->1)
-proof_term=l(A,l(B,l(C,a(A,a(C,B)))))
-
-formula=((0->1)->2->(2->0)->1)
-proof_term=l(A,l(B,l(C,a(A,a(C,B)))))
-
-formula=((0->1)->0->(1->2)->2)
-proof_term=l(A,l(B,l(C,a(C,a(A,B)))))
-
-formula=((0->1)->(1->2)->0->2)
-proof_term=l(A,l(B,l(C,a(B,a(A,C)))))
-
-formula=((0->1)->(2->0)->2->1)
-proof_term=l(A,l(B,l(C,a(A,a(B,C)))))
-
-formula=((0->1)->((0->0)->0)->1)
-proof_term=l(A,l(B,a(A,a(B,l(C,C)))))
-
-formula=((0->0->0)->0->0->0)
-proof_term=l(A,A)
-
-formula=((0->1->0)->0->1->0)
-proof_term=l(A,A)
-
-formula=((0->0->1)->0->0->1)
-proof_term=l(A,A)
-
-formula=((0->1->2)->1->0->2)
-proof_term=l(A,l(B,l(C,a(a(A,C),B))))
-
-formula=((0->1->1)->0->1->1)
-proof_term=l(A,A)
-
-formula=((0->1->2)->0->1->2)
-proof_term=l(A,A)
-
-formula=((0->(1->1)->1)->0->1)
-proof_term=l(A,l(B,a(a(A,B),l(C,C))))
-
-formula=(((0->0)->0)->(0->0)->0)
-proof_term=l(A,A)
-
-formula=(((0->1)->0)->(0->1)->0)
-proof_term=l(A,A)
-
-formula=(((0->0)->1)->(0->0)->1)
-proof_term=l(A,A)
-
-formula=(((0->0)->0)->(0->1)->1)
-proof_term=l(A,l(B,a(B,a(A,l(C,C)))))
-
-formula=(((0->1)->1)->(0->1)->1)
-proof_term=l(A,A)
-
-formula=(((0->1)->2)->(0->1)->2)
-proof_term=l(A,A)
-
-true.
-
-
-?-linear_nf(4,X,T),ppt(X),ppt(T),writeln('---------'),nl,fail.
-
-   l
-  _|_
- /   \
- X    l
-     _|
-    /  \
-    Y   a
-        |
-       / \
-       Y  X
-
-
-   ->
-  __|_
- /    \
- X    ->
-      _|_
-     /   \
-    ->    Y
-     |
-    / \
-    X  Y
-
-
----------
-
-   l
-  _|_
- /   \
- X    l
-     _|
-    /  \
-    Y   a
-        |
-       / \
-       X  Y
-
-
-    ->
-   __|_
-  /    \
- ->    ->
-  |     |
- / \   / \
- X  Y  X  Y
-
-
----------
-
-   l
-  _|_
- /   \
- X    a
-     _|
-    /  \
-    X   l
-        |
-       / \
-       Y  Y
-
-
-      ->
-     __|_
-    /    \
-   ->     Y
-   _|_
-  /   \
- ->    Y
-  |
- / \
- X  X
-
-
----------
-
-false.
-
-?- 
-*/

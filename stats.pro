@@ -259,4 +259,16 @@ int2name(I,N):-atomic_list_concat(['X',I],N).
 s2n(0,0).
 s2n(s(X),N):-s2n(X,N1),succ(N1,N).
 
+to_lambda(X)-->{var(X)},!,['~',X].
+to_lambda(X)-->{atomic(X)},!,[X,' '].
+to_lambda(l(X,E))-->[' \\lambda ',X,'.'],to_lambda(E).
+to_lambda(a(A,B))-->['('],to_lambda(A),['~'],to_lambda(B),[')'].
 
+to_lambda(E):-
+  namevars(E,EE),
+  to_lambda(EE,Ls,[]),
+  write('$'),
+  maplist(write,Ls),
+  writeln('$').
+  
+  

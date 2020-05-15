@@ -31,7 +31,7 @@ polarized_tree(N,Tree,Ps,Qs):-N>0,
   
 
 polarized_tree(P,V,Xs1,Xs2,Ys1,Ys2)-->dispatch(P,V,Xs1,Xs2,Ys1,Ys2).
-polarized_tree(P,(A  -@ B),Xs1,Xs3,Ys1,Ys3)-->pred,{Q is 1-P},
+polarized_tree(P,(A  '-o' B),Xs1,Xs3,Ys1,Ys3)-->pred,{Q is 1-P},
   polarized_tree(Q,A,Xs1,Xs2,Ys1,Ys2),
   polarized_tree(P,B,Xs2,Xs3,Ys2,Ys3).
   
@@ -46,4 +46,5 @@ perm_of([X|Xs],Zs):-
 ins(X,Xs,[X|Xs]).
 ins(X,[Y|Xs], [Y|Ys]):-ins(X,Xs,Ys).
 
-% gp(N):-counts_for3(N,gen_pol_taut,Ks),ppp('LinearTautologies'(N)=Ks).
+gpt(N):-counts_for2(N,gen_polarized,Ks),ppp('PolarizedTrees'(N)=Ks).
+gp(N):-counts_for3(N,gen_pol_taut,Ks),ppp('PolarizedLinearTautologies'(N)=Ks).
