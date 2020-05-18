@@ -85,7 +85,7 @@ is_polarized_tree(P,(A  '-o' B),Xs1,Xs3,Ys1,Ys3):-Q is 1-P,
 dispatch(0,X,[X|Xs],Xs,Ys,Ys).
 dispatch(1,Y,Xs,Xs,[Y|Ys],Ys).
 
-% each variable has a couterpart of oppossite polarity  
+% each variable has a counterpart of opposite polarity  
 in_bijection(Ps,Qs, N):-
   length(Ps,K),
   length(Qs,K),
