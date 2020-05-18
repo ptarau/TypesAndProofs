@@ -42,7 +42,10 @@ gen_formula(N,T):-
   gen_tree(N,T,Vs),
   natpartitions(Vs).
  
-
+gen_formula2(N,T):-
+  M is 2*N+1,
+  gen_formula(M,T).
+  
   
 prove_ipc(T,ProofTerm):-prove_ipc(ProofTerm,T,[]).
 
@@ -80,51 +83,6 @@ gen_taut(N,T,ProofTerm):-gen_formula(N,T),prove_lin(T,ProofTerm).
 
 
 /*
-
-?- show3(3,gen_taut).
-    '-o' 
-  __|_
- /    \
- 0     '-o' 
-      _|_
-     /   \
-     '-o'     1
-     |
-    / \
-    0  1
-
-
-   l
-  _|_
- /   \
- X    l
-     _|
-    /  \
-    Y   a
-        |
-       / \
-       Y  X
-
-
------- .
-
-     '-o' 
-   __|_
-  /    \
-  '-o'      '-o' 
-  |     |
- / \   / \
- 0  0  0  0
-
-
-  l
-  |
- / \
- X  X
-
-
------- .
-
 ?- time(gt(9)).
 'LinearTautlogies'=[0, 1, 0, 4, 0, 27, 0, 315, 0, 5565].
 % 29,434,761,596 inferences, 
@@ -225,15 +183,33 @@ sols_count(Goal, Times) :-
 counts_for2(M,Generator,Ks):-
   findall(K,
   (between(0,M,L),
-    sols_count(call(Generator,L,_),K),S is 2*L+1,ppp(size(L->S):count(K))),
+    sols_count(call(Generator,L,_),K),S is 2*L+1,
+    ppp(size(L->S):count(K))),
   Ks).
   
   
 counts_for3(M,Generator,Ks):-
   findall(K,
   (between(0,M,L),
-    sols_count(call(Generator,L,_,_),K),S is 2*L+1,ppp(size(L->S):count(K))),
+    sols_count(call(Generator,L,_,_),K),S is 2*L+1,
+    ppp(size(L->S):count(K))),
   Ks).
+
+dcounts_for2(M,Generator,Ks):-
+  findall(K,
+  (between(0,M,L),
+    sols_count(distinct(call(Generator,L,_)),K),S is 2*L+1,
+    ppp(size(L->S):count(K))),
+  Ks).
+  
+  
+dcounts_for3(M,Generator,Ks):-
+  findall(K,
+  (between(0,M,L),
+    sols_count(distinct(call(Generator,L,_,_)),K),S is 2*L+1,
+    ppp(size(L->S):count(K))),
+  Ks).
+
   
 /*
 % A262301
@@ -254,7 +230,7 @@ show2(N,Gen):-
 
 lshow2(N,Gen):-
   call(Gen,N,X),
-  \+ is_linear(X),
+  %\+ is_linear(X),
   ppt(X),
   to_lambda(X),
   qqq(X),
@@ -284,6 +260,8 @@ g2:-show3(3,linear_typed_normal_form).
 
 % counts
 
+gf(N):-counts_for2(N,gen_formula,Ks),ppp('ImplicationalFormulas'(N)=Ks).
+gf2(N):-counts_for2(N,gen_formula2,Ks),ppp('ImplicationalFormulas'(N)=Ks).
 
 gt(N):-counts_for3(N,gen_taut,Ks),ppp('LinearTautologies'(N)=Ks).
 
@@ -298,3 +276,34 @@ lt(N):-counts_for3(N,linear_typed_normal_form,Ks),ppp('LinearTermsAndType'(N)=Ks
 go:-gt(7),nl,mc(5),nl,lc(5),nl,ln(5),nl,lt(5).
 
 :-include('polar.pro').
+
+do(G):-G,fail;true.
+
+
+save_dataset(M):-
+  do((
+    between(0,M,N),
+    save_dataset1(N)
+  )).
+  
+save_dataset1(N):-
+  make_directory_path('lltaut/'),
+  atomic_list_concat(['lltaut/theorems',N,'.pro'],F),
+  tell(F), 
+  write('% clauses of the form: tp(Theorem,ProofTerm).'),nl,
+  write('% preceeded by LaTeX code for Theorem and ProofTerm, as comments'),nl,nl,  
+  portray_clause(:-op(900,xfy,('-o'))),nl,
+  do((
+   linear_typed_normal_form(N,X,T),
+   write('% '),qqq(T),
+   write('% '),qqq(X),
+   portray_clause(tp(T,X))
+  )),
+  told.
+   
+sgo:-save_dataset(2).
+
+
+
+  
+  
