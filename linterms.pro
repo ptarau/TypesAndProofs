@@ -279,6 +279,35 @@ go:-gt(7),nl,mc(5),nl,lc(5),nl,ln(5),nl,lt(5).
 
 do(G):-G,fail;true.
 
+tgo:-save_traning_set(4).
+
+save_traning_set(M):-
+  tell('training.txt'),
+  encode_map(M),
+  told.
+
+encode_map(M):-
+  do((
+    between(0,M,N),
+    encode_map1(N)
+  )).
+
+encode_map1(N):-do((
+   linear_typed_normal_form(N,X,T),
+   numbervars(X,0,_),
+   numbervars(T,0,_),
+   encode_term(X,Xs,[]),
+   encode_formula(T,Ts,[]),
+   maplist(write,Ts),write(':'),maplist(write,Xs),nl
+   )).
+   
+encode_term('$VAR'(I))-->['$VAR'(I)].
+encode_term(l(X,E))-->[1],encode_term(X),encode_term(E).
+encode_term(a(A,B))-->[0],encode_term(A),encode_term(B).
+
+encode_formula('$VAR'(I))-->['$VAR'(I)].
+encode_formula((A '-o' B))-->[0],encode_formula(A),encode_formula(B).
+
 
 save_dataset(M):-
   do((

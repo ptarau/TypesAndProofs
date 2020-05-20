@@ -132,7 +132,5 @@ gpp(N):-counts_for2(N,polarized_tree,Ks),ppp('PolarizedTrees'(N)=Ks).
 
 gpg(N):-counts_for3(N,pol_gen_taut,Ks),ppp('tests'(N)=Ks). % good
 
-gpl1(N):-counts_for2(N,pol_gen1,Ks),ppp('tests'(N)=Ks).
-
 gpf(N):-counts_for3(N,pol_taut,Ks),ppp('tests'(N)=Ks). % good
 
