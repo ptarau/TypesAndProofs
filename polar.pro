@@ -118,9 +118,57 @@ pol_gen(N,T):-
   gen_formula2(N,T),
   is_polarized_tree(T,_).
     
-  
-  
+%:-include('tools.pro'). 
+ 
+new_ctr(ctr(0)).
 
+%% ctr_inc(Ctr,X):  adds value X to Ctr
+ctr_inc(Ctr,N):-arg(1,Ctr,V1),V2 is V1+N,nb_setarg(1,Ctr,V2).
+
+ctr_get(Ctr,Val):-arg(1,Ctr,Val).
+
+%% ctr_dec(Ctr,X): decrements Ctr if > 0
+ctr_dec(Ctr):-arg(1,Ctr,V1),V1>0,V2 is V1-1,nb_setarg(1,Ctr,V2).
+
+fgo:-save_full_traning_set(3).
+
+save_full_traning_set(M):-
+  tell('full_training.txt'),
+  encode_full_map1(M),
+  told.
+
+encode_full_map1(M):-
+  do((
+    between(0,M,N),
+    encode_full_map(N)
+  )).
+    
+encode_full_map(N):-
+   set_random(seed(42)),
+   new_ctr(C),new_ctr(U),
+   (
+   gen_formula2(N,T),
+   ( prove_polarized(X,T)->
+     ctr_inc(C,1),ctr_inc(U,1),
+     numbervars(X,0,_),
+     encode_term(X,Xs,[])
+   ; Xs=['?'],random(R),R<1/10,ctr_dec(C)
+   ),
+   numbervars(T,0,_),
+   encode_formula(T,Ts,[]),
+   maplist(write,Ts),write(':'),maplist(write,Xs),nl,
+   ctr_inc(U,1),
+   (  ctr_get(U,K),K>60000->!
+   ;  fail
+   )
+   ;true
+   ).
+ 
+   
+   
+
+   
+    
 /*
 
 LinearTermsAndType(7)=[1,3,26,367,7142,176766,5304356,186954535]

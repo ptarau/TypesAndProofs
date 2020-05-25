@@ -300,11 +300,14 @@ encode_map1(N):-do((
    encode_formula(T,Ts,[]),
    maplist(write,Ts),write(':'),maplist(write,Xs),nl
    )).
+  
+   
    
 encode_term('$VAR'(I))-->['$VAR'(I)].
 encode_term(l(X,E))-->[1],encode_term(X),encode_term(E).
 encode_term(a(A,B))-->[0],encode_term(A),encode_term(B).
 
+encode_formula(I)-->{integer(I)},!,['$VAR'(I)].
 encode_formula('$VAR'(I))-->['$VAR'(I)].
 encode_formula((A '-o' B))-->[0],encode_formula(A),encode_formula(B).
 
