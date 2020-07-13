@@ -1,5 +1,5 @@
-% reversible translater between implactional
-% end embedded Hron clause form
+% reversible translator between implicational
+% end embedded Horn clause form
 
 toHorn((A->B),(H:-Bs)):-!,toHorns((A->B),Bs,H).
 toHorn(H,H).
@@ -7,6 +7,24 @@ toHorn(H,H).
 toHorns((A->B),[HA|Bs],H):-!,toHorn(A,HA),toHorns(B,Bs,H).
 toHorns(H,[],H).  
 
+/*
+fromHorn(A,B):-toHorn(B,A).
+
+term2horn(T,H):-var(T),!,H=T.
+term2horn(T,H):-atomic(T),!,H=T.
+term2horn(T,(F:-Ys)):-T=..[F|Xs],
+  maplist(term2horn,Xs,Ys).
+  
+horn2term(H,T):-var(H),!,T=H.
+horn2term(H,T):-atomic(H),!,T=H.
+horn2term((F:-Ys),T):-
+  maplist(horn2term,Ys,Xs),
+  T=..[F|Xs].  
+  
+toTerm-->toHorn,horn2term.
+
+fromTerm-->term2horn,fromHorn.
+*/
 
 toAHorn((A->B),(H<-Bs)):-!,toAHorns((A->B),Bs,H).
 toAHorn(H,H).
