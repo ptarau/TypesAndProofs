@@ -77,6 +77,64 @@ impl_taut_no_left_lambda(Q,Ps)-->pred,pred,
 
 implTaut(N,T):-impl_taut(N,T),natvars(T). 
   
+
+
+
+tgo:-save_traning_set(6).
+
+save_traning_set(M):-
+  tell('training.txt'),
+  encode_map(M),
+  told.
+
+encode_map(M):-
+  do((
+    between(0,M,N),
+    encode_map1(N)
+  )).
+
+encode_map1(N):-do((
+   tnf(N,X:T),
+   numbervars(X,0,_),
+   numbervars(T,0,_),
+   encode_term(X,Xs,[]),
+   encode_formula(T,Ts,[]),
+   maplist(write,Ts),write(':'),maplist(write,Xs),nl
+   )).
+  
+   
+   
+encode_term('$VAR'(I))-->['$VAR'(I)].
+encode_term(l(X,E))-->[1],encode_term(X),encode_term(E).
+encode_term(a(A,B))-->[0],encode_term(A),encode_term(B).
+
+encode_formula(I)-->{integer(I)},!,['$VAR'(I)].
+encode_formula('$VAR'(I))-->['$VAR'(I)].
+encode_formula((A -> B))-->[0],encode_formula(A),encode_formula(B).
+
+
+save_dataset(M):-
+  do((
+    between(0,M,N),
+    save_dataset2(N)
+  )).
+  
+  
+save_dataset2(N):-
+  make_directory_path('itaut/'),
+  atomic_list_concat(['itaut/theorems',N,'.pro'],F),
+  tell(F), 
+  write('% clauses of the form: tp(Theorem,ProofTerm).'),nl,
+  write('% preceeded by LaTeX code for Theorem and ProofTerm, as comments'),nl,nl,  
+  do((
+   tnf(N,X:T),
+   write('% '),qqq(T),
+   write('% '),qqq(X),
+   portray_clause(tp(T,X))
+  )),
+  told.
+  
+  
   /*
   ?- findall(S,(between(0,16,N),sols(tnf(N,_),S)),Xs).
 Xs = [0,1,2,3,7,17,43,129,389,1245,4274,14991,55289,210743,826136,3354509,13948176].
