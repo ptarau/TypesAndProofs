@@ -80,7 +80,7 @@ implTaut(N,T):-impl_taut(N,T),natvars(T).
 
 
 
-tgo:-save_traning_set(6).
+tgo:-save_traning_set(12).
 
 save_traning_set(M):-
   tell('training.txt'),
@@ -113,20 +113,15 @@ encode_formula('$VAR'(I))-->['$VAR'(I)].
 encode_formula((A -> B))-->[0],encode_formula(A),encode_formula(B).
 
 
+  
 save_dataset(M):-
-  do((
-    between(0,M,N),
-    save_dataset2(N)
-  )).
-  
-  
-save_dataset2(N):-
   make_directory_path('itaut/'),
-  atomic_list_concat(['itaut/theorems',N,'.pro'],F),
+  atomic_list_concat(['itaut/theorems',M,'.pro'],F),
   tell(F), 
   write('% clauses of the form: tp(Theorem,ProofTerm).'),nl,
   write('% preceeded by LaTeX code for Theorem and ProofTerm, as comments'),nl,nl,  
   do((
+   between(0,M,N),
    tnf(N,X:T),
    write('% '),qqq(T),
    write('% '),qqq(X),
