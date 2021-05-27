@@ -24,6 +24,8 @@ genHorns([B|Bs],SN1,N3)-->{succ(N1,SN1)},
 
   
 % A105633: [1,2,4,9,22,57,154,429,1223,3550,10455,31160,93802,284789]
+%% canonicalized Horn clauses
+%% one repres. of each equiv. class
 genSortedHorn(N,Tree,Leaves):-
   succ(N,SN),length(Leaves,SN),
   generateSortedHorn(Tree,Leaves,[]).
@@ -241,4 +243,3 @@ fsize(A,S):-functor(A,F,_N),A=..[F|Xs],
   
   
   
-   

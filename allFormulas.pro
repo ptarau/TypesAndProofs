@@ -14,7 +14,8 @@ allSortedHorn(N,T):-
   natpartitions(Vs),
   genSortedHorn(N,T,Vs).
 
-
+% ?- countGen2(allStrictHorn,8,R).
+% R = [1, 4, 21, 145, 1208, 11664, 127019, 1534258].
 allStrictHorn(N,T):-
   succ(N,SN),length(Vs,SN),
   natpartitions(Vs),
@@ -29,6 +30,8 @@ testSortedHorn(N,T):-
 % to break symmetries irrelevant for testing provers
 % of depth at most 3, as deeper ones can be reduced to these
 
+% ?- countGen2(allSortedHorn,8,R).
+% R = [2, 7, 38, 266, 2263, 22300, 247737, 3049928].
 allSortedHorn3(N,T):-
   succ(N,SN),length(Vs,SN),
   natpartitions(Vs),
@@ -135,6 +138,5 @@ genX((A*B),T)-->pred,
   genX(B,S),
   {unify_with_occurs_check(ST,(S->T))}. 
  
-  
   
   
