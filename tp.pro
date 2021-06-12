@@ -18,7 +18,8 @@ c:-['tp.pro']. % quick iteractive reloader
 %:- op(500, xfy,  ->).    % right associative  
 %%% WARNING, this overwrites Prolog's ->
                
-                
+:-include('horn_flattener.pro').
+
 :-include('stats.pro'). % tools, including statistical and displayers
 
 :-include('allTrees.pro').

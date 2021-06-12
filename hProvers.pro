@@ -2,6 +2,14 @@
 % preprocessing from implicational form
 % from which the translation is reversible
 
+
+flat_hprove(T0):-
+   toHorn(T0,T1),
+   %ppp(t1=T1),
+   flatter_horn(T1,[G|Ts]),
+   %ppp(G+Ts),
+   ljh(G,Ts).
+
 hprove(T0):-toHorn(T0,T),ljh(T).
 
 ljh(A):-ljh(A,[]).

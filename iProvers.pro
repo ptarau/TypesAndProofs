@@ -61,6 +61,8 @@ ljb(G,Vs1):-
 ljb_imp((C->D),B,Vs):-!,ljb((C->D),[(D->B)|Vs]).
 ljb_imp(A,_,Vs):-memberchk(A,Vs).   
 
+%% proving (C->D)->B becomes (D->B) -> (C->D)
+%% thus we try to prove C->D and assume D->B for that
 
 % variant of bprove that produces
 % lambda terms as proofs

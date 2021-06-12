@@ -65,6 +65,16 @@ countSortedHorn(M):-
   ),
   maplist(ppp,Rs).
 
+countSortedFlatHorn(M):-
+  findall(R,(
+      N to M,
+      gen_and_count(N,allSortedHorn,flat_hprove,R)
+    ),
+    Rs
+  ),
+  maplist(ppp,Rs).
+
+
 countHorn(M):-
   findall(R,(
       N to M,
@@ -437,6 +447,5 @@ nthImpFormula(N,T,K):-
   allImpFormulas(N,T),
   ctr_get(C,K),
   ctr_inc(C).
-  
   
   
