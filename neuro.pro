@@ -1,4 +1,8 @@
-:-ensure_loaded('horn_flattener.pro').
+:-include('horn_flattener.pro').
+:-include('printers.pro').
+:-include('stats.pro').
+
+%ppp(X):-portray_clause(X).
 
 toHorn((A->B),(H:-Bs)):-!,toHorns((A->B),Bs,H).
 toHorn(H,H).
@@ -6,15 +10,29 @@ toHorn(H,H).
 toHorns((A->B),[HA|Bs],H):-!,toHorn(A,HA),toHorns(B,Bs,H).
 toHorns(H,[],H).
 
-ppp(X):-portray_clause(X).
+horn2term(N,A):-atomic(N),!,to_atom(N,A).
+horn2term((H:-Bs),T):-
+   maplist(horn2term,Bs,As),
+   to_atom(H,F),
+   T=..[F|As].
+
+term2horn(T,H):-atomic(T),!,H=T.
+term2horn(T,(F:-Bs)):-
+  T=..[F|Xs],
+  maplist(term2horn,Xs,Bs).
+
+to_atom(A,R):-atom(A),!,R=A.
+to_atom(N,R):-integer(N),atom_number(R,N).
+
+
 
 fgo:-
   X=(a:-[b,(c:-[d,e,(q:-[p,r,s])]),f]),
   ppp(X),
   flat_horn(X,Y),
-  ppp(Y),
+  pph(Y),
   flatter_horn(X,Z),
-  ppp(Z).
+  pph(Z).
 
 % works on Horn clauses - includes
 % preprocessing from implicational form
@@ -125,3 +143,20 @@ hgo:-
   bprove(Y->Y0),
   bprove(X->Y0),
   true.
+
+ftest:-
+  X= (((c->d)->b) -> (c->d)) ,
+  Y= ( (d->b) ->    (c->d)),
+  XY=(X->Y),YX=(Y->X),
+  ppt(X),
+  ppt(Y),
+  toHorn(X,A),toHorn(Y,B),
+  toHorn(XY,AB),
+  toHorn(YX,BA),
+  hprove(AB),
+  hprove(BA),
+  ppp(A),
+  pph(A),
+  ppp(B),
+  pph(B).
+

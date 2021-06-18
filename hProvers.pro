@@ -5,10 +5,11 @@
 
 flat_hprove(T0):-
    toHorn(T0,T1),
-   %ppp(t1=T1),
-   flatter_horn(T1,[G|Ts]),
-   %ppp(G+Ts),
-   ljh(G,Ts).
+   %assertion((T1=(_:-[_|_]);atomic(T1))),
+   flatter_horn(T1,(G:-Ts)),
+   ljh(G,Ts),
+   %pph(G:-Ts),
+   true.
 
 hprove(T0):-toHorn(T0,T),ljh(T).
 
@@ -32,6 +33,32 @@ ljh_imp(A,_B,Vs):-memberchk(A,Vs).
 
 trimmed((B:-[]),R):-!,R=B. 
 trimmed(BBs,BBs).
+
+
+ord_ljh(A,Vs):-ord_memberchk(A,Vs),!.
+ord_ljh((B:-As),Vs1):-!,ord_union(As,Vs1,Vs2),
+  ord_ljh(B,Vs2).
+ord_ljh(G,Vs1):- % atomic(G), G not on Vs1
+  memberchk((G:-_),Vs1), % if not, we just fail
+  select((B:-As),Vs1,Vs2), % outer select loop
+  select(A,As,Bs),         % inner select loop
+  ord_ljh_imp(A,B,Vs2), % A element of the body of B
+  !,
+  trimmed((B:-Bs),NewB), % trim off empty bodies
+  ord_add_element(Vs2,NewB,Vs3),
+  ord_ljh(G,Vs3).
+
+
+ord_ljh_imp((D:-Cs),B,Vs):- !,
+  ord_add_element(Vs,(B:-[D]),Vs1),
+  ord_ljh((D:-Cs),Vs1).
+ord_ljh_imp(A,_B,Vs):-
+  ord_memberchk(A,Vs).
+
+ord_select(X,[X|Xs],Xs).
+ord_select(X,[Y|Xs],[Y|Ys]):-X@<Y,ord_select(X,Xs,Ys).
+
+
 
 hrprove(T0):-toHorn(T0,T),hrlj(T).
 
