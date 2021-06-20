@@ -74,6 +74,33 @@ countSortedFlatHorn(M):-
   ),
   maplist(ppp,Rs).
 
+countStrictFlatHorn(M):-
+  findall(R,(
+      N to M,
+      gen_and_count(N,allStrictHorn,flat_hprove,R)
+    ),
+    Rs
+  ),
+  maplist(ppp,Rs).
+
+countStrictHorn(M):-
+  findall(R,(
+      N to M,
+      gen_and_count(N,allStrictHorn,hprove,R)
+    ),
+    Rs
+  ),
+  maplist(ppp,Rs).
+
+countSortedEqHorn(M):-
+  findall(R,(
+      N to M,
+      gen_and_count(N,allSortedHorn,haprove,R)
+    ),
+    Rs
+  ),
+  maplist(ppp,Rs).
+
 
 countHorn(M):-
   findall(R,(

@@ -8,7 +8,13 @@ flat_hprove(T0):-
    %assertion((T1=(_:-[_|_]);atomic(T1))),
    flatter_horn(T1,(G:-Ts)),
    ljh(G,Ts),
-   %pph(G:-Ts),
+   /*
+   ppp(T1),
+   pph(T1),
+   ppp(G:-Ts),
+   pph(G:-Ts),
+   ppp('---------'),nl,
+   */
    true.
 
 hprove(T0):-toHorn(T0,T),ljh(T).
@@ -34,6 +40,15 @@ ljh_imp(A,_B,Vs):-memberchk(A,Vs).
 trimmed((B:-[]),R):-!,R=B. 
 trimmed(BBs,BBs).
 
+
+strict_hprove(G):-
+  toHorn(G,H),
+  to_strict(H,S),
+  ljh(S,[]).
+
+ord_hprove(T0):-toHorn(T0,T),to_sorted(T,S),ord_ljh(S).
+
+ord_ljh(A):-ord_ljh(A,[]).
 
 ord_ljh(A,Vs):-ord_memberchk(A,Vs),!.
 ord_ljh((B:-As),Vs1):-!,ord_union(As,Vs1,Vs2),

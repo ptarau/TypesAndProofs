@@ -3,6 +3,8 @@
 
 ranImpFormula(N,T):-ranImpFormula(random,N,T).
 
+ranHornFormula(N,T):-ranImpFormula(N,I),toHorn(I,T).
+
 ranImpFormula(Seed,N,T):-
   set_random(seed(Seed)),
   N1 is N+1,
