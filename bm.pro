@@ -157,7 +157,7 @@ hbm(N,P,Counts,Time=T2-T1):-
   new_ctr(All),
   time(
   do((
-   allSortedHorn(N,T),
+   allHornFormulas(N,T),
    ctr_inc(All)
   )),
   T1
@@ -166,7 +166,7 @@ hbm(N,P,Counts,Time=T2-T1):-
   new_ctr(Proven),
   time(
   do((
-   allSortedHorn(N,T),
+   allHornFormulas(N,T),
    call(P,T),
    ctr_inc(Proven)
   )),
@@ -285,4 +285,3 @@ itaut(N):-
   faprove(F),
   ppp(F)
   )).
-  

@@ -39,7 +39,7 @@ to_strict((H:-Bs),Strict):-
   sort(Cs,Xs),
   trim_to_strict((H:-Xs),Strict).
 
-trim_to_strict((H:-Xs),(H:-[H])):-memberchk(H,Xs),!.
+trim_to_strict((H:-Xs),(0:-[0])):-memberchk(H,Xs),!.
 trim_to_strict(C,C).
 
 name_vars(T):-ground(T),!.

@@ -46,6 +46,12 @@ strict_hprove(G):-
   to_strict(H,S),
   ljh(S,[]).
 
+sorted_hprove(G):-
+  toHorn(G,H),
+  to_sorted(H,S),
+  ljh(S,[]).
+
+
 ord_hprove(T0):-toHorn(T0,T),to_sorted(T,S),ord_ljh(S).
 
 ord_ljh(A):-ord_ljh(A,[]).
