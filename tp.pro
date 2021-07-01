@@ -23,8 +23,8 @@ c:-['tp.pro']. % quick iteractive reloader
 :-include('stats.pro'). % tools, including statistical and displayers
 
 :-include('allTrees.pro').
-:-include('remyR.pro').  % random binary tree, Knuth's algorithm R
-%:-include('remyP.pro'). % declarative alternative
+:-include('RemyR.pro').  % random binary tree, Knuth's algorithm R
+%:-include('RemyP.pro'). % declarative alternative
 
 :-include('allPartitions.pro'). % partitions of set of given size
 :-include('ranPartition.pro'). % random partitions
