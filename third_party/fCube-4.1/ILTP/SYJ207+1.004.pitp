@@ -1,0 +1,1 @@
+intDecide(im(and(equiv(p,and(p0, and(p1, and(p2, and(p3, and(p4, and(p5, and(p6, p7)))))))),and(and(and(and(and(and(and(im(equiv(p0, p1), p), im(equiv(p1, p2), p)), im(equiv(p2, p3), p)), im(equiv(p3, p4), p)), im(equiv(p4, p5), p)), im(equiv(p5, p6), p)), im(equiv(p6, p7), p)), im(equiv(p7, p0), p))), or(p8, or(p, non(p8)))),X,'SYJ207+1.004.pitp').

@@ -1,0 +1,36 @@
+intDecide(Wff,_,Nro)				:-	toEquiv(Wff, Res),
+							/*
+							printWFF(Wff),
+							writeln(' '),
+							*/
+							write('intDecide('),
+							write(Res),
+							write(',X,\''),
+							write(Nro),
+							write('\').').
+							/*printWFF(Res).*/
+
+toEquiv(X, X)					:-	atomic(X).
+
+toEquiv(and(X, Y), TheWff)			:- 	toEquiv(X, XT),
+							toEquiv(Y, YT),
+							buildWff(and(XT,YT), TheWff).
+
+toEquiv(or(X, Y), or(XT,YT))			:- 	toEquiv(X, XT),
+							toEquiv(Y, YT).
+
+toEquiv(im(X, Y), im(XT,YT))			:- 	toEquiv(X, XT),
+							toEquiv(Y, YT).
+
+toEquiv(non(X), non(XT))			:- 	toEquiv(X, XT).
+
+buildWff(and(im(X,Y), im(Y,X)), equiv(X,Y)).
+buildWff(Wff, Wff).
+
+printWFF(X):-atom(X),write(X).
+printWFF(im(X,Y)):-write('('),printWFF(X),!,write('->'),printWFF(Y),!,write(')').
+printWFF(or(X,Y)):-write('('),printWFF(X),!,write('|'),printWFF(Y),!,write(')').
+printWFF(and(X,Y)):-write('('),printWFF(X),!,write('&'),printWFF(Y),!,write(')').
+printWFF(dot(X,Y)):-write('('),printWFF(X),!,write('%'),printWFF(Y),!,write(')').
+printWFF(non(X)):-write('~'),printWFF(X),!.
+printWFF(equiv(X,Y)):-write('('),printWFF(X),!,write('='),printWFF(Y),!,write(')').

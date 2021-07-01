@@ -1,0 +1,1 @@
+intDecide(im(im(or(and(p0, and(p1, and(p2, p3))), or(im(p0, p4), or(im(p1, p4), or(im(p2, p4), im(p3, p4))))), p4), p4),X,'SYJ203+1.004.pitp').

@@ -1,0 +1,1 @@
+intDecide(im(and(equiv(p,and(p0, p1)),and(im(equiv(p0, p1), p), im(equiv(p0, p1), p))), or(p2, or(p, non(p2)))),X,'SYJ207+1.001.pitp').

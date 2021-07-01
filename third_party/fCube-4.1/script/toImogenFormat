@@ -1,0 +1,33 @@
+intDecide(Wff,_,_)				:-	toEquiv(Wff).
+
+toEquiv(X)					:-	atomic(X),
+							write(' '),
+							write(X),
+							write(' ').
+
+toEquiv(and(X, Y))				:- 	write(' ( '),
+							toEquiv(X),
+							write( ' & '),
+							toEquiv(Y),
+							write(' ) ').
+
+toEquiv(equiv(X, Y))				:- 	write(' ( '),
+							toEquiv(X),
+							write( ' <=> '),
+							toEquiv(Y),
+							write(' ) ').
+							
+toEquiv(or(X, Y))				:- 	write(' ( '),
+							toEquiv(X),
+							write( ' | '),
+							toEquiv(Y),
+							write(' ) ').
+
+toEquiv(im(X, Y))				:- 	write(' ( '),
+							toEquiv(X),
+							write( ' => '),
+							toEquiv(Y),
+							write(' ) ').
+
+toEquiv(non(X))					:- 	write(' ~ '),
+							toEquiv(X).

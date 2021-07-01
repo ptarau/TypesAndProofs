@@ -1,0 +1,1 @@
+intDecide(equiv(equiv(p0 , p1),equiv(p1, p0)),X,'SYJ206+1.002.pitp').

@@ -1,0 +1,1 @@
+intDecide(or(p22,im(p22,or(p21,im(p21,or(p20,im(p20,or(p19,im(p19,or(p18,im(p18,or(p17,im(p17,or(p16,im(p16,or(p15,im(p15,or(p14,im(p14,or(p13,im(p13,or(p12,im(p12,or(p11,im(p11,or(p10,im(p10,or(p9,im(p9,or(p8,im(p8,or(p7,im(p7,or(p6,im(p6,or(p5,im(p5,or(p4,im(p4,or(p3,im(p3,or(p2,im(p2,or(p1,im(p1,or(p0,non(p0)))))))))))))))))))))))))))))))))))))))))))))),X,'nagata.022.txt').

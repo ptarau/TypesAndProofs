@@ -1,4 +1,4 @@
-:-include('../SOFTWARE/PROVERS/fCube-4.1/fCube/fCube').
+:-include('third_party/fCube-4.1/fCube/fCube').
 %:-include('../SOFTWARE/PROVERS/fCube-11.1/fCube/fCube').
 
 fcube(A):-toPrefix(A,X),fc(X).
