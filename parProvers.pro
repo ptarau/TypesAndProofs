@@ -35,7 +35,7 @@ ljfp_(Secs,T,R):-
  ; R=R0
  ).
 
-:-dynamic stoppedTimer.
+:-dynamic stoppedTimer/0.
 
 timer(Secs,Stopper,Goal,Id):-
   bg(run_timer(Secs,Stopper,Goal),Id).
