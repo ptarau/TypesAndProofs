@@ -42,7 +42,28 @@ ljt(G,Vs1):- % atomic(G),
   ljt((C->D), [(D->B)|Vs2]),    
   !,
   ljt(G,[B|Vs2]).
- 
+
+% variant
+llprove(T):-lljt(T,[]),!.
+
+lljt(A,Vs):-memberchk(A,Vs),!.
+
+lljt((A->B),Vs):-!,lljt(B,[A|Vs]).
+
+lljt(G,Vs1):-
+  select((A->B),Vs1,Vs2),
+  memberchk(A,Vs2),
+  !,
+  lljt((B->G),Vs2).
+
+lljt(G,Vs1):-
+  select( ((C->D)->B), Vs1,Vs2),
+  lljt((B->G),Vs2),
+  lljt(((D->B)->(C->D)),Vs2),
+  !.
+
+
+
 % simplest, with multisets, no contraction
 % with a single select/3 operation
 
@@ -63,6 +84,29 @@ ljb_imp(A,_,Vs):-memberchk(A,Vs).
 
 %% proving (C->D)->B becomes (D->B) -> (C->D)
 %% thus we try to prove C->D and assume D->B for that
+
+% variant
+
+bbprove(T):-ljbb(T,[]).
+
+ljbb(A,Vs):-memberchk(A,Vs),!.
+ljbb((A->B),Vs):-!,ljbb(B,[A|Vs]).
+ljbb(G,Vs1):-
+  select((A->B),Vs1,Vs2),
+  ljbb((B->G),Vs2),
+  ljbb_imp(A,B,Vs2),
+  !.
+
+ljbb_imp((C->D),B,Vs):-!,ljbb(((D->B)->(C->D)),Vs).
+ljbb_imp(A,_,Vs):-memberchk(A,Vs).
+
+/*
+ljbb_add(A,[A|Vs1],[A|Vs2]):-!,ljbb_add(A,Vs1,Vs2).
+ljbb_add(A,[(A->B)|Bs],[A,B|BBs]):-!,ljbb_add(A,Bs,BBs).
+ljbb_add(A,[B|Vs1],[B|Vs2]):-!,ljbb_add(A,Vs1,Vs2).
+ljbb_add(A,[],[A]).
+*/
+
 
 % variant of bprove that produces
 % lambda terms as proofs
@@ -379,3 +423,9 @@ badReduce(Vs):-
   badSolve(V,NewVs),
   badReduce(NewVs).
   
+iptest:-
+  X= (((c->d)->b) -> (c->d)) ,
+  Y= ( (d->b)     -> (c->d)),
+  ppp(X<->Y),
+  faprove(X<->Y).
+

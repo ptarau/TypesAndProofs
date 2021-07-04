@@ -104,7 +104,6 @@ abduce_with_prover(Prover,G,T,Us,Assumptions,NewT):-
   %ppp(Us:T->G),
   call(Prover,NewT).
 
-  
 list2impl([],G,G).
 list2impl([X|Xs],G,(X->R)):-list2impl(Xs,G,R).
   
@@ -152,6 +151,30 @@ abduce_test(N,P):-
    ppp((T0-->T)),
    fail.
    
+% SIMPLER, NEATER HYPOTHETCAL REASONING CONCEPT
+% generalizes ASP, and abductive LP to IPC
   
-  
- 
+subset_of(Xs,Ss):-
+  length(Xs,L),
+  between(0,L,K),
+  ksubset(K,Xs,Ss).
+
+leaves_of(Form,Leaves):-
+  leaves_of(Form,Xs,[]),
+  sort(Xs,Leaves).
+
+leaves_of([])-->!,[].
+leaves_of(A)-->{atomic(A)},!,[A].
+leaves_of(T)-->
+  {T=..[_|Xs]},
+  leaves_of_all(Xs).
+
+
+leaves_of_all([])-->[].
+leaves_of_all([X|Xs])-->leaves_of(X),leaves_of_all(Xs).
+
+needed_for(Prover,Formula,Hypos):-
+  % ex: Prover = lbj, Formula ((a->b)->c)
+  leaves_of(Formula,Ls),
+  subset_of(Ls,Hypos),
+  call(Prover,Formula,Hypos).

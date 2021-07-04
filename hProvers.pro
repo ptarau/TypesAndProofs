@@ -1,27 +1,6 @@
-% works on Horn clauses - includes
-% preprocessing from implicational form
-% from which the translation is reversible
-
-
-flat_hprove(T0):-
-   toHorn(T0,T1),
-   %assertion((T1=(_:-[_|_]);atomic(T1))),
-   flatter_horn(T1,(G:-Ts)),
-   ljh(G,Ts),
-   /*
-   ppp(T1),
-   pph(T1),
-   ppp(G:-Ts),
-   pph(G:-Ts),
-   ppp('---------'),nl,
-   */
-   true.
-
 hprove(T0):-toHorn(T0,T),ljh(T).
 
 ljh(A):-ljh(A,[]).
-
-%ljh(A,Vs):-ppp((Vs-->A)),fail. % just to trace steps
 
 ljh(A,Vs):-memberchk(A,Vs),!. 
 ljh((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljh(B,Vs2).
@@ -51,6 +30,24 @@ sorted_hprove(G):-
   to_sorted(H,S),
   ljh(S,[]).
 
+% works on Horn clauses - includes
+% preprocessing from implicational form
+% from which the translation is reversible
+
+
+flat_hprove(T0):-
+   toHorn(T0,T1),
+   %assertion((T1=(_:-[_|_]);atomic(T1))),
+   flatter_horn(T1,(G:-Ts)),
+   ljh(G,Ts),
+   /*
+   ppp(T1),
+   pph(T1),
+   ppp(G:-Ts),
+   pph(G:-Ts),
+   ppp('---------'),nl,
+   */
+   true.
 
 ord_hprove(T0):-toHorn(T0,T),to_sorted(T,S),ord_ljh(S).
 
@@ -694,3 +691,8 @@ ljz_imp((D:-Cs),B,Vs1):-
   ljz((D:-Cs),Vs2).          % prove A under that assumption
 
   
+hptest:-
+  X= (d:-[(b:-[(d:-[c])]), c]),
+  Y= (d:-[(b:-[d]), c]),
+  hprove((X:-[Y])),
+  hprove((Y:-[X])).
