@@ -173,6 +173,8 @@ leaves_of(T)-->
 leaves_of_all([])-->[].
 leaves_of_all([X|Xs])-->leaves_of(X),leaves_of_all(Xs).
 
+%% abductive inference for propositions
+%% that mast hold for a formula to be atautology in IPC
 needed_for(Prover,Formula,Hypos):-
   % ex: Prover = lbj, Formula ((a->b)->c)
   leaves_of(Formula,Ls),

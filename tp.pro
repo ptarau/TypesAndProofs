@@ -114,6 +114,8 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('primes.pro').
 
-:-include('hfs.pro').
+:-include('uhfs.pro').
+
+:-include('hhfs.pro').
 
 :-include('fc.pro').

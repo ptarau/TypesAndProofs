@@ -64,7 +64,8 @@ genSetTrees(B,[C|Bs],SN1,N3):-succ(N1,SN1),
 
 % hereditarily finite sets generators
 
-nat2nats(N,Ns):-findall(I,nat2bit(N,I),Ns).
+nat2nats(0,[]).
+nat2nats(N,Ns):-N>0,findall(I,nat2bit(N,I),Ns).
 
 nat2bit(N,I):-
   M is msb(N),
