@@ -1,8 +1,8 @@
 % natural number -> hereditatily finite set
 % with urelments smaller than M
 
-nat2uhfs(M,U,U):-U=<M.
-nat2uhfs(M,N,Hs):-N>M,
+nat2uhfs(M,U,U):-U<M.
+nat2uhfs(M,N,Hs):-N>=M,
   nat2nats(N,Ns),
   maplist(nat2uhfs(M),Ns,Hs).
 
@@ -27,3 +27,15 @@ nat2uhorn(M,N,C):-
   nat2uhfs(M,N,X),
   hornify(X,C).
 
+/*
+?- nat2uhorn(4,1001,R),ppp(R),pph(R),fail.
+0:-[3,(0:-[2]),(1:-[2]),(0:-[1,2]),3,(0:-[3])]
+          0
+  ________|_______
+ /  |  |   |    | \
+ 3  0  1   0    3  0
+    |  |   |       |
+    |  |  / \      |
+    2  2  1  2     3
+
+*/
