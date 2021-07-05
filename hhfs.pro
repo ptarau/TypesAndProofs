@@ -49,3 +49,13 @@ put_bdigit(B,D,N,NewN):- D >= 0,D<B,NewN is 1+D+B*N.
 
 
 
+test_hhfs:-
+   U=5,
+   M=1000,
+   between(0,M,N),
+   nat2hhfs(U,N,HBs),
+   hprove(HBs),
+   hhfs2nat(U,HBs,NN),
+   ppp((N=NN):'------>':HBs),
+   pph(HBs),
+   fail.
