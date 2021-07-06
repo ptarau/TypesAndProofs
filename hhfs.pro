@@ -4,9 +4,13 @@
 % nested Horn terms
 
 nat2hhfs(M,U,U):-U<M.
-nat2hhfs(M,N,(H:-Hs)):-N>=M,
+nat2hhfs(M,N,T):-N>=M,
   nat2unats(M,N,H-Ns),
-  maplist(nat2hhfs(M),Ns,Hs).
+  maplist(nat2hhfs(M),Ns,X),
+  empty_negate(H-X,T).
+
+empty_negate(H-[],~H).
+empty_negate(H-[B|Bs],H:-[B|Bs]).
 
 nat2unats(M,N,D-Ns):-
   get_bdigit(M,D,N,NewN),
@@ -17,7 +21,7 @@ unats2nat(M,D-Ns,N):-
   put_bdigit(M,D,OldN,N).
 
 hhfs2nat(M,H,H):-atomic(H),assertion(M>H).
-hhfs2nat(M,(H:-Bs),N):-assertion(M>H),
+hhfs2nat(M,T,N):-empty_negate(H-Bs,T),
   maplist(hhfs2nat(M),Bs,Cs),
   unats2nat(M,H-Cs,N).
 
@@ -54,8 +58,8 @@ test_hhfs:-
    M=1000,
    between(0,M,N),
    nat2hhfs(U,N,HBs),
-   hprove(HBs),
+   nhorn(HBs),
    hhfs2nat(U,HBs,NN),
    ppp((N=NN):'------>':HBs),
-   pph(HBs),
+   (pph(HBs)->true;ppt(HBs)),
    fail.
