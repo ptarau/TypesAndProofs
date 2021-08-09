@@ -32,7 +32,7 @@ uhorn2nat(HBs,N):-
 
 test_uhorn:-
    U=5,
-   M=100,
+   M=1000,
    between(0,M,N),
    nat2uhorn(U,N,HBs),
    nhorn(HBs),
