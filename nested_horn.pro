@@ -29,10 +29,11 @@ membtest(_,Vs):-memberchk((false<-_),Vs). % could still be infered from false
 trimmed((B<-[]),R):-!,R=B.
 trimmed(BBs,BBs).
 
+nholds(F):-neg_expand(F,NF),holds(NF).
 
 holds_classicaly(F):-
   glivenko(F,G),
-  holds(G).
+  nholds(G).
 
 
 % abductive implicational IPC
@@ -170,8 +171,8 @@ neg_expand(A,A).
 
 
 % turns formula into equivalent to being classically provable
-glivenko(H<-Bs,R):-!,maplist(glivenko,[H|Bs],[G|Cs]),R = (G<-Cs).
-glivenko(false,R):-!,R=false.
+%glivenko(H<-Bs,R):-!,maplist(glivenko,[H|Bs],[G|Cs]),R = (G<-Cs).
+%glivenko(false,R):-!,R=false.
 glivenko(X,R):-R=(false<-[false<-[X]]).
 
 
