@@ -93,6 +93,8 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('printers.pro'). % shows trees and other things in ASCII and LaTeX
 
+:-include('encoders.pro').
+
 
 %:-include('third_party/dyckhoff.pro'). % implicational variant of Roy Dyckhoff's prover 
 
@@ -119,3 +121,4 @@ c:-['tp.pro']. % quick iteractive reloader
 :-include('hhfs.pro').
 
 :-include('fc.pro').
+
