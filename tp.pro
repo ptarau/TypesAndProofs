@@ -95,6 +95,7 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('encoders.pro').
 
+:-include('hdprovers.pro').
 
 %:-include('third_party/dyckhoff.pro'). % implicational variant of Roy Dyckhoff's prover 
 

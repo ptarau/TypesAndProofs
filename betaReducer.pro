@@ -40,7 +40,7 @@ shift_var(I,K,v(N),v(M)):-K>=0,I>=0,N>=K,M is N+I.
 shift_var(I,K,v(N),v(N)):-K>=0,I>=0,N<K.
 
 % transforms de Bruijn term to 
-% canonical term with logic varibales in it
+% canonical term with logic varianbles in it
 b2l(A,T):-b2l(A,T,_Vs).
 
 b2l(v(I),V,Vs):-nth0(I,Vs,V).

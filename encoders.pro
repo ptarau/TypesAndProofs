@@ -21,3 +21,6 @@ etest:-
   term2paths(T,Pss),
   writeln(Pss),
   fail.
+
+
+

@@ -2,7 +2,7 @@ fmprove(G):-
   expand_full_neg(G,F),
   mints(F,H,Bs),
   %length(Bs,L),ppp(H:L),
-  %ppp(Bs->H),
+  %ppp(Bs->H)
   %ppp(H),
   ljfa(H,Bs).
   
@@ -67,6 +67,13 @@ spy(Mes,T,Vs):-
 		abort
 	).	
 
+/*
+% usage
+
+?- faprove(((a->h)&(b->h))<->(((a v b)->h))).
+true.
+
+*/
 
 faprove(T0):-
   expand_full_neg(T0,T),

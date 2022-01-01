@@ -476,7 +476,10 @@ gold_full_test(N,Culprit,Unexpected):-
   
 gold_full_test(N,Prover,Culprit,Unexpected):-
   gold_test(N,allFullFormulas,(=),dprove,Prover, Culprit,Unexpected).
- 
+
+gold_ext_test(N,Prover,Culprit,Unexpected):-
+  gold_test(N,allExtFullFormulas,(=),dprove,Prover, Culprit,Unexpected).
+
 % hardened tests
 
 gold_hard_full_test(N,Prover,Culprit,Unexpected):-
@@ -784,4 +787,3 @@ classimp0:-
       catch(time(call(Prover,C)),E,(ppp(E),sleep(20)))
     )).
 
- 

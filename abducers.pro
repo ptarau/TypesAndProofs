@@ -178,5 +178,76 @@ leaves_of_all([X|Xs])-->leaves_of(X),leaves_of_all(Xs).
 needed_for(Prover,Formula,Hypos):-
   % ex: Prover = lbj, Formula ((a->b)->c)
   leaves_of(Formula,Ls),
-  subset_of(Ls,Hypos),
+  subset_of(Ls,Positives),
+  mark_hypos(Positives,Hypos),
   call(Prover,Formula,Hypos).
+
+mark_hypos([],[]).
+mark_hypos([P|Ps],[H|Hs]):-
+   member(H,[P,~P]),
+   mark_hypos(Ps,Hs).
+
+abtest1:-
+  do((
+    needed_for(ipc_prover,(a->b&c),Hs),
+    ppp(Hs)
+  )).
+
+abtest2:-
+  do((
+     needed_for(ipc_prover,((a<->b)<->(~a <-> ~b)),Hs),
+     ppp(Hs)
+  )).
+
+
+abtest3:-
+  T=(~ (a & b)) <-> (~a v ~b),
+  do((
+     needed_for(ipc_prover,T, Hs),
+     ppp(Hs)
+  )).
+
+
+abtest4:-
+  T=((a -> b) & (a-> ~b)),
+  do((
+     needed_for(ipc_prover,T, Hs),
+     ppp(Hs)
+  )).
+
+needed_for(Formula,Assumptions):-
+  needed_for(ipc_prover,Formula,Assumptions).
+
+ipc_prover(T) :- ipc_prover(T,[]).
+
+ipc_prover(true,_):-!.
+ipc_prover(A,Vs):-memberchk(A,Vs),!.
+ipc_prover(_,Vs):-memberchk(false,Vs),!.
+ipc_prover(~A,Vs):-!,ipc_prover(false,[A|Vs]).
+ipc_prover(A<->B,Vs):-!,ipc_prover(B,[A|Vs]),ipc_prover(A,[B|Vs]).
+ipc_prover((A->B),Vs):-!,ipc_prover(B,[A|Vs]).
+ipc_prover((B<-A),Vs):-!,ipc_prover(B,[A|Vs]).
+ipc_prover(A & B,Vs):-!,ipc_prover(A,Vs),ipc_prover(B,Vs).
+ipc_prover(G,Vs1):- % atomic or disj or false
+  select(Red,Vs1,Vs2),
+  ipc_prover_reduce(Red,G,Vs2,Vs3),
+  !,
+  ipc_prover(G,Vs3).
+ipc_prover(A v B, Vs):-(ipc_prover(A,Vs);ipc_prover(B,Vs)),!.
+
+ipc_prover_reduce(true,_,Vs1,Vs2):-!,ipc_prover_imp(false,false,Vs1,Vs2).
+ipc_prover_reduce(~A,_,Vs1,Vs2):-!,ipc_prover_imp(A,false,Vs1,Vs2).
+ipc_prover_reduce((A->B),_,Vs1,Vs2):-!,ipc_prover_imp(A,B,Vs1,Vs2).
+ipc_prover_reduce((B<-A),_,Vs1,Vs2):-!,ipc_prover_imp(A,B,Vs1,Vs2).
+ipc_prover_reduce((A & B),_,Vs,[A,B|Vs]):-!.
+ipc_prover_reduce((A<->B),_,Vs,[(A->B),(B->A)|Vs]):-!.
+ipc_prover_reduce((A v B),G,Vs,[B|Vs]):-ipc_prover(G,[A|Vs]).
+
+ipc_prover_imp(true,B,Vs,[B|Vs]):-!. %,ipc_prover((false->false),[(false->B)|Vs]).
+ipc_prover_imp(~C,B,Vs,[B|Vs]):-!,ipc_prover((C->false),Vs). % ,[(false->B)|Vs]).
+ipc_prover_imp((C->D),B,Vs,[B|Vs]):-!,ipc_prover((C->D),[(D->B)|Vs]).
+ipc_prover_imp((D<-C),B,Vs,[B|Vs]):-!,ipc_prover((C->D),[(D->B)|Vs]).
+ipc_prover_imp((C & D),B,Vs,[(C->(D->B))|Vs]):-!.
+ipc_prover_imp((C v D),B,Vs,[(C->B),(D->B)|Vs]):-!.
+ipc_prover_imp((C<->D),B,Vs,[((C->D)->((D->C)->B))|Vs]):-!.
+ipc_prover_imp(A,B,Vs,[B|Vs]):-memberchk(A,Vs).  

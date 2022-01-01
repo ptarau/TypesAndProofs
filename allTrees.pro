@@ -135,7 +135,7 @@ genHorn3s(K,_B,[C|Bs],SN1,N3):-succ(N1,SN1),
   genHorn3(K,C,N1,N2),
   genHorn3s(K,C,Bs,N2,N3).
 
-  
+
 genOpTree(N,Tree,Leaves):-genOpTree(N,[(~),(->),(<->),(&),(v)],Tree,Leaves).
 
 genOpTree(N,Ops0,Tree,Leaves):-

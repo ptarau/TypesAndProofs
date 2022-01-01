@@ -106,7 +106,29 @@ allEqNegFormulas(N,T):-
     ], T, Vs),
     natpartitions(Vs).  
 
-  
+
+allExtFullFormulas(N,T):-
+  genExtOpTree(N,T,Vs),
+  extpartitions(Vs).
+
+genExtOpTree(N,Tree,Leaves):-
+   genOpTree(N,[(~),(->),(<->),(&),(v)],Tree,Leaves).
+
+
+extpartitions(Vs):-
+   TVs=[false,true],
+   mpart_of(Vs,Ms),
+   ( Ns=Ms
+   ; select(X,Ms,Ns),member(X,TVs)
+   ; select(X,Ms,Ns0),
+     select(Y,Ns0,Ns),
+     member(X,TVs),
+     member(Y,TVs)
+   ),
+   length(Ns,SL),
+   succ(L,SL),
+   numlist(0,L,Ns).
+
 allFullFormulas(N,T):-
   genOpTree(N,T,Vs),
   natpartitions(Vs).
