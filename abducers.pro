@@ -404,10 +404,29 @@ counterfactual(Prover,AggregatorOp,WithNeg,Abducibles,Formula,Assumption):-
 
 
 abduce_explanation_with(Prover,Abductibles,Prog,IC,G,Expl):-
-    ipc_counterfactual(Abductibles,(Prog->G), Expl),
-    ipc_prove(Expl & Prog->G),
-    ipc_prove((Expl & Prog->IC)),
-    not(call(Prover,(Expl & Prog->false))).
+    any_counterfactual(Prover,(&),yes,Abductibles,(Prog->G), Expl),
+    call(Prover, Expl & Prog->G),
+    call(Prover,(Expl & Prog->IC)),
+    \+call(Prover,(Expl & Prog -> false)).
+
+
+abex(Prover):-
+    IC = ~(rained & sunny),
+    P = sunny & (rained v sprinkler -> wet),
+    As=[sprinkler,rained],
+    G = wet,
+    do((
+     ppp(prog=P),
+     ppp(ic=IC),
+     abduce_explanation_with(Prover,As,P,IC,G,Explanation),
+     ppp('Explanation:' --> Explanation)
+   )).
+
+
+abex2:-abex(ipc_prove).
+
+abex3:-abex(cpc_prove).
+
 
 intuitionistic_abduction(Abductibles,Prog,IC,G,Expl):-
   Prover=ipc_prove,
@@ -466,29 +485,8 @@ cf1(H):-
 
 
 
-abex2:-
-    IC = ~(rained & sunny),
-    P = sunny & (rained v sprinkler -> wet),
-    As=[sprinkler,rained],
-    G = wet,
-    do((
-     ppp(prog=P),
-     ppp(ic=IC),
-     intuitionistic_abduction(As,P,IC,G,Explanation),
-     ppp(Explanation)
-   )).
 
-abex3:-
-    IC = ~(rained & sunny),
-    P = sunny & (rained v sprinkler -> wet),
-    As=[sprinkler,rained],
-    G = wet,
-    do((
-     ppp(prog=P),
-     ppp(ic=IC),
-     classical_abduction(As,P,IC,G,Explanation),
-     ppp(Explanation)
-   )).
+
 
 
 peirce(Prover,WhatIf):-
@@ -497,6 +495,10 @@ peirce(Prover,WhatIf):-
     AggregatorOp=(v),
     Abducibles=[p],
     counterfactual(Prover,AggregatorOp,WithNeg,Abducibles,Formula,WhatIf).
+
+ipeirce(WhatIf):-
+  Prover=ipc_prove,
+  peirce(Prover,WhatIf).
 
 
 cpeirce(WhatIf):-
