@@ -11,12 +11,12 @@ c:-['tp.pro']. % quick iteractive reloader
 :-op(30,xfx,to).
 
 :- op(100,  fx,  (?) ). 
-:- op(525,  fy,  ~ ).
+:- op(525,  fy,  ~ ).    % right associative
 :- op(550, xfy,  & ).    % right associative
 :- op(575, xfy,  v ).    % right associative
 :- op(600, xfx,  <-> ).  % non associative
-%:- op(500, xfy,  ->).    % right associative  
-%%% WARNING, this overwrites Prolog's ->
+:- op(800, yfx,  <- ).   % left associative
+%:- op(800, xfy,  ->).    % right associative  %%% thiswould  overwride Prolog's ->
                
 :-include('horn_flattener.pro').
 

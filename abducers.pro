@@ -106,11 +106,7 @@ abduce_with_prover(Prover,G,T,Us,Assumptions,NewT):-
 
 list2impl([],G,G).
 list2impl([X|Xs],G,(X->R)):-list2impl(Xs,G,R).
-  
-  % subsets of K elements of a set with N elements
-ksubset(0,_,[]).
-ksubset(K,[X|Xs],[X|Rs]):-K>0,K1 is K-1,ksubset(K1,Xs,Rs).
-ksubset(K,[_|Xs],Rs):-K>0,ksubset(K,Xs,Rs).
+
 
 genWithArrows(Ns,Hyps):-
   findall(Arr,genArrow(Ns,Arr),As),
@@ -153,49 +149,43 @@ abduce_test(N,P):-
    
 % SIMPLER, NEATER HYPOTHETCAL REASONING CONCEPT
 % generalizes ASP, and abductive LP to IPC
-  
+
+% subsets, by increasing size order
 subset_of(Xs,Ss):-
   length(Xs,L),
   between(0,L,K),
   ksubset(K,Xs,Ss).
+
+% subsets of K elements of a set with N elements
+ksubset(0,_,[]).
+ksubset(K,[X|Xs],[X|Rs]):-K>0,K1 is K-1,ksubset(K1,Xs,Rs).
+ksubset(K,[_|Xs],Rs):-K>0,ksubset(K,Xs,Rs).
 
 leaves_of(Form,Leaves):-
   leaves_of(Form,Xs,[]),
   sort(Xs,Leaves).
 
 leaves_of([])-->!,[].
+leaves_of(false)-->!,[].
+leaves_of(true)-->!,[].
 leaves_of(A)-->{atomic(A)},!,[A].
 leaves_of(T)-->
   {T=..[_|Xs]},
   leaves_of_all(Xs).
 
-
 leaves_of_all([])-->[].
 leaves_of_all([X|Xs])-->leaves_of(X),leaves_of_all(Xs).
 
-%% abductive inference for propositions
-%% that mast hold for a formula to be atautology in IPC
-needed_for(Prover,Formula,Hypos):-
-  % ex: Prover = lbj, Formula ((a->b)->c)
-  leaves_of(Formula,Ls),
-  subset_of(Ls,Positives),
-  mark_hypos(Positives,Hypos),
-  call(Prover,Formula,Hypos).
-
-mark_hypos([],[]).
-mark_hypos([P|Ps],[H|Hs]):-
-   member(H,[P,~P]),
-   mark_hypos(Ps,Hs).
 
 abtest1:-
   do((
-    needed_for(ipc_prover,(a->b&c),Hs),
+    needed_for(ipc_prove,(a->b&c),Hs),
     ppp(Hs)
   )).
 
 abtest2:-
   do((
-     needed_for(ipc_prover,((a<->b)<->(~a <-> ~b)),Hs),
+     needed_for(ipc_prove,((a<->b)<->(~a <-> ~b)),Hs),
      ppp(Hs)
   )).
 
@@ -203,7 +193,7 @@ abtest2:-
 abtest3:-
   T=(~ (a & b)) <-> (~a v ~b),
   do((
-     needed_for(ipc_prover,T, Hs),
+     needed_for(ipc_prove,T, Hs),
      ppp(Hs)
   )).
 
@@ -211,43 +201,304 @@ abtest3:-
 abtest4:-
   T=((a -> b) & (a-> ~b)),
   do((
-     needed_for(ipc_prover,T, Hs),
+     needed_for(ipc_prove,T, Hs),
      ppp(Hs)
   )).
 
-needed_for(Formula,Assumptions):-
-  needed_for(ipc_prover,Formula,Assumptions).
 
-ipc_prover(T) :- ipc_prover(T,[]).
+abtest5:-
+  T=(a v b -> a & b),
+  do((
+     needed_for(ipc_prove,T, Hs),
+     ppp(Hs)
+  )).
 
-ipc_prover(true,_):-!.
-ipc_prover(A,Vs):-memberchk(A,Vs),!.
-ipc_prover(_,Vs):-memberchk(false,Vs),!.
-ipc_prover(~A,Vs):-!,ipc_prover(false,[A|Vs]).
-ipc_prover(A<->B,Vs):-!,ipc_prover(B,[A|Vs]),ipc_prover(A,[B|Vs]).
-ipc_prover((A->B),Vs):-!,ipc_prover(B,[A|Vs]).
-ipc_prover((B<-A),Vs):-!,ipc_prover(B,[A|Vs]).
-ipc_prover(A & B,Vs):-!,ipc_prover(A,Vs),ipc_prover(B,Vs).
-ipc_prover(G,Vs1):- % atomic or disj or false
-  select(Red,Vs1,Vs2),
-  ipc_prover_reduce(Red,G,Vs2,Vs3),
+abtest6:-
+  T=(a v ~a),
+  do((
+     needed_for(ipc_prove,T, Hs),
+     ppp(Hs)
+  )).
+
+abtest7:-
+   T= (
+     (a -> b<->c)  &
+     (b<->bb) &
+     (c<->cc) &
+     (a -> aa) ->
+     bb<->cc
+     ),
+     do((
+     needed_for(ipc_prove,T, Hs),
+     ppp(Hs)
+     )).
+
+abtest8:-
+  T=(p -> q v r),
+  do((
+     needed_for(T, Hs),
+     ppp(Hs)
+  )).
+
+% peirce's law
+abtest9:-
+  T=(((p->q)->p)->p),
+   do((
+     needed_for(T, Hs),
+     ppp(Hs)
+  )).
+
+abtest10:-
+  T=((a&b->c)->((a->c) v (b->c))),
+  do((
+     needed_for(T, Hs),
+     ppp(Hs)
+  )).
+
+
+
+
+asp1:-
+   T= ((p <- ~q) & (q <- ~p)),
+   do((
+     needed_for(T, Hs),
+     ppp(Hs)
+  )).
+
+asp2:-
+   T= (
+     p &
+     (r<-p&q) &
+     (s<-p& ~q)
+   ),
+   do((
+     needed_for(~ ~T, Hs),
+     ppp(Hs)
+  )).
+
+
+asp3:-
+   T= (
+     p &
+     (r<-p&q) &
+     (s<-p& ~q)
+   ),
+   do((
+     needed_for(T, Hs),
+     ppp(Hs)
+   )).
+
+
+abex1:-
+    IC = ~(rained & sunny),
+    P = sunny & (rained v sprinkler -> wet),
+    G = wet,
+    do((
+     ppp(prog=P),
+     ppp(ic=IC),
+     needed_for(P->G, Hyp),
+     ipc_prove(Hyp&P->G),
+     ipc_prove((Hyp&P->IC)),
+     not(ipc_prove(Hyp&P->false)),
+     ppp(Hyp)
+   )).
+
+
+%% abductive inference for propositions
+%% that mast hold for a formula to be a tautology in IPC
+
+needed_for(Formula,R):-
+  needed_for(ipc_prove,Formula,Assumption)*-> R=Assumption
+; R=fail.
+
+
+needed_for(Prover,Formula,Assumption):-
+  needed_with((&),yes,Prover,Formula,Assumption).
+
+needed_with(_,_,Prover,Formula,Assumption):-
+  call(Prover,Formula),
   !,
-  ipc_prover(G,Vs3).
-ipc_prover(A v B, Vs):-(ipc_prover(A,Vs);ipc_prover(B,Vs)),!.
+  Assumption=[].
+needed_with(Op,Neg,Prover,Formula,Assumption):-
+  % ex: Op=&, Prover = ipc_prove, Formula ((a->b)->c)
+  leaves_of(Formula,Ls),
+  subset_of(Ls,[P|Positives]),
+  mark_hypos(Neg,[P|Positives],Hypos),
+  join_with(Op,Hypos,Assumption),
+  call(Prover,Assumption->Formula).
 
-ipc_prover_reduce(true,_,Vs1,Vs2):-!,ipc_prover_imp(false,false,Vs1,Vs2).
-ipc_prover_reduce(~A,_,Vs1,Vs2):-!,ipc_prover_imp(A,false,Vs1,Vs2).
-ipc_prover_reduce((A->B),_,Vs1,Vs2):-!,ipc_prover_imp(A,B,Vs1,Vs2).
-ipc_prover_reduce((B<-A),_,Vs1,Vs2):-!,ipc_prover_imp(A,B,Vs1,Vs2).
-ipc_prover_reduce((A & B),_,Vs,[A,B|Vs]):-!.
-ipc_prover_reduce((A<->B),_,Vs,[(A->B),(B->A)|Vs]):-!.
-ipc_prover_reduce((A v B),G,Vs,[B|Vs]):-ipc_prover(G,[A|Vs]).
 
-ipc_prover_imp(true,B,Vs,[B|Vs]):-!. %,ipc_prover((false->false),[(false->B)|Vs]).
-ipc_prover_imp(~C,B,Vs,[B|Vs]):-!,ipc_prover((C->false),Vs). % ,[(false->B)|Vs]).
-ipc_prover_imp((C->D),B,Vs,[B|Vs]):-!,ipc_prover((C->D),[(D->B)|Vs]).
-ipc_prover_imp((D<-C),B,Vs,[B|Vs]):-!,ipc_prover((C->D),[(D->B)|Vs]).
-ipc_prover_imp((C & D),B,Vs,[(C->(D->B))|Vs]):-!.
-ipc_prover_imp((C v D),B,Vs,[(C->B),(D->B)|Vs]):-!.
-ipc_prover_imp((C<->D),B,Vs,[((C->D)->((D->C)->B))|Vs]):-!.
-ipc_prover_imp(A,B,Vs,[B|Vs]):-memberchk(A,Vs).  
+
+
+% intuitionistic  prover
+ipc_prove(T) :- ipc_prove(T,[]).
+
+ipc_prove(true,_):-!.
+ipc_prove(A,Vs):-memberchk(A,Vs),!.
+ipc_prove(_,Vs):-memberchk(false,Vs),!.
+ipc_prove(~A,Vs):-!,ipc_prove(false,[A|Vs]).
+ipc_prove(A<->B,Vs):-!,ipc_prove(B,[A|Vs]),ipc_prove(A,[B|Vs]).
+ipc_prove((A->B),Vs):-!,ipc_prove(B,[A|Vs]).
+ipc_prove((B<-A),Vs):-!,ipc_prove(B,[A|Vs]).
+ipc_prove(A & B,Vs):-!,ipc_prove(A,Vs),ipc_prove(B,Vs).
+ipc_prove(G,Vs1):- % atomic or disj or false
+  select(Red,Vs1,Vs2),
+  ipc_prove_reduce(Red,G,Vs2,Vs3),
+  !,
+  ipc_prove(G,Vs3).
+ipc_prove(A v B, Vs):-(ipc_prove(A,Vs);ipc_prove(B,Vs)),!.
+
+ipc_prove_reduce(true,_,Vs1,Vs2):-!,ipc_prove_imp(false,false,Vs1,Vs2).
+ipc_prove_reduce(~A,_,Vs1,Vs2):-!,ipc_prove_imp(A,false,Vs1,Vs2).
+ipc_prove_reduce((A->B),_,Vs1,Vs2):-!,ipc_prove_imp(A,B,Vs1,Vs2).
+ipc_prove_reduce((B<-A),_,Vs1,Vs2):-!,ipc_prove_imp(A,B,Vs1,Vs2).
+ipc_prove_reduce((A & B),_,Vs,[A,B|Vs]):-!.
+ipc_prove_reduce((A<->B),_,Vs,[(A->B),(B->A)|Vs]):-!.
+ipc_prove_reduce((A v B),G,Vs,[B|Vs]):-ipc_prove(G,[A|Vs]).
+
+ipc_prove_imp(true,B,Vs,[B|Vs]):-!.
+ipc_prove_imp(~C,B,Vs,[B|Vs]):-!,ipc_prove((C->false),Vs).
+ipc_prove_imp((C->D),B,Vs,[B|Vs]):-!,ipc_prove((C->D),[(D->B)|Vs]).
+ipc_prove_imp((D<-C),B,Vs,[B|Vs]):-!,ipc_prove((C->D),[(D->B)|Vs]).
+ipc_prove_imp((C & D),B,Vs,[(C->(D->B))|Vs]):-!.
+ipc_prove_imp((C v D),B,Vs,[(C->B),(D->B)|Vs]):-!.
+ipc_prove_imp((C<->D),B,Vs,[((C->D)->((D->C)->B))|Vs]):-!.
+ipc_prove_imp(A,B,Vs,[B|Vs]):-memberchk(A,Vs).  
+
+% classical prover - via Glivenko's theorem
+cpc_prove(T):-ipc_prove( ~ ~T).
+
+abducibles_of(Formula,Abducibles):-var(Abducibles),!,leaves_of(Formula,Abducibles).
+abducibles_of(_,_).
+
+cpc_counterfactual(Abducibles,Formula,Assumption):-
+   Prover=cpc_prove,
+   WithNeg=yes,
+   AggregatorOp=(&),
+   counterfactual(Prover,AggregatorOp,WithNeg,Abducibles,Formula,Assumption).
+
+ipc_counterfactual(Abducibles,Formula,Assumption):-
+   Prover=ipc_prove,
+   WithNeg=yes,
+   AggregatorOp=(&),
+   counterfactual(Prover,AggregatorOp,WithNeg,Abducibles,Formula,Assumption).
+
+any_counterfactual(Prover,AggregatorOp,WithNeg,Abducibles,Formula,Assumption):-
+  abducibles_of(Formula,Abducibles),
+  subset_of(Abducibles,Positives),
+  mark_hypos(WithNeg,Positives,Hypos),
+  join_with(AggregatorOp,Hypos,Assumption),
+  call(Prover,Assumption->Formula).
+
+
+weakest_with(Prover,Gs,G):-
+   select(G,Gs,Others),
+   \+ (member(O,Others),call(Prover,(G->O))).
+
+counterfactual(Prover,AggregatorOp,WithNeg,Abducibles,Formula,Assumption):-
+  findall(Assumption,
+    any_counterfactual(Prover,AggregatorOp,WithNeg,Abducibles,Formula,Assumption),
+    Assumptions),
+  weakest_with(Prover,Assumptions,Assumption).
+
+
+
+abduce_explanation_with(Prover,Abductibles,Prog,IC,G,Expl):-
+    ipc_counterfactual(Abductibles,(Prog->G), Expl),
+    ipc_prove(Expl & Prog->G),
+    ipc_prove((Expl & Prog->IC)),
+    not(call(Prover,(Expl & Prog->false))).
+
+intuitionistic_abduction(Abductibles,Prog,IC,G,Expl):-
+  Prover=ipc_prove,
+  abduce_explanation_with(Prover,Abductibles,Prog,IC,G,Expl).
+
+classical_abduction(Abductibles,Prog,IC,G,Expl):-
+  Prover=cpc_prove,
+  abduce_explanation_with(Prover,Abductibles,Prog,IC,G,Expl).
+
+
+mark_hypos(_,[],[]).
+mark_hypos(Neg,[P|Ps],[H|Hs]):-
+   with_neg(Neg,P,H),
+   mark_hypos(Neg,Ps,Hs).
+
+with_neg(_,P,P).
+with_neg(yes,P,~P).
+
+join_with_op(_,[],true).
+join_with_op(_,[X],X).
+join_with_op(Op,[X,Y|Xs],R):-
+   join_with_op(Op,[Y|Xs],R0),
+   R=..[Op,X,R0].
+
+
+join_with(Op,Xs,R):-
+  memberchk(Op,[(->),(<-)]),!,
+  select(Head,Xs,Ys),
+  append(Ys,[Head],Zs),
+  join_with_op((->),Zs,R).
+join_with(Op,Xs,R):-Op=(<->),!,
+  permutation(Xs,Ys),
+  join_with_op(Op,Ys,R).
+join_with(Op,Xs,R):-
+  join_with_op(Op,Xs,R).
+
+
+abtest11:-
+  T=(a<-((a<-(b<-d))&(b<-c)&(c<-d))) ,
+  ppp(T),
+  ipc_prove(T).
+
+abtest12:-
+  T=(a<-((a<-(b<-d))&(b<-c))),
+  H=(d->c),
+  ppp(H->T),
+  ipc_prove(T<-H).
+
+cf1(H):-
+   T=(a<-((a<-(b<-d))&(b<-c))),
+   Prover=ipc_prove,
+   WithNeg=yes,
+   AggregatorOp=(<-),
+   As=[c,d],
+   counterfactual(Prover,AggregatorOp,WithNeg,As,T,H).
+
+
+
+abex2:-
+    IC = ~(rained & sunny),
+    P = sunny & (rained v sprinkler -> wet),
+    As=[sprinkler,rained],
+    G = wet,
+    do((
+     ppp(prog=P),
+     ppp(ic=IC),
+     intuitionistic_abduction(As,P,IC,G,Explanation),
+     ppp(Explanation)
+   )).
+
+abex3:-
+    IC = ~(rained & sunny),
+    P = sunny & (rained v sprinkler -> wet),
+    As=[sprinkler,rained],
+    G = wet,
+    do((
+     ppp(prog=P),
+     ppp(ic=IC),
+     classical_abduction(As,P,IC,G,Explanation),
+     ppp(Explanation)
+   )).
+
+
+peirce(Prover,WhatIf):-
+    Formula=(((p->q)->p)->p),
+    WithNeg=yes,
+    AggregatorOp=(v),
+    Abducibles=[p],
+    counterfactual(Prover,AggregatorOp,WithNeg,Abducibles,Formula,WhatIf).
+
+
+cpeirce(WhatIf):-
+  Prover=cpc_prove,
+  peirce(Prover,WhatIf).

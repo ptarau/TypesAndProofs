@@ -8,8 +8,14 @@ varvars(A,X):-
   varvars(A,X,D).
 
 varvars((A,B),(X->Y),D):-!,varvars(A,X,D),varvars(B,Y,D).
+varvars(A&B,X&Y,D):-!,varvars(A,X,D),varvars(B,Y,D).
+varvars(A v B,X v Y,D):-!,varvars(A,X,D),varvars(B,Y,D).
 varvars(A->B,X->Y,D):-!,varvars(A,X,D),varvars(B,Y,D).
+varvars(A<-B,X<-Y,D):-!,varvars(A,X,D),varvars(B,Y,D).
+varvars(A<->B,X<->Y,D):-!,varvars(A,X,D),varvars(B,Y,D).
+varvars(~A,~X,D):-!,varvars(A,X,D).
 varvars(false,false,_):-!.
+varvars(true,true,_):-!.
 varvars(A,V,D):-I is A+1,arg(I,D,V).
 
 
@@ -17,6 +23,7 @@ varvars(A,V,D):-I is A+1,arg(I,D,V).
 
 maxvar(X,M):-var(X),!,M=0.
 maxvar(A,M):-atom(A),!,M=0.
+maxvar((A<-B),R):-!,maxvar(A,I),maxvar(B,J),R is max(I,J).
 maxvar((A->B),R):-!,maxvar(A,I),maxvar(B,J),R is max(I,J).
 maxvar((A v B),R):-!,maxvar(A,I),maxvar(B,J),R is max(I,J).
 maxvar((A & B),R):-!,maxvar(A,I),maxvar(B,J),R is max(I,J).
@@ -29,7 +36,7 @@ maxvar(I,R):-must_be(integer,I),R=I.
 % logic variables in it to 0,1,...
 
 natvars(T):-natvars(0,T).
-
+$
 natvars(Min,T):-
   must_be(acyclic,T),
   term_variables(T,Vs),
@@ -208,5 +215,4 @@ toPrefix(X,Y):-atomic_list_concat([x,X],Y).
 
 
 
-   
    

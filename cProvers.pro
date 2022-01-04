@@ -79,7 +79,7 @@ toImp(X^Y, R):-
   
 
 % simple evaluator / truth table generator
-% for classic implicational formulas
+% for classic  formulas
 
 classEval(G):-
   varvars(G,F),
@@ -101,16 +101,57 @@ eval(G,R):-varvars(G,T),evalT(T,R).
 
 evalT(X,X):-var(X),!,bit(X).
 evalT(false,R):-!,R=0.
+evalT(true,R):-!,R=1.
 evalT(X,R):-integer(X),!,R=X.
+evalT(~A,R):- evalT(A,X),neg(X,R).
 evalT((A->B),R):-
   evalT(A,X),
   evalT(B,Y),
   impl(X,Y,R).
+evalT((A&B),R):-
+  evalT(A,X),
+  evalT(B,Y),
+  conj(X,Y,R).
+evalT((A v B),R):-
+  evalT(A,X),
+  evalT(B,Y),
+  disj(X,Y,R).
+evalT((A<->B),R):-
+  evalT(A,X),
+  evalT(B,Y),
+  equiv(X,Y,R).
+evalT((A<-B),R):-
+  evalT(A,X),
+  evalT(B,Y),
+  rev_impl(X,Y,R).
+
+neg(0,1).
+neg(1,0).
 
 impl(0,0,1).
 impl(0,1,1).
 impl(1,0,0).
 impl(1,1,1).
+
+conj(0,0,0).
+conj(0,1,0).
+conj(1,0,0).
+conj(1,1,1).
+
+disj(0,0,0).
+disj(0,1,1).
+disj(1,0,1).
+disj(1,1,1).
+
+equiv(0,0,1).
+equiv(0,1,0).
+equiv(1,0,0).
+equiv(1,1,1).
+
+rev_impl(0,0,1).
+rev_impl(0,1,1).
+rev_impl(1,0,0).
+rev_impl(1,1,1).
 
 bit(0).
 bit(1).
