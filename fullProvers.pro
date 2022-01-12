@@ -97,19 +97,18 @@ ljfa(G,Vs1):- % atomic or disj or false
 ljfa(A v B, Vs):-(ljfa(A,Vs);ljfa(B,Vs)),!.
 
 %ljfa_reduce(AB,G,Vs,Vs):-compound(AB),ppp(reduce(G):(AB:-Vs)),fail.
-ljfa_reduce((A->B),_,Vs1,Vs2):-!,ljfa_imp(A,B,Vs1,Vs2).
+ljfa_reduce((A->B),_,Vs1,Vs2):-!,ljfa_impl(A,B,Vs1,Vs2).
 ljfa_reduce((A & B),_,Vs,[A,B|Vs]):-!.
 ljfa_reduce((A<->B),_,Vs,[(A->B),(B->A)|Vs]):-!.
 ljfa_reduce((A v B),G,Vs,[B|Vs]):-ljfa(G,[A|Vs]).
  
 % alternative, avoidng duplication of D
-%ljfa_imp((C->D),B,Vs,[B|Vs]):-!,gensym(p__,P),ljfa(P,[C,(D->P),(P->B)|Vs]).
-ljfa_imp((C->D),B,Vs,[B|Vs]):-!,ljfa((C->D),[(D->B)|Vs]).
-
-ljfa_imp((C & D),B,Vs,[(C->(D->B))|Vs]):-!.
-ljfa_imp((C v D),B,Vs,[(C->B),(D->B)|Vs]):-!.
-ljfa_imp((C<->D),B,Vs,[((C->D)->((D->C)->B))|Vs]):-!.
-ljfa_imp(A,B,Vs,[B|Vs]):-memberchk(A,Vs).  
+%ljfa_impl((C->D),B,Vs,[B|Vs]):-!,gensym(p__,P),ljfa(P,[C,(D->P),(P->B)|Vs]).
+ljfa_impl((C->D),B,Vs,[B|Vs]):-!,ljfa((C->D),[(D->B)|Vs]).
+ljfa_impl((C & D),B,Vs,[(C->(D->B))|Vs]):-!.
+ljfa_impl((C v D),B,Vs,[(C->B),(D->B)|Vs]):-!.
+ljfa_impl((C<->D),B,Vs,[((C->D)->((D->C)->B))|Vs]):-!.
+ljfa_impl(A,B,Vs,[B|Vs]):-memberchk(A,Vs).  
 
 fdprove(T0):-
   expand_full_neg(T0,T),

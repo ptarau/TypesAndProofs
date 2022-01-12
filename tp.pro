@@ -16,7 +16,7 @@ c:-['tp.pro']. % quick iteractive reloader
 :- op(575, xfy,  v ).    % right associative
 :- op(600, xfx,  <-> ).  % non associative
 :- op(800, yfx,  <- ).   % left associative
-%:- op(800, xfy,  ->).    % right associative  %%% thiswould  overwride Prolog's ->
+%:- op(800, xfy,  ->).   % right associative  %%% thiswould  overwride Prolog's ->
                
 :-include('horn_flattener.pro').
 
@@ -60,6 +60,7 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('parTypedNFs.pro'). % parallel variants of typed normal form generators
 
+:-include('old_abducers.pro').
 :-include('abducers.pro').
 
 :-include('inputTransformers.pro').
