@@ -40,6 +40,7 @@ iprover_impl(A,B,Vs,[B|Vs]):-memberchk(A,Vs).
 
 % classical prover - via Glivenko's theorem
 cprover(T):-iprover( ~ ~T).
+cprover(T,Vs):-iprover( ~ ~T,Vs).
 
 
 abducibles_of(Formula,Abducibles):-var(Abducibles),!,atoms_of(Formula,Abducibles).
@@ -336,3 +337,9 @@ imt2(P):-
   T=((p->(q v r))),
   R=((p->h) & (h<->(q v r))),
   intuitionistic_protasis(_,T->R,P).
+
+path_test:-
+  Cs=[a<-b v c,b<-d v e v f,e<-a,f<-b v e,c<-e v f,e<-g v h],
+  %Cs=[a<-b,b<-c v d,c<-e v h,e<-a],
+  G=(h->a),
+  iprover(G,Cs).
