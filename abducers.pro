@@ -223,6 +223,15 @@ model_test2(A):-
   weakest_protasis(cprover,(&),yes,[a,b],P,A).
 
 
+model_test3(A):-
+  P=((a<->b)<->(~a <-> ~b)),
+  weakest_protasis(iprover,(&),yes,[a,b],P,A).
+
+model_test4(A):-
+  P=((a<->b)<->(~a <-> ~b)),
+  weakest_protasis(cprover,(&),yes,[a,b],P,A).
+
+
 ht_axiom(A):-
   P=(f v (f->g) v ~g),
   weakest_protasis(iprover,(->),yes,_,P,A).
@@ -343,3 +352,54 @@ path_test:-
   %Cs=[a<-b,b<-c v d,c<-e v h,e<-a],
   G=(h->a),
   iprover(G,Cs).
+
+
+
+path_inf:-
+  Graph=(a<-b v c)&(c<-d v e)&(e<-a),
+  Link=((a->d)),
+  Formula=(Graph->Link),
+  weakest_protasis(iprover,(->),no,_Abducibles,Formula,Assumption),
+  ppp(Assumption),
+  fail.
+
+path_inf1:-
+  Graph=((a->b)&(b->c)&(c->a) & (d->e)&(e->f)&(f->d)),
+  Link=((f->a)),
+  Formula=(Graph->Link),
+  %weakest_mints_premise(iprover,_Abducibles,Formula,Assumption),
+  weakest_protasis(iprover,(->),no,_Abducibles,Formula,Assumption),
+  ppp(Assumption),
+  fail.
+
+
+acall(Abducible, Holes):-
+   copy_term(Abducible,Caller),
+   term_variables(Abducible,Us),
+   copy_term(Abducible+Us,Caller+Vs),
+   call(Caller),
+   find_holes(Us,Vs,Holes).
+
+find_holes([],[],[]).
+find_holes([U|Us],[V|Vs],URs):-nonvar(V),!,URs=[U-V|Rs],find_holes(Us,Vs,Rs).
+find_holes([_|Us],[_|Vs],Rs):-find_holes(Us,Vs,Rs).
+
+
+acall_test:-
+  G=append(_,_,[1,2,3]),
+  acall(G,R),
+  ppp(G-->R),
+  fail.
+
+/*
+
+p -> o1 & o2 & o3.
+
+p <- i1 v i2 v i3 v i4
+
+?- A=((the->cat)&(big->cat)),B=(the v big -> cat),iprover(A<->B).
+A =  (the->cat)&(big->cat),
+B =  (the v big->cat).
+
+
+*/
