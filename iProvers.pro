@@ -58,9 +58,9 @@ lljt(G,Vs1):-
 
 lljt(G,Vs1):-
   select( ((C->D)->B), Vs1,Vs2),
-  lljt((B->G),Vs2),
-  lljt(((D->B)->(C->D)),Vs2),
-  !.
+  lljt(((D->B)->(C->D)->B),Vs2),
+  !,
+  lljt((G),Vs2).
 
 
 
@@ -72,7 +72,7 @@ bprove(T):-ljb(T,[]).
 %ljb(A,Vs):-ppp((Vs-->A)),fail. % fo traing only
 
 ljb(A,Vs):-memberchk(A,Vs),!.
-ljb((A->B),Vs):-!,ljb(B,[A|Vs]). 
+ljb((A->B),Vs):-!,ljb(B,[A|Vs]).
 ljb(G,Vs1):-
   select((A->B),Vs1,Vs2),
   ljb_imp(A,B,Vs2),
@@ -80,7 +80,23 @@ ljb(G,Vs1):-
   ljb(G,[B|Vs2]).
 
 ljb_imp((C->D),B,Vs):-!,ljb((C->D),[(D->B)|Vs]).
-ljb_imp(A,_,Vs):-memberchk(A,Vs).   
+ljb_imp(A,_,Vs):-memberchk(A,Vs).
+
+% same but in terms of reverse implication
+
+riprove(A):-riprove(A,[]).
+
+riprove(A,Vs):-memberchk(A,Vs),!.
+riprove((B<-A),Vs):-!,riprove(B,[A|Vs]).
+riprove(G,Vs1):-
+  select((B<-A),Vs1,Vs2),
+  riprove_imp(A,B,Vs2),
+  !,
+  riprove(G,[B|Vs2]).
+
+riprove_imp((D<-C),B,Vs):-!,riprove((D<-C),[(B<-D)|Vs]).
+riprove_imp(A,_,Vs):-memberchk(A,Vs).
+
 
 %% proving (C->D)->B becomes (D->B) -> (C->D)
 %% thus we try to prove C->D and assume D->B for that

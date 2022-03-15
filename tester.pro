@@ -718,9 +718,18 @@ fbug:-T=(((0 <-> (((0 <-> 0) <-> 0) -> false)) -> false) -> false) ,
   faprove(T).
   
 % soundness of ljt4 rule  
-ljt4:-L=((d->b)->(c->d)),R=(b->g),LR=(((c->d)->b)->g),
-   bprove(L->(R->LR)).
-   
+ljt4:-
+   L=((d->b)->(c->d)),
+   R=(b->g),
+   LR=(((c->d)->b)->g),
+   bprove(L->R->LR).
+
+ljt4x:-
+   L=((d->b)->(c->d)),
+   R=b,
+   LR=(((c->d)->b)),
+   iprover(L->(R->LR)).
+
    
 /*
 assume 

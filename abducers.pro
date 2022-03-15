@@ -353,6 +353,9 @@ path_test:-
   G=(h->a),
   iprover(G,Cs).
 
+prove_test:-
+  T=(a<-(b<-d)),S=(b<-c),R=(c<-d),
+  iprover(T&S&R->a).
 
 
 path_inf:-
@@ -373,6 +376,9 @@ path_inf1:-
   fail.
 
 
+graph_inf:-
+  iprover((a v x ->b&c) <-> ((a ->b) & (x->b) & (a->c) & (x->c))).
+
 acall(Abducible, Holes):-
    copy_term(Abducible,Caller),
    term_variables(Abducible,Us),
@@ -389,6 +395,22 @@ acall_test:-
   G=append(_,_,[1,2,3]),
   acall(G,R),
   ppp(G-->R),
+  fail.
+
+
+mon_test1:-
+  %Xs=[a,b,c],member(X,Xs),member(Y,Xs),member(Z,Xs),
+  iprover(p(U)->(p(X)->p(Y)->p(Z))->((p(X)->p(Y))->p(Z))),
+  ppp([U,X,Y,Z]),
+  fail.
+
+mon_test2:-
+  %Xs=[a,b,c],member(X,Xs),member(Y,Xs),member(Z,Xs),
+  [X,Y,Z]=[a(_),b(_),c(_)],
+  G=((X->Y)&(Y->Z)&(Z->X)),
+  GG=((X<-Y)&(Y<-Z)&(Z<-X)),
+  iprover(G<->GG),
+  ppp(G),
   fail.
 
 /*
