@@ -33,8 +33,11 @@ nholds(F):-neg_expand(F,NF),holds(NF).
 
 holds_classicaly(F):-
   glivenko(F,G),
-  nholds(G).
+  holds(G).
 
+nholds_classicaly(F):-
+  glivenko(F,G),
+  nholds(G).
 
 % abductive implicational IPC
 

@@ -115,7 +115,7 @@ ljg(A):-ljg(A,[]),!.
 ljg(A,Vs):-memberchk(A,Vs),!. 
 ljg((B:-As),Vs1):-!,append(As,Vs1,Vs2),ljg(B,Vs2).
 ljg(G,Vs0):- % G is atomic
-   ((G:-Gs),Vs0,Vs1),!, % bring a G:-.. first
+  select((G:-Gs),Vs0,Vs1),!, % bring a G:-.. first
   select((B:-As),[(G:-Gs)|Vs1],Vs2),
   select(A,As,Bs), 
   ljg_imp(A,B,Vs2), % A element of the body of B

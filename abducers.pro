@@ -413,6 +413,25 @@ mon_test2:-
   ppp(G),
   fail.
 
+vorob:-
+  X=(c & ((c->d)->b)),
+  Y=(c & (d->b)),
+  T=(X<->Y),
+  iprover(T).
+
+
+vorob1:-
+  L=((c & (d->b))->d),
+  R=(b->e),
+  S=(((c->d)->b)->e),
+  iprover((L&R->S)).
+
+hudelm:-
+  L=((c & (d->p) & (p->b))->p),
+  R=(c & ((c->d)->b) -> d),
+  iprover((L<-R)).
+
+
 /*
 
 p -> o1 & o2 & o3.
