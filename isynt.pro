@@ -51,15 +51,15 @@ abducibles_of(_,_).
 atom_of(A,R):-atomic(A),!,R=A.
 atom_of(T,A):-arg(_,T,X),atom_of(X,A).
 
-atoms_of(T,As):-findall(A,distinct(A,atom_of(T,A)),As).
+atoms_of(T,As):-setof(A,atom_of(T,A),As).
 
 any_protasis(Prover,AggregatorOp,WithNeg,Abducibles,Formula,Assumption):-
   abducibles_of(Formula,Abducibles),
   mark_hypos(WithNeg,Abducibles,Literals),
   subset_of(Literals,Hypos),
   join_with(AggregatorOp,Hypos,Assumption),
-  \+ (call(Prover,Assumption->false)),
-  call(Prover,Assumption->Formula).
+  \+ (call(Prover,Assumption->false)), % we do not assume contradictions !
+  call(Prover,Assumption->Formula).    % we ensure this is a theorem 
 
 mark_hypos(_,[],[]).
 mark_hypos(yes,[P|Ps],[P,~P|Ns]):-mark_hypos(yes,Ps,Ns).
@@ -88,7 +88,7 @@ join_with(Op,Xs,R):-Op=(<->),!,permutation(Xs,Ys),join_with_op(Op,Ys,R).
 join_with(Op,Xs,R):- join_with_op(Op,Xs,R).
 
 weakest_protasis(Prover,AggregatorOp,WithNeg,Abducibles,Formula,Assumption):-
-  findall(Assumption,
+  setof(Assumption,
     any_protasis(Prover,AggregatorOp,WithNeg,Abducibles,Formula,Assumption),
     Assumptions),
   weakest_with(Prover,Assumptions,Assumption).
@@ -97,7 +97,7 @@ weakest_with(_,Gs,G):-memberchk(true,Gs),!,G=true.
 weakest_with(Prover,Gs,G):-select(G,Gs,Others),
    \+ (member(Other,Others),weaker_with(Prover,Other,G)).
 
-weaker_with(Prover,P,Q):- \+ call(Prover,P->Q), call(Prover,(Q->P)).
+weaker_with(Prover,P,Q):- \+ call(Prover,(P->Q)), call(Prover,(Q->P)).
 
 peirce(Prover,WhatIf):-
     Formula=(((p->q)->p)->p),
@@ -157,9 +157,8 @@ place_element(U,U,Zs,Zs).
 place_element(_,X,Zs,[X|Zs]).
 
 weakest_mints_premise(Prover,Abducibles,Formula,Premise):-
-  findall(Premise,
+  setof(Premise,
     any_mints_premise(Prover,Abducibles,Formula,Premise),
     Premises),
-  sort(Premises,Uniques),
-  weakest_with(Prover,Uniques,Premise).
+  weakest_with(Prover,Premises,Premise).
 
