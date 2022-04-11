@@ -416,6 +416,8 @@ atrimmed(BBs,BBs).
 % faster so far
 ahprove(A):-toAHorn(A,H),call(H).
 
+holds(T):-T<-[].
+
 A<-Vs:-memberchk(A,Vs),!. 
 (B<-As)<-Vs1:-!,append(As,Vs1,Vs2),B<-Vs2.
 

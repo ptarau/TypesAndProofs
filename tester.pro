@@ -493,10 +493,17 @@ gold_ran_imp_test(N,K, Silver, Culprit, Unexpected):-
   gold_test(N,genRanImpFormulas(K),(=),dprove,Silver, Culprit, Unexpected).  
 
 rtest1:-
- gold_ran_imp_test(50,100,hprove, Culprit, Unexpected),ppp(Culprit=Unexpected).
+ gold_ran_imp_test(300,300,hprove, Culprit, Unexpected),ppp(Culprit=Unexpected).
   
 rtest2:-time(
- gold_ran_imp_test(1000,1000,hprove, Culprit, Unexpected),ppp(Culprit=Unexpected)
+ (gold_ran_imp_test(1000,1000,hprove, Culprit, Unexpected),ppp(Culprit=Unexpected))
+).
+
+hrtest1:-
+ gold_ran_imp_test(300,300,ahprove, Culprit, Unexpected),ppp(Culprit=Unexpected).
+
+hrtest2:-time(
+ (gold_ran_imp_test(1000,1000,ahprove, Culprit, Unexpected),ppp(Culprit=Unexpected))
 ).
 
 % tests "proven" formulas against Melvin Fitting's prover 

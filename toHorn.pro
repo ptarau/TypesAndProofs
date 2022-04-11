@@ -383,4 +383,90 @@ toHorns1(H,[],HH):-toHorn1(H,HH).
 hmints(E,(H:-Bs)):-mints(E,H,Gs),maplist(toHorn1,Gs,Bs).
 
 
-  
+to_hcan(T,(H:-Bs)):-
+  reset_gensym(v),
+  hcan(T,(H:-Bs)).
+  %heq(T,H,Bs,[]).
+
+nvar(V):-gensym(v,V).
+
+simple(X):-atomic(X),!.
+simple(X):-var(X).
+
+hcan(A,R):-simple(A),!,R=A.
+hcan((H:-Bs),(H:-Ds)):-hcans(Bs,Cs,Ds,Cs). %,append(Cs,Ds,Rs).
+
+hcans([],[])-->[].
+hcans([B|Bs],[C|Cs])-->
+  heq(B,C),
+  hcans(Bs,Cs).
+
+heq(A,A)-->{simple(A)},!.
+heq((H:-Bs),N)-->
+   {nvar(N)},
+   hcans(Bs,Cs),
+   [(N:-(H:-Cs)),(H:-[N|Cs])].
+   %[(N:-(H:-Cs)),((H:-Cs):-[N])].
+
+
+hctest:-
+  T=(f:-[a,g:-[(b:-[c,d,X]),c],d:-[e,f,g,X]]),
+  ppp(T),
+  to_hcan(T,C),
+  X=x,
+  portray_clause(C),
+  toHorn(H,T),
+  ppp(H),
+  mints(H,M,Ms),
+  portray_clause((M:-Ms)),
+  hmints(H,HM),
+  portray_clause(HM).
+
+
+hctest1:-
+  T=(f:-[a,g:-[b,c],d]),
+  to_hcan(T,C),
+  ppp(T),
+  ppp(C).
+
+hctest2:-
+  T=(f:-[a,f:-[a,b],b]),
+  to_hcan(T,C),
+  ppp(T),
+  ppp(C),
+  ljh(T),
+  ljh(C).
+
+hctest3:-
+  T=(0:-[0:-[0:-[0]]]),
+  to_hcan(T,C),
+  ppp(T),
+  ppp(C),
+  TT=(0 :-
+    [ (a:-((0:-[0]))),
+      (0:-[a, 0]),
+      (0:-[(0:-[a])])
+    ]),
+  ppp(TT),
+  ljh(T),
+  ppp(t),
+  ljh(C),
+  ppp(c),
+  ljh(TT),
+  ppp(tt).
+
+
+hctest4:-
+  T=(0<-(0<-(0<-0))),
+  iprover(T),
+  ppp(T),
+  T1=   (0<-(0<-n1)),
+  T2=   (n1<->(0<-0)),
+  iprover(T2->T1),
+  ppp(T1),
+  T3=( 0<- (0<-n1) &  (n1<->(0<-0)) ),
+  iprover(T3),
+  ppp(t3).
+
+
+

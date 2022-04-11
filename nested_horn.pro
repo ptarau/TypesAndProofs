@@ -200,12 +200,12 @@ nat2uhorn(M,N,HBs):-N>=M,
   maplist(nat2uhorn(M),Ns,Hs),
   hornify(Hs,HBs).
 
-hornify([X],(X->false)).
+hornify([X],(false<-[X])):-!.
 hornify([X,Y|Xs],(X<-[Y|Xs])).
 
 % nested Horn clause -> natural number
 uhorn2nat(U,U):-atomic(U).
-uhorn2nat(HBs,N):-
+uhorn2nat(HBs,N):-compound(HBs),
   hornify(Hs,HBs),
   maplist(uhorn2nat,Hs,Ns),
   nats2nat(Ns,N).
@@ -236,6 +236,33 @@ hfs2nat(Ns,N):-
   nats2nat(Ms,N).
 
 
+% canonical equiprovable formula of depth at most 3
+
+
+to_hcan(T,C):-
+  reset_gensym(v),
+  hcan(T,C).
+
+nvar(V):-gensym(v,V).
+
+simple(X):-atomic(X),!.
+simple(X):-var(X).
+
+hcan(A,R):-simple(A),!,R=A.
+hcan((H<-Bs),(H<-Ds)):-hcans(Bs,Cs,Ds,Cs). %,append(Cs,Ds,Rs).
+
+hcans([],[])-->[].
+hcans([B|Bs],[C|Cs])-->
+  heq(B,C),
+  hcans(Bs,Cs).
+
+heq(A,A)-->{simple(A)},!.
+heq((H<-Bs),N)-->
+   {nvar(N)},
+   hcans(Bs,Cs),
+   [(N<-(H<-Cs)),(H<-[N|Cs])].
+
+
 % counts nb. of solutions of Goal
 sols_count(Goal, Times) :-
         Counter = counter(0),
@@ -258,7 +285,7 @@ inc(Ctr):-arg(1,Ctr,X),succ(X,Y),nb_setarg(1,Ctr,Y).
 go1:-
    Ctr=proven(0),
    NCtr=unprovable(0),
-   M=50000,
+   M=3000,
    ( between(0,M,N),
      N1 is floor(log(1+N)),
      between(0,N1,U),
@@ -284,3 +311,20 @@ go:-
   Ls=[_,_|_],
   ppp(T),
   ppp(Ls),nl,fail.
+
+go2:-
+  T=f<-[a,g<-[b<-[c,d<-[e<-[i,j],f<-[k]]],m],r<-[p,x]],
+  to_hcan(T,C),
+  ppp(T),
+  ppp(C).
+
+
+err:-
+  trimmed_horn(4,T),
+  to_hcan(T,C),
+  (holds(T)->Orig='YES';Orig='NO'),
+  (holds(C)->Can='YES';Can='NO'),
+  Orig\==Can,
+  ppp((orig(Orig):-T)),
+  ppp((can(Can):-C)),nl,
+  fail.

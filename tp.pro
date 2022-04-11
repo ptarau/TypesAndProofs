@@ -73,6 +73,8 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('testProvers.pro').
 
+%:-include('canonical_horn.pro').
+
 :-include('circSynt.pro').
 
 :-include('harrop.pro').
