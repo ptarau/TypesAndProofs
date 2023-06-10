@@ -91,3 +91,9 @@ cht4:-
 
 chgo:-cht1;cht2;cht3;cht4.
 
+
+
+go:-
+ T=x<-[g<-[g,h]],
+ holds(T).
+
