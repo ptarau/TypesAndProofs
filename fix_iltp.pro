@@ -287,7 +287,7 @@ file2db(F):-Db=prob,
 map_operators(A,B):-map_operator([
   (#)-(box),
   (*)-(diam),
-  (&)-(,),
+  (&)-(','),
   (v)-(;),
   (<->)-(<=>),
    (->)-(=>)
@@ -304,5 +304,4 @@ map_operator(Ps,A,B):-
  A=..[F|Xs],
  maplist(map_operator(Ps),Xs,Ys),
  B=..[F|Ys]. 
- 
  
