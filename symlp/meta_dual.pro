@@ -41,15 +41,9 @@ go:-
 
 
 /*
-negation as failure to prove
-vs.
-affirmation as failure to disprove
+?- go.
+successfully falsified+[solvent,cash,sales,investors,venture,institutional,credit,from_banks,from_subsidies,from_founders]
 
-add term_expansion for p-:q ; r and ~ p into  p:-fail
-
-p -: q ; r. ===> dual:(p:-q,r).
-~p.         ===> dual:p.
-
-disprove(Q):-dual:call(Q).
-
+?- go1.
+successfully falsified
 */
