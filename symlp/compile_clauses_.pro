@@ -5,27 +5,20 @@
 
 compile_clauses(C,_):-var(C),!,fail.
 
-compile_clauses((H<=B),true:(H:-B)) :- !,nonvar(H),nonvar(B).
-compile_clauses((+H),true:H) :- !,nonvar(H).
+compile_clauses((H<=B),true:(H:-B)):-!,nonvar(H),nonvar(B).
+compile_clauses((+H),true:H):-!,nonvar(H).
 
 compile_clauses((H=>B),R):-nonvar(H),nonvar(B),!,dual2clause((H=>B),R).
 compile_clauses((-H),false:H):-nonvar(H).
 
-dual2clause((H=>(B;Bs)),false:(H:-CB)) :- !,disj2conj((B;Bs),CB).
-dual2clause((H=>(B,Bs)),false:(H:-CB)) :- !,conj2disj((B,Bs),CB).
-dual2clause((H=>false),false:(H)) :- !.
-dual2clause((H=>B),false:(H:-B)).
+dual2clause((H=>false),false:(H)):-!.
+dual2clause((H=>B),false:(H:-CB)):-disj2conj(B,CB).
 dual2clause((-H),false:H).
 
-disj2conj((A;B),(CA,CB)) :- nonvar(A),nonvar(B),!,
+disj2conj((A;B),(CA,CB)):-nonvar(A),nonvar(B),!,
     disj2conj(A,CA),
     disj2conj(B,CB).
 disj2conj(A,A).
-
-conj2disj((A,B),(CA;CB)) :- nonvar(A),nonvar(B),!,
-    conj2disj(A,CA),
-    conj2disj(B,CB).
-conj2disj(A,A).
 
 
 show:-
