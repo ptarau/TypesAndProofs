@@ -4,6 +4,7 @@ __pycache__/
 .idea/
 scratch/
 *.xml
+venv/
 
 
 

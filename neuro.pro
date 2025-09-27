@@ -68,9 +68,9 @@ ljb(A,Vs):-memberchk(A,Vs),!.
 ljb((A->B),Vs):-!,ljb(B,[A|Vs]).
 ljb(G,Vs1):-
   select((A->B),Vs1,Vs2),
+  ljb(G,[B|Vs2]),
   ljb_imp(A,B,Vs2),
-  !,
-  ljb(G,[B|Vs2]).
+  !.
 
 ljb_imp((C->D),B,Vs):-!,ljb(D,[C,(D->B)|Vs]).
 ljb_imp(A,_,Vs):-memberchk(A,Vs).

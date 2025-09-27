@@ -36,7 +36,7 @@ maxvar(I,R):-must_be(integer,I),R=I.
 % logic variables in it to 0,1,...
 
 natvars(T):-natvars(0,T).
-$
+
 natvars(Min,T):-
   must_be(acyclic,T),
   term_variables(T,Vs),

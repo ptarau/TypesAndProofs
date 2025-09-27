@@ -25,21 +25,22 @@ dprove(A):-provable(A),!.
   
 
 % derived directly from Dyckhoff's LJT calculus
-lprove(T):-ljt(T,[]),!.
+lprove(T):-ljt(T,[]),!. % done
 
-ljt(A,Vs):-memberchk(A,Vs),!.
+ljt(A,Vs):-memberchk(A,Vs),!. % L1
 
-ljt((A->B),Vs):-!,ljt(B,[A|Vs]).
+ljt((A->B),Vs):-!,ljt(B,[A|Vs]). % L2
 
-ljt(G,Vs1):- %atomic(G),                
+ljt(G,Vs1):- %atomic(G),                % L3
   select((A->B),Vs1,Vs2),
   memberchk(A,Vs2),
   !,
   ljt(G,[B|Vs2]).
 
-ljt(G,Vs1):- % atomic(G),
+ljt(G,Vs1):- % atomic(G),              % L4
   select( ((C->D)->B),Vs1,Vs2),
-  ljt((C->D), [(D->B)|Vs2]),    
+  % ljt((C->D), [C(D->B)|Vs2]),  
+  ljt(D, [C,(D->B)|Vs2]),   
   !,
   ljt(G,[B|Vs2]).
 
@@ -81,6 +82,24 @@ ljb(G,Vs1):-
 
 ljb_imp((C->D),B,Vs):-!,ljb((C->D),[(D->B)|Vs]).
 ljb_imp(A,_,Vs):-memberchk(A,Vs).
+
+
+% same, but focus on current goal first
+bprove_(T):-ljb_(T,[]).
+
+ljb_(A,Vs):-memberchk(A,Vs),!.
+ljb_((A->B),Vs):-!,ljb_(B,[A|Vs]).
+ljb_(G,Vs1):-
+  select((A->B),Vs1,Vs2),
+  ljb_(G,[B|Vs2]),
+  ljb_imp_(A,B,Vs2),
+  !.
+
+ljb_imp_((C->D),B,Vs):-!,ljb_(D,[C,(D->B)|Vs]).
+ljb_imp_(A,_,Vs):-memberchk(A,Vs).
+
+
+
 
 % same but in terms of reverse implication
 

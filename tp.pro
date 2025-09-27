@@ -60,7 +60,7 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('parTypedNFs.pro'). % parallel variants of typed normal form generators
 
-:-include('old_abducers.pro').
+%:-include('old_abducers.pro').
 :-include('abducers.pro').
 
 :-include('inputTransformers.pro').
