@@ -413,11 +413,44 @@ mon_test2:-
   ppp(G),
   fail.
 
-vorob:-
-  X=(c & ((c->d)->b)),
-  Y=(c & (d->b)),
-  T=(X<->Y),
-  iprover(T).
+
+vorob :-
+   XY = ((gamma & ((p->q)->r))->g),
+   % ---------------------------- 
+   X= (gamma & p & (q->r)->q),
+   Y= (gamma & r->g),
+   % ----------------------------
+   T=(X & Y->XY),
+   iprover(T).
+
+vorob0 :-
+   XY = ( ((p->q)->r)  ->g),
+   % ---------------------------- 
+   X= (p & (q->r)->q),
+   Y= (r->g),
+   % ----------------------------
+   T=(X & Y->XY),
+   iprover(T).
+
+vorob_ :-
+   XY = ( ((p->q)->r)  ->h),
+   % ---------------------------- 
+   X= (p & (q->r)->h),
+   Y= (r->h),
+   % ----------------------------
+   T=(X & Y->XY),
+   iprover(T).
+
+
+
+vorob1:-
+   YZ= ((gamma & ((c->d)->b))->g),
+   % ---------------------------- 
+   Y= (gamma & c & (d->b)->d),
+   Z= (gamma & b->g),
+   % ----------------------------
+   T=(Y & Z->YZ),
+   iprover(T).
 
 vorob2:-
    YZ= ((gamma & ((c->d)->b))->g),
@@ -428,22 +461,17 @@ vorob2:-
    T=(Y & Z->YZ),
    iprover(T).
 
-
-
 vorob3:-
-   YZ= ((gamma & ((c->d)->b))->g),
-   % ---------------------------- 
-   Y= ((gamma & c & (d->b))->d),
-   Z= (gamma & b->g),
-   % ----------------------------
-   T=(Y & Z->YZ),
-   iprover(T).
-
-vorob1:-
   L=((c & (d->b))->d),
   R=(b->e),
   S=(((c->d)->b)->e),
   iprover((L&R->S)).
+
+vorob4:-
+  X=(c & ((c->d)->b)),
+  Y=(c & (d->b)),
+  T=(X<->Y),
+  iprover(T).
 
 hudelm:-
   L=((c & (d->p) & (p->b))->p),

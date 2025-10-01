@@ -15,7 +15,7 @@ G<-Vs1:- % atomic(G), G not on Vs1
   trimmed((B<-Bs),NewB), % trim empty bodies
   G<-[NewB|Vs2].
   
-holds_imp((D<-Cs),B,Vs):-!,(D<-Cs)<-[(B<-[D])|Vs].
+holds_imp((D<-Cs),B,Vs):-!,(D<-Cs)<-[(B<-[D])|Vs]. % could append Cs Vs here
 holds_imp(A,_B,Vs):-memberchk(A,Vs).
 
 trimmed((B<-[]),R):-!,R=B.
@@ -94,6 +94,6 @@ chgo:-cht1;cht2;cht3;cht4.
 
 
 go:-
- T=x<-[g<-[g,h]],
+ T=(x<-[g<-[g,h]]),
  holds(T).
 
