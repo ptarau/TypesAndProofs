@@ -414,6 +414,39 @@ mon_test2:-
   fail.
 
 
+vorobx:-
+   % (A->B)->A 
+   X=(gamma & ((c -> d) -> b) -> (c->d)),
+   Y=(gamma & (d->b) -> (c->d)),
+   T=(X<->Y),
+   iprover(T).
+
+vorobx_:-
+   % (A->B)->A 
+   X=(((c -> d) -> b) -> (c->d)),
+   Y=((d->b) -> (c->d)),
+   T=(X<->Y),
+   iprover(T).
+
+voroby:-
+   X=(gamma & ((c -> d) -> b) -> c -> d),
+   Y=(gamma & (d->b) -> c->d),
+   T=(X<->Y),
+   iprover(T).
+
+vorobz:-
+   X=(gamma & c & ((c -> d) -> b) -> d),
+   Y=(gamma & c & (d->b) -> d),
+   T=(X<->Y),
+   iprover(T).
+
+vorobz_:-
+   X=(c -> ((c -> d) -> b) -> d),
+   Y=(c -> (d->b) -> d),
+   T=(X<->Y),
+   iprover(T).
+
+
 vorob :-
    XY = ((gamma & ((p->q)->r))->g),
    % ---------------------------- 
@@ -433,15 +466,12 @@ vorob0 :-
    iprover(T).
 
 vorob_ :-
-   XY = ( ((p->q)->r)  ->h),
+   Y =  (((p->q)->r)  -> goal),
    % ---------------------------- 
-   X= (p & (q->r)->h),
-   Y= (r->h),
+   X = p & (r->goal) & ((q->r)->q),
    % ----------------------------
-   T=(X & Y->XY),
+   T=(X->Y),
    iprover(T).
-
-
 
 vorob1:-
    YZ= ((gamma & ((c->d)->b))->g),
