@@ -101,3 +101,6 @@ proof_count(N):-
    portray_clause(I=Result),
    fail.
 proof_count(_).
+
+go__:-
+  proof_count(8).
