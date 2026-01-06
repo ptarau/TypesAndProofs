@@ -10,14 +10,14 @@ c:-['tp.pro']. % quick iteractive reloader
 :-op(800,xfx,(for)).
 :-op(30,xfx,to).
 
-:- op(100,  fx,  (?) ). 
+:- op(100,  fx,  (?) ).
 :- op(525,  fy,  ~ ).    % right associative
 :- op(550, xfy,  & ).    % right associative
 :- op(575, xfy,  v ).    % right associative
 :- op(600, xfx,  <-> ).  % non associative
 :- op(800, yfx,  <- ).   % left associative
 %:- op(800, xfy,  ->).   % right associative  %%% thiswould  overwride Prolog's ->
-               
+
 :-include('horn_flattener.pro').
 
 :-include('stats.pro'). % tools, including statistical and displayers
@@ -100,9 +100,9 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('hdprovers.pro').
 
-%:-include('third_party/dyckhoff.pro'). % implicational variant of Roy Dyckhoff's prover 
+%:-include('third_party/dyckhoff.pro'). % implicational variant of Roy Dyckhoff's prover
 
-:-include('third_party/dyckhoff_orig.pro'). % implicational variant of Roy Dyckhoff's prover  
+:-include('third_party/dyckhoff_orig.pro'). % implicational variant of Roy Dyckhoff's prover
 
 :-include('third_party/g4ip.pro').
 
@@ -126,3 +126,4 @@ c:-['tp.pro']. % quick iteractive reloader
 
 :-include('fc.pro').
 
+:-include('seq2impl.pl').
