@@ -328,3 +328,11 @@ err:-
   ppp((orig(Orig):-T)),
   ppp((can(Can):-C)),nl,
   fail.
+
+
+lmemb(T,(_->T)):-!.
+lmemb(T,(H->_)):-lmemb(T,H),!.
+lmemb(T,T):-T\=[_,_].
+
+lsel(T,(H->T),H).
+lsel(X,(H->_),RH):-lsel(X,H,RH).
