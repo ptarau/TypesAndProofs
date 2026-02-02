@@ -1,4 +1,4 @@
-% variant of the transformation from Mints 92, 
+% variant of the transformation from Mints 92,
 % reducing formulas to a canonical form
 % here we also handle <-> and reduce ~p to p -> false
 mints(E,T,Rs):-mints0(E,T,Rs,[]),!.
@@ -33,8 +33,14 @@ nv(X,Es,Es):-gensym('nv',X).
 mints(T,MT):-
   mints(T,H,Bs),
   unexpand(Bs,H,MT).
-  
-% turns Vs,G into V1-&V2->...->G 
+
+% turns Vs,G into V1-&V2->...->G
+
+list2conj([],[]).
+list2conj([V|Vs],Conj):-
+    append(Xs,[Z],[V|Vs]),
+    list2conj(Xs,Z,Conj).
+
 
 
 list2conj([],G,G).
